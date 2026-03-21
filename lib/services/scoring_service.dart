@@ -18,6 +18,16 @@ const int _kResampleN = 64;
 /// a ratio above this threshold are considered "complete enough".
 const double _kCoverageThreshold = 0.55;
 
+/// Maximum rotation angle (radians) that Procrustes may apply without
+/// penalising the shape score.  ~20° allows for natural handwriting slant
+/// while penalising clearly rotated or upside-down letters.
+const double _kMaxFreeRotation = 20.0 * pi / 180.0; // ~0.349 rad
+
+/// Maximum additive penalty for rotation (added to shape error).
+/// At 180° rotation the full penalty is applied; at the threshold, zero.
+/// 0.50 maps to a shape score of about 1 on beginner difficulty.
+const double _kRotationPenaltyMax = 0.50;
+
 /// Scores a user's drawing against a letter template.
 ///
 /// All geometric comparison happens in **template coordinate space**
@@ -69,8 +79,18 @@ class ScoringService {
     final frechetDist =
         _discreteFrechet(procResult.alignedTemplate, procResult.alignedUser);
 
-    // 7. Shape error (combined).
-    final shapeError = 0.6 * procResult.distance + 0.4 * frechetDist;
+    // 7. Shape error (combined), with rotation penalty.
+    //    If Procrustes needed to rotate the user path significantly to
+    //    match, add a penalty to the shape error — letters should not
+    //    need large rotations to look correct.  Additive so that even a
+    //    perfect geometric match at 180° still gets penalised.
+    final rawShapeError = 0.6 * procResult.distance + 0.4 * frechetDist;
+    final absRotation = procResult.rotationAngle.abs();
+    final rotationExcess = (absRotation - _kMaxFreeRotation)
+        .clamp(0.0, pi - _kMaxFreeRotation);
+    final rotationPenalty =
+        _kRotationPenaltyMax * (rotationExcess / (pi - _kMaxFreeRotation));
+    final shapeError = rawShapeError + rotationPenalty;
 
     // 8. Placement error.
     final placementError =
@@ -127,6 +147,7 @@ class ScoringService {
         'frechet': frechetDist,
         'scaleFactor': procResult.scaleFactor,
         'coverageRatio': coverageRatio,
+        'rotationDeg': procResult.rotationAngle * 180.0 / pi,
       },
     );
   }
@@ -213,6 +234,7 @@ class ScoringService {
       return _ProcrustesResult(
         distance: distReversed,
         scaleFactor: scaleFactor,
+        rotationAngle: thetaRev,
         alignedTemplate: t,
         alignedUser: uRevRotated,
       );
@@ -221,6 +243,7 @@ class ScoringService {
     return _ProcrustesResult(
       distance: distForward,
       scaleFactor: scaleFactor,
+      rotationAngle: theta,
       alignedTemplate: t,
       alignedUser: uRotated,
     );
@@ -394,6 +417,7 @@ class _ProcrustesResult {
   const _ProcrustesResult({
     required this.distance,
     required this.scaleFactor,
+    required this.rotationAngle,
     required this.alignedTemplate,
     required this.alignedUser,
   });
@@ -404,6 +428,10 @@ class _ProcrustesResult {
   /// User norm / template norm before unit scaling.
   /// 1.0 = same size, >1 = user drew bigger, <1 = user drew smaller.
   final double scaleFactor;
+
+  /// Optimal rotation angle (radians) applied to align user to template.
+  /// 0 = no rotation needed, π = upside-down.
+  final double rotationAngle;
 
   /// Centred, unit-scaled, rotation-aligned template points.
   final List<Offset> alignedTemplate;
