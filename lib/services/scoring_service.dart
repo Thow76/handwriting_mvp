@@ -13,6 +13,11 @@ import 'stroke_matching_service.dart';
 /// Number of equidistant points each path is resampled to before comparison.
 const int _kResampleN = 64;
 
+/// Minimum coverage ratio (user arc-length / template arc-length, scale-
+/// corrected) below which the combined score is penalised.  Drawings with
+/// a ratio above this threshold are considered "complete enough".
+const double _kCoverageThreshold = 0.55;
+
 /// Scores a user's drawing against a letter template.
 ///
 /// All geometric comparison happens in **template coordinate space**
@@ -87,8 +92,25 @@ class ScoringService {
     final placementScore = _errorToScore(placementError, difficulty);
     final thirdScore = _errorToScore(thirdError, difficulty);
 
+    // 11. Coverage penalty — penalise incomplete drawings.
+    //     Compare user arc-length to template arc-length, corrected for
+    //     the Procrustes scale factor so that small-but-complete drawings
+    //     are not penalised (size is already handled by proportion/size).
+    final templateArcLen = _arcLength(templatePath);
+    final userArcLen = _arcLength(userPath);
+    final scaleFactor = procResult.scaleFactor;
+    final coverageRatio = (templateArcLen > 1e-10 && scaleFactor > 1e-10)
+        ? ((userArcLen / templateArcLen) / scaleFactor).clamp(0.0, 1.5)
+        : 0.0;
+
+    final coveragePenalty = coverageRatio >= _kCoverageThreshold
+        ? 1.0
+        : (coverageRatio / _kCoverageThreshold) *
+          (coverageRatio / _kCoverageThreshold); // quadratic ramp
+
+    final rawCombined = (shapeScore + placementScore + thirdScore) / 3.0;
     final combined =
-        ((shapeScore + placementScore + thirdScore) / 3.0).round().clamp(1, 10);
+        (rawCombined * coveragePenalty).round().clamp(1, 10);
 
     return ScoringResult(
       shapeScore: shapeScore,
@@ -104,6 +126,7 @@ class ScoringService {
         'procrustes': procResult.distance,
         'frechet': frechetDist,
         'scaleFactor': procResult.scaleFactor,
+        'coverageRatio': coverageRatio,
       },
     );
   }
@@ -296,6 +319,15 @@ class ScoringService {
   // ===========================================================================
   // Helpers
   // ===========================================================================
+
+  /// Total arc length (sum of segment distances) of a polyline.
+  static double _arcLength(List<Offset> pts) {
+    var len = 0.0;
+    for (var i = 1; i < pts.length; i++) {
+      len += (pts[i] - pts[i - 1]).distance;
+    }
+    return len;
+  }
 
   static Offset _centroid(List<Offset> pts) {
     var sx = 0.0, sy = 0.0;
