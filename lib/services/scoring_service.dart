@@ -90,7 +90,10 @@ class ScoringService {
         .clamp(0.0, pi - _kMaxFreeRotation);
     final rotationPenalty =
         _kRotationPenaltyMax * (rotationExcess / (pi - _kMaxFreeRotation));
-    final shapeError = rawShapeError + rotationPenalty;
+    // 7b. Structural penalty — catches confusable pairs (b/d, p/q) where
+    //     the geometric shape matches but the stem is on the wrong side.
+    final structuralErr = _structuralError(allUserPts, allTemplatePts);
+    final shapeError = rawShapeError + rotationPenalty + structuralErr;
 
     // 8. Placement error.
     final placementError =
@@ -101,7 +104,8 @@ class ScoringService {
     final String thirdLabel;
     if (guidelineMode == GuidelineMode.full) {
       thirdLabel = 'Proportion';
-      thirdError = _proportionError(allUserPts, allTemplatePts);
+      thirdError = _proportionError(
+          allUserPts, allTemplatePts, procResult.scaleFactor);
     } else {
       thirdLabel = 'Size';
       thirdError = _sizeError(procResult.scaleFactor);
@@ -128,9 +132,19 @@ class ScoringService {
         : (coverageRatio / _kCoverageThreshold) *
           (coverageRatio / _kCoverageThreshold); // quadratic ramp
 
+    // 12. Structural penalty — catches confusable pairs where the shape
+    //     score is low but placement and proportion are both high because
+    //     the mirror/rotated letter occupies a similar bounding box.
+    //     Applied as a combined-score multiplier alongside coverage.
+    final structuralPenalty = structuralErr > 0.15
+        ? (1.0 - 2.0 * (structuralErr - 0.15)).clamp(0.3, 1.0)
+        : 1.0;
+
     final rawCombined = (shapeScore + placementScore + thirdScore) / 3.0;
     final combined =
-        (rawCombined * coveragePenalty).round().clamp(1, 10);
+        (rawCombined * coveragePenalty * structuralPenalty)
+            .round()
+            .clamp(1, 10);
 
     return ScoringResult(
       shapeScore: shapeScore,
@@ -148,6 +162,7 @@ class ScoringService {
         'scaleFactor': procResult.scaleFactor,
         'coverageRatio': coverageRatio,
         'rotationDeg': procResult.rotationAngle * 180.0 / pi,
+        'structural': structuralErr,
       },
     );
   }
@@ -299,10 +314,14 @@ class ScoringService {
   }
 
   /// Proportion error (full-guidelines mode):
-  ///   0.5 × aspect-ratio error  +  0.5 × vertical-zone-distribution error.
+  ///   ⅓ aspect-ratio error + ⅓ vertical-zone-distribution error + ⅓ size error.
+  ///
+  /// The [scaleFactor] is the Procrustes scale ratio (user/template).
+  /// 1.0 = same size, >1 = user drew bigger, <1 = user drew smaller.
   static double _proportionError(
     List<Offset> userPts,
     List<Offset> templatePts,
+    double scaleFactor,
   ) {
     final uBox = _boundingBox(userPts);
     final tBox = _boundingBox(templatePts);
@@ -319,13 +338,91 @@ class ScoringService {
         userPts.where((p) => p.dy > kTemplateXHeight).length / userPts.length;
     final zoneErr = (uAbove - tAbove).abs();
 
-    return 0.5 * aspectErr + 0.5 * zoneErr;
+    // Absolute size error: how far the scale factor deviates from 1.0.
+    final sizeErr = (1.0 - scaleFactor).abs();
+
+    return (aspectErr + zoneErr + sizeErr) / 3.0;
   }
 
   /// Size consistency error (baseline-only mode):
   ///   |1.0 − scaleFactor|
   static double _sizeError(double scaleFactor) =>
       (1.0 - scaleFactor).abs();
+
+  /// Structural error: compares the horizontal position of ink at the
+  /// vertical extremes between user and template drawings.
+  ///
+  /// This catches confusable-pair errors like p/q and b/d where the letter
+  /// shape is similar but the stem is on the wrong side.  Only activates
+  /// for letters that extend into the ascender zone (above x-height) or
+  /// descender zone (below baseline).
+  ///
+  /// Uses the template's extreme point as the reference landmark, and the
+  /// average x of user points near their own extreme for robustness.
+  /// Margin above x-height required to count as a true ascender.
+  /// Prevents circle peaks (e.g. top of 'q' at 0.57) from triggering
+  /// the ascender check — only letters like b, d, h, k, l qualify.
+  static const double _kAscenderMargin = 0.10;
+
+  /// Margin below baseline required to count as a true descender.
+  static const double _kDescenderMargin = 0.05;
+
+  static double _structuralError(
+    List<Offset> userPts,
+    List<Offset> templatePts,
+  ) {
+    final tBox = _boundingBox(templatePts);
+    final uBox = _boundingBox(userPts);
+    final tMargin = tBox.height * 0.20;
+    final uMargin = uBox.height * 0.20;
+
+    var totalErr = 0.0;
+    var terms = 0;
+
+    // Find template extreme y-values.
+    final tMaxY = templatePts.map((p) => p.dy).reduce(max);
+    final tMinY = templatePts.map((p) => p.dy).reduce(min);
+
+    // --- Ascender zone: compare x-position of topmost ink ---
+    // Only for letters with a true ascender (well above x-height).
+    if (tMaxY > kTemplateXHeight + _kAscenderMargin) {
+      final tTopPts = templatePts
+          .where((p) => p.dy >= tMaxY - tMargin)
+          .toList();
+      final uTopPts = userPts
+          .where((p) => p.dy >= uBox.maxY - uMargin)
+          .toList();
+      if (tTopPts.isNotEmpty && uTopPts.isNotEmpty) {
+        final tAvgX = tTopPts.map((p) => p.dx).reduce((a, b) => a + b) /
+            tTopPts.length;
+        final uAvgX = uTopPts.map((p) => p.dx).reduce((a, b) => a + b) /
+            uTopPts.length;
+        totalErr += (uAvgX - tAvgX).abs();
+        terms++;
+      }
+    }
+
+    // --- Descender zone: compare x-position of bottommost ink ---
+    // Only for letters with a true descender (well below baseline).
+    if (tMinY < kTemplateBaseline - _kDescenderMargin) {
+      final tBotPts = templatePts
+          .where((p) => p.dy <= tMinY + tMargin)
+          .toList();
+      final uBotPts = userPts
+          .where((p) => p.dy <= uBox.minY + uMargin)
+          .toList();
+      if (tBotPts.isNotEmpty && uBotPts.isNotEmpty) {
+        final tAvgX = tBotPts.map((p) => p.dx).reduce((a, b) => a + b) /
+            tBotPts.length;
+        final uAvgX = uBotPts.map((p) => p.dx).reduce((a, b) => a + b) /
+            uBotPts.length;
+        totalErr += (uAvgX - tAvgX).abs();
+        terms++;
+      }
+    }
+
+    return terms > 0 ? totalErr / terms : 0.0;
+  }
 
   // ===========================================================================
   // Error → score mapping
