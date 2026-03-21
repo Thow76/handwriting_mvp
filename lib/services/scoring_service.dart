@@ -373,6 +373,10 @@ class ScoringService {
   ) {
     final tBox = _boundingBox(templatePts);
     final uBox = _boundingBox(userPts);
+
+    // Need meaningful width to normalise x-positions.
+    if (tBox.width < 1e-10 || uBox.width < 1e-10) return 0.0;
+
     final tMargin = tBox.height * 0.20;
     final uMargin = uBox.height * 0.20;
 
@@ -383,7 +387,7 @@ class ScoringService {
     final tMaxY = templatePts.map((p) => p.dy).reduce(max);
     final tMinY = templatePts.map((p) => p.dy).reduce(min);
 
-    // --- Ascender zone: compare x-position of topmost ink ---
+    // --- Ascender zone: compare normalised x-position of topmost ink ---
     // Only for letters with a true ascender (well above x-height).
     if (tMaxY > kTemplateXHeight + _kAscenderMargin) {
       final tTopPts = templatePts
@@ -393,16 +397,19 @@ class ScoringService {
           .where((p) => p.dy >= uBox.maxY - uMargin)
           .toList();
       if (tTopPts.isNotEmpty && uTopPts.isNotEmpty) {
+        // Normalise x within each letter's own bounding box (0=left, 1=right).
         final tAvgX = tTopPts.map((p) => p.dx).reduce((a, b) => a + b) /
             tTopPts.length;
         final uAvgX = uTopPts.map((p) => p.dx).reduce((a, b) => a + b) /
             uTopPts.length;
-        totalErr += (uAvgX - tAvgX).abs();
+        final tNormX = (tAvgX - tBox.minX) / tBox.width;
+        final uNormX = (uAvgX - uBox.minX) / uBox.width;
+        totalErr += (uNormX - tNormX).abs();
         terms++;
       }
     }
 
-    // --- Descender zone: compare x-position of bottommost ink ---
+    // --- Descender zone: compare normalised x-position of bottommost ink ---
     // Only for letters with a true descender (well below baseline).
     if (tMinY < kTemplateBaseline - _kDescenderMargin) {
       final tBotPts = templatePts
@@ -416,7 +423,9 @@ class ScoringService {
             tBotPts.length;
         final uAvgX = uBotPts.map((p) => p.dx).reduce((a, b) => a + b) /
             uBotPts.length;
-        totalErr += (uAvgX - tAvgX).abs();
+        final tNormX = (tAvgX - tBox.minX) / tBox.width;
+        final uNormX = (uAvgX - uBox.minX) / uBox.width;
+        totalErr += (uNormX - tNormX).abs();
         terms++;
       }
     }
