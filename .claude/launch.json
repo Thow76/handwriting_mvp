@@ -1,0 +1,35 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Flutter — iOS Simulator",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "apple_ios_simulator"],
+      "port": 8181
+    },
+    {
+      "name": "Flutter — Android (Pixel 8)",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "Pixel_8"],
+      "port": 8182
+    },
+    {
+      "name": "Flutter — Android (Medium Phone API 36.1)",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "Medium_Phone_API_36.1"],
+      "port": 8183
+    },
+    {
+      "name": "Flutter — Chrome (Web)",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "chrome", "--web-port", "8080"],
+      "port": 8080
+    },
+    {
+      "name": "Flutter — macOS (Desktop)",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "macos"],
+      "port": 8184
+    }
+  ]
+}
