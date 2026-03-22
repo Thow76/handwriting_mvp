@@ -24,8 +24,17 @@ class StrokeMatchingService {
       return (templatePath, _concat(userStrokes));
     }
 
+    // Compute overall centroids and the offset between them so that stroke
+    // matching uses *relative* positions.  Without this, a drawing that is
+    // shifted on the canvas can cause strokes to be matched to the wrong
+    // template strokes (e.g. the user's stem centroid is closer to the
+    // template's circle centroid than the user's own circle centroid).
+    final tAllCentroid = _centroid(_concat(templateStrokes));
+    final uAllCentroid = _centroid(_concat(userStrokes));
+    final offset = uAllCentroid - tAllCentroid;
+
     // Greedy centroid matching: for each template stroke (in order), pick the
-    // closest unmatched user stroke.
+    // closest unmatched user stroke, comparing in template-centred space.
     final matched = List<bool>.filled(userStrokes.length, false);
     final ordering = <int>[]; // indices into userStrokes, in template order
 
@@ -36,7 +45,8 @@ class StrokeMatchingService {
 
       for (var i = 0; i < userStrokes.length; i++) {
         if (matched[i]) continue;
-        final d = (_centroid(userStrokes[i]) - tCentroid).distance;
+        // Subtract the overall offset so we compare relative positions.
+        final d = (_centroid(userStrokes[i]) - offset - tCentroid).distance;
         if (d < bestDist) {
           bestDist = d;
           bestIdx = i;

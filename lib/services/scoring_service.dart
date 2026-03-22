@@ -7,26 +7,12 @@ import '../models/letter_template.dart';
 import '../models/scoring_result.dart';
 import '../models/stroke_data.dart';
 import '../utils/constants.dart';
+import 'bitmap_comparison_service.dart';
 import 'point_resampling.dart';
 import 'stroke_matching_service.dart';
 
 /// Number of equidistant points each path is resampled to before comparison.
 const int _kResampleN = 64;
-
-/// Minimum coverage ratio (user arc-length / template arc-length, scale-
-/// corrected) below which the combined score is penalised.  Drawings with
-/// a ratio above this threshold are considered "complete enough".
-const double _kCoverageThreshold = 0.55;
-
-/// Maximum rotation angle (radians) that Procrustes may apply without
-/// penalising the shape score.  ~20° allows for natural handwriting slant
-/// while penalising clearly rotated or upside-down letters.
-const double _kMaxFreeRotation = 20.0 * pi / 180.0; // ~0.349 rad
-
-/// Maximum additive penalty for rotation (added to shape error).
-/// At 180° rotation the full penalty is applied; at the threshold, zero.
-/// 0.50 maps to a shape score of about 1 on beginner difficulty.
-const double _kRotationPenaltyMax = 0.50;
 
 /// Scores a user's drawing against a letter template.
 ///
@@ -79,21 +65,34 @@ class ScoringService {
     final frechetDist =
         _discreteFrechet(procResult.alignedTemplate, procResult.alignedUser);
 
-    // 7. Shape error (combined), with rotation penalty.
-    //    If Procrustes needed to rotate the user path significantly to
-    //    match, add a penalty to the shape error — letters should not
-    //    need large rotations to look correct.  Additive so that even a
-    //    perfect geometric match at 180° still gets penalised.
+    // 7. Shape error — hybrid Procrustes + bitmap approach.
+    //    Procrustes + Frechet measure shape quality (how similar the form is).
+    //    Bitmap coverage measures completeness (did you draw the whole letter).
+    //    Together they answer: "is this a well-drawn, complete letter?"
     final rawShapeError = 0.6 * procResult.distance + 0.4 * frechetDist;
-    final absRotation = procResult.rotationAngle.abs();
-    final rotationExcess = (absRotation - _kMaxFreeRotation)
-        .clamp(0.0, pi - _kMaxFreeRotation);
-    final rotationPenalty =
-        _kRotationPenaltyMax * (rotationExcess / (pi - _kMaxFreeRotation));
-    // 7b. Structural penalty — catches confusable pairs (b/d, p/q) where
-    //     the geometric shape matches but the stem is on the wrong side.
-    final structuralErr = _structuralError(allUserPts, allTemplatePts);
-    final shapeError = rawShapeError + rotationPenalty + structuralErr;
+
+    // 7b. Bitmap coverage — rasterise both Procrustes-aligned shapes and
+    //     measure pixel overlap.  templateFill tells us what fraction of
+    //     the template the user actually covered (completeness).
+    //     coverage tells us what fraction of the user's ink is on-template
+    //     (accuracy).
+    final bitmapResult = BitmapComparisonService.compare(
+      alignedTemplate: procResult.alignedTemplate,
+      alignedUser: procResult.alignedUser,
+      difficulty: difficulty.name,
+    );
+
+    // Combine quality and completeness into shape error.
+    // If templateFill is low (user drew a fragment), shape error increases
+    // sharply regardless of how well the fragment's shape matched.
+    // If coverage is low (user drew outside the template), shape error
+    // also increases.
+    //
+    // completenessMultiplier: 1.0 when fully complete, >1.0 when partial.
+    // A drawing covering 30% of the template gets multiplied by ~3.3×.
+    final completeness = bitmapResult.templateFill.clamp(0.01, 1.0);
+    final accuracy = bitmapResult.coverage.clamp(0.01, 1.0);
+    final shapeError = rawShapeError / (completeness * accuracy);
 
     // 8. Placement error.
     final placementError =
@@ -116,35 +115,11 @@ class ScoringService {
     final placementScore = _errorToScore(placementError, difficulty);
     final thirdScore = _errorToScore(thirdError, difficulty);
 
-    // 11. Coverage penalty — penalise incomplete drawings.
-    //     Compare user arc-length to template arc-length, corrected for
-    //     the Procrustes scale factor so that small-but-complete drawings
-    //     are not penalised (size is already handled by proportion/size).
-    final templateArcLen = _arcLength(templatePath);
-    final userArcLen = _arcLength(userPath);
-    final scaleFactor = procResult.scaleFactor;
-    final coverageRatio = (templateArcLen > 1e-10 && scaleFactor > 1e-10)
-        ? ((userArcLen / templateArcLen) / scaleFactor).clamp(0.0, 1.5)
-        : 0.0;
-
-    final coveragePenalty = coverageRatio >= _kCoverageThreshold
-        ? 1.0
-        : (coverageRatio / _kCoverageThreshold) *
-          (coverageRatio / _kCoverageThreshold); // quadratic ramp
-
-    // 12. Structural penalty — catches confusable pairs where the shape
-    //     score is low but placement and proportion are both high because
-    //     the mirror/rotated letter occupies a similar bounding box.
-    //     Applied as a combined-score multiplier alongside coverage.
-    final structuralPenalty = structuralErr > 0.15
-        ? (1.0 - 2.0 * (structuralErr - 0.15)).clamp(0.3, 1.0)
-        : 1.0;
-
+    // 11. Combined score — simple average of the three category scores.
+    //     Coverage/completeness is already embedded in the shape score via
+    //     bitmap comparison, so no separate coverage penalty is needed.
     final rawCombined = (shapeScore + placementScore + thirdScore) / 3.0;
-    final combined =
-        (rawCombined * coveragePenalty * structuralPenalty)
-            .round()
-            .clamp(1, 10);
+    final combined = rawCombined.round().clamp(1, 10);
 
     return ScoringResult(
       shapeScore: shapeScore,
@@ -160,9 +135,9 @@ class ScoringService {
         'procrustes': procResult.distance,
         'frechet': frechetDist,
         'scaleFactor': procResult.scaleFactor,
-        'coverageRatio': coverageRatio,
         'rotationDeg': procResult.rotationAngle * 180.0 / pi,
-        'structural': structuralErr,
+        'bitmapCoverage': bitmapResult.coverage,
+        'bitmapTemplateFill': bitmapResult.templateFill,
       },
     );
   }
@@ -349,89 +324,6 @@ class ScoringService {
   static double _sizeError(double scaleFactor) =>
       (1.0 - scaleFactor).abs();
 
-  /// Structural error: compares the horizontal position of ink at the
-  /// vertical extremes between user and template drawings.
-  ///
-  /// This catches confusable-pair errors like p/q and b/d where the letter
-  /// shape is similar but the stem is on the wrong side.  Only activates
-  /// for letters that extend into the ascender zone (above x-height) or
-  /// descender zone (below baseline).
-  ///
-  /// Uses the template's extreme point as the reference landmark, and the
-  /// average x of user points near their own extreme for robustness.
-  /// Margin above x-height required to count as a true ascender.
-  /// Prevents circle peaks (e.g. top of 'q' at 0.57) from triggering
-  /// the ascender check — only letters like b, d, h, k, l qualify.
-  static const double _kAscenderMargin = 0.10;
-
-  /// Margin below baseline required to count as a true descender.
-  static const double _kDescenderMargin = 0.05;
-
-  static double _structuralError(
-    List<Offset> userPts,
-    List<Offset> templatePts,
-  ) {
-    final tBox = _boundingBox(templatePts);
-    final uBox = _boundingBox(userPts);
-
-    // Need meaningful width to normalise x-positions.
-    if (tBox.width < 1e-10 || uBox.width < 1e-10) return 0.0;
-
-    final tMargin = tBox.height * 0.20;
-    final uMargin = uBox.height * 0.20;
-
-    var totalErr = 0.0;
-    var terms = 0;
-
-    // Find template extreme y-values.
-    final tMaxY = templatePts.map((p) => p.dy).reduce(max);
-    final tMinY = templatePts.map((p) => p.dy).reduce(min);
-
-    // --- Ascender zone: compare normalised x-position of topmost ink ---
-    // Only for letters with a true ascender (well above x-height).
-    if (tMaxY > kTemplateXHeight + _kAscenderMargin) {
-      final tTopPts = templatePts
-          .where((p) => p.dy >= tMaxY - tMargin)
-          .toList();
-      final uTopPts = userPts
-          .where((p) => p.dy >= uBox.maxY - uMargin)
-          .toList();
-      if (tTopPts.isNotEmpty && uTopPts.isNotEmpty) {
-        // Normalise x within each letter's own bounding box (0=left, 1=right).
-        final tAvgX = tTopPts.map((p) => p.dx).reduce((a, b) => a + b) /
-            tTopPts.length;
-        final uAvgX = uTopPts.map((p) => p.dx).reduce((a, b) => a + b) /
-            uTopPts.length;
-        final tNormX = (tAvgX - tBox.minX) / tBox.width;
-        final uNormX = (uAvgX - uBox.minX) / uBox.width;
-        totalErr += (uNormX - tNormX).abs();
-        terms++;
-      }
-    }
-
-    // --- Descender zone: compare normalised x-position of bottommost ink ---
-    // Only for letters with a true descender (well below baseline).
-    if (tMinY < kTemplateBaseline - _kDescenderMargin) {
-      final tBotPts = templatePts
-          .where((p) => p.dy <= tMinY + tMargin)
-          .toList();
-      final uBotPts = userPts
-          .where((p) => p.dy <= uBox.minY + uMargin)
-          .toList();
-      if (tBotPts.isNotEmpty && uBotPts.isNotEmpty) {
-        final tAvgX = tBotPts.map((p) => p.dx).reduce((a, b) => a + b) /
-            tBotPts.length;
-        final uAvgX = uBotPts.map((p) => p.dx).reduce((a, b) => a + b) /
-            uBotPts.length;
-        final tNormX = (tAvgX - tBox.minX) / tBox.width;
-        final uNormX = (uAvgX - uBox.minX) / uBox.width;
-        totalErr += (uNormX - tNormX).abs();
-        terms++;
-      }
-    }
-
-    return terms > 0 ? totalErr / terms : 0.0;
-  }
 
   // ===========================================================================
   // Error → score mapping
@@ -448,15 +340,6 @@ class ScoringService {
   // ===========================================================================
   // Helpers
   // ===========================================================================
-
-  /// Total arc length (sum of segment distances) of a polyline.
-  static double _arcLength(List<Offset> pts) {
-    var len = 0.0;
-    for (var i = 1; i < pts.length; i++) {
-      len += (pts[i] - pts[i - 1]).distance;
-    }
-    return len;
-  }
 
   static Offset _centroid(List<Offset> pts) {
     var sx = 0.0, sy = 0.0;
