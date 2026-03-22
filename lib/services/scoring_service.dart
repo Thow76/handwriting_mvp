@@ -65,34 +65,28 @@ class ScoringService {
     final frechetDist =
         _discreteFrechet(procResult.alignedTemplate, procResult.alignedUser);
 
-    // 7. Shape error — hybrid Procrustes + bitmap approach.
-    //    Procrustes + Frechet measure shape quality (how similar the form is).
-    //    Bitmap coverage measures completeness (did you draw the whole letter).
-    //    Together they answer: "is this a well-drawn, complete letter?"
-    final rawShapeError = 0.6 * procResult.distance + 0.4 * frechetDist;
+    // 7. Shape error — hybrid Procrustes + bitmap IoU approach.
+    //    Procrustes + Frechet measure fine shape quality (point-level similarity).
+    //    Bitmap IoU measures overall visual overlap (completeness + accuracy).
+    //    Both rendered at the SAME thickness — no structural bias.
+    final qualityError = 0.6 * procResult.distance + 0.4 * frechetDist;
 
-    // 7b. Bitmap coverage — rasterise both Procrustes-aligned shapes and
-    //     measure pixel overlap.  templateFill tells us what fraction of
-    //     the template the user actually covered (completeness).
-    //     coverage tells us what fraction of the user's ink is on-template
-    //     (accuracy).
+    // 7b. Bitmap IoU — rasterise both Procrustes-aligned shapes at the same
+    //     difficulty-based thickness and compute intersection / union.
+    //     IoU naturally penalises fragments (low intersection relative to
+    //     template-heavy union) and off-template ink (low intersection
+    //     relative to user-heavy union).
     final bitmapResult = BitmapComparisonService.compare(
       alignedTemplate: procResult.alignedTemplate,
       alignedUser: procResult.alignedUser,
       difficulty: difficulty.name,
     );
 
-    // Combine quality and completeness into shape error.
-    // If templateFill is low (user drew a fragment), shape error increases
-    // sharply regardless of how well the fragment's shape matched.
-    // If coverage is low (user drew outside the template), shape error
-    // also increases.
-    //
-    // completenessMultiplier: 1.0 when fully complete, >1.0 when partial.
-    // A drawing covering 30% of the template gets multiplied by ~3.3×.
-    final completeness = bitmapResult.templateFill.clamp(0.01, 1.0);
-    final accuracy = bitmapResult.coverage.clamp(0.01, 1.0);
-    final shapeError = rawShapeError / (completeness * accuracy);
+    // Combine: 50% bitmap IoU + 50% Procrustes/Frechet quality.
+    // bitmapError = 1.0 - IoU (0 = perfect overlap, 1 = no overlap).
+    // qualityError is already 0 = perfect, higher = worse.
+    final bitmapError = 1.0 - bitmapResult.iou;
+    final shapeError = 0.5 * bitmapError + 0.5 * qualityError;
 
     // 8. Placement error.
     final placementError =
@@ -136,8 +130,8 @@ class ScoringService {
         'frechet': frechetDist,
         'scaleFactor': procResult.scaleFactor,
         'rotationDeg': procResult.rotationAngle * 180.0 / pi,
-        'bitmapCoverage': bitmapResult.coverage,
-        'bitmapTemplateFill': bitmapResult.templateFill,
+        'bitmapIoU': bitmapResult.iou,
+        'bitmapError': bitmapError,
       },
     );
   }

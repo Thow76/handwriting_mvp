@@ -1,66 +1,62 @@
 import 'dart:ui';
 
-/// Bitmap-based coverage comparison for shape scoring.
+/// Bitmap-based shape comparison using IoU (Intersection over Union).
 ///
 /// After Procrustes alignment (both point sets centred at origin, unit-scaled,
 /// optimally rotated), this service rasterises both paths onto a small pixel
-/// grid and measures how much of the user's ink overlaps the template's ink.
+/// grid at the **same thickness** and measures how much they overlap.
 ///
-/// This replaces the flawed arc-length coverage ratio, which couldn't
-/// distinguish "drew half the letter" from "drew the whole letter but smaller."
+/// Same thickness is critical: it ensures a well-drawn complete letter
+/// produces high IoU, a fragment produces low IoU (template pixels in the
+/// union but not the intersection), and ink outside the template also
+/// produces low IoU (user pixels in the union but not the intersection).
 ///
-/// The template is rendered with a configurable stroke thickness that controls
-/// difficulty-based leniency (thicker = more forgiving).
+/// The shared thickness controls difficulty-based leniency:
+///   - Beginner: thick strokes = wide tolerance, wobble forgiven
+///   - Advanced: thin strokes = tight tolerance, precision required
 class BitmapComparisonService {
   const BitmapComparisonService._();
 
   /// Grid resolution.  64×64 = 4096 cells — fast and sufficient for
-  /// letter-level coverage detection.
+  /// letter-level shape comparison.
   static const int _gridSize = 64;
 
   /// Padding fraction around the points when mapping to the grid.
   /// Ensures strokes near the edge don't clip.
   static const double _padding = 0.10;
 
-  /// Template stroke thickness per difficulty (in grid pixels).
-  /// Wider = more forgiving (user ink can be further from template centre
-  /// and still count as overlapping).
-  static const Map<String, double> templateThickness = {
+  /// Stroke thickness per difficulty (in grid pixels).
+  /// Both template and user are rendered at this same thickness.
+  /// Wider = more forgiving (shapes overlap even with wobble).
+  static const Map<String, double> strokeThickness = {
     'beginner': 8.0,
     'intermediate': 5.0,
     'advanced': 3.0,
   };
 
-  /// User stroke thickness (always thin — represents actual ink).
-  static const double _userThickness = 1.5;
-
-  /// Computes bitmap coverage: what fraction of the user's ink overlaps
-  /// the template's ink zone.
+  /// Computes bitmap IoU (Intersection over Union) between two
+  /// Procrustes-aligned paths rendered at the same stroke thickness.
   ///
   /// [alignedTemplate] and [alignedUser] are the Procrustes-aligned point
   /// sequences (centred at origin, unit-scaled, optimally rotated).
   ///
-  /// Returns a [BitmapCoverageResult] with:
-  ///   - `coverage`: fraction of user pixels that overlap template pixels (0–1)
-  ///   - `templateFill`: fraction of template pixels covered by user (0–1)
-  ///   - `userPixelCount`: total user ink pixels
-  ///   - `overlapCount`: pixels present in both
-  static BitmapCoverageResult compare({
+  /// Returns a [BitmapComparisonResult] with IoU and pixel counts.
+  static BitmapComparisonResult compare({
     required List<Offset> alignedTemplate,
     required List<Offset> alignedUser,
     required String difficulty,
   }) {
-    final tThick = templateThickness[difficulty] ?? 5.0;
+    final thickness = strokeThickness[difficulty] ?? 5.0;
 
     // 1. Find bounding box of ALL points (both sets) to define the viewport.
     final allPoints = [...alignedTemplate, ...alignedUser];
     if (allPoints.isEmpty) {
-      return const BitmapCoverageResult(
-        coverage: 0.0,
-        templateFill: 0.0,
-        userPixelCount: 0,
-        overlapCount: 0,
+      return const BitmapComparisonResult(
+        iou: 0.0,
+        intersectionCount: 0,
+        unionCount: 0,
         templatePixelCount: 0,
+        userPixelCount: 0,
       );
     }
 
@@ -78,7 +74,6 @@ class BitmapComparisonService {
     final rangeY = maxY - minY;
     final range = rangeX > rangeY ? rangeX : rangeY;
     final padded = range * (1.0 + 2.0 * _padding);
-    // Use the larger dimension to maintain aspect ratio on the grid.
     final cx = (minX + maxX) / 2.0;
     final cy = (minY + maxY) / 2.0;
     final halfPadded = padded / 2.0;
@@ -87,29 +82,30 @@ class BitmapComparisonService {
 
     // Guard against degenerate (zero-range) inputs.
     if (padded < 1e-10) {
-      return const BitmapCoverageResult(
-        coverage: 0.0,
-        templateFill: 0.0,
-        userPixelCount: 0,
-        overlapCount: 0,
+      return const BitmapComparisonResult(
+        iou: 0.0,
+        intersectionCount: 0,
+        unionCount: 0,
         templatePixelCount: 0,
+        userPixelCount: 0,
       );
     }
 
     final scale = _gridSize / padded;
 
-    // 2. Rasterise template path (thick stroke).
+    // 2. Rasterise both paths at the SAME thickness.
     final templateGrid = _createGrid();
-    _rasterisePath(templateGrid, alignedTemplate, vpMinX, vpMinY, scale, tThick);
+    _rasterisePath(
+        templateGrid, alignedTemplate, vpMinX, vpMinY, scale, thickness);
 
-    // 3. Rasterise user path (thin stroke).
     final userGrid = _createGrid();
-    _rasterisePath(userGrid, alignedUser, vpMinX, vpMinY, scale, _userThickness);
+    _rasterisePath(userGrid, alignedUser, vpMinX, vpMinY, scale, thickness);
 
-    // 4. Count pixels.
+    // 3. Count pixels: intersection and union.
     var templatePixelCount = 0;
     var userPixelCount = 0;
-    var overlapCount = 0;
+    var intersectionCount = 0;
+    var unionCount = 0;
 
     for (var y = 0; y < _gridSize; y++) {
       for (var x = 0; x < _gridSize; x++) {
@@ -117,30 +113,25 @@ class BitmapComparisonService {
         final uPx = userGrid[y][x];
         if (tPx) templatePixelCount++;
         if (uPx) userPixelCount++;
-        if (tPx && uPx) overlapCount++;
+        if (tPx && uPx) intersectionCount++;
+        if (tPx || uPx) unionCount++;
       }
     }
 
-    // coverage = what fraction of user ink lands on template ink
-    final coverage =
-        userPixelCount > 0 ? overlapCount / userPixelCount : 0.0;
+    // IoU = intersection / union.  1.0 = perfect overlap, 0.0 = no overlap.
+    final iou = unionCount > 0 ? intersectionCount / unionCount : 0.0;
 
-    // templateFill = what fraction of template ink is covered by user ink
-    // This is the completeness measure — low means the user missed parts.
-    final templateFill =
-        templatePixelCount > 0 ? overlapCount / templatePixelCount : 0.0;
-
-    return BitmapCoverageResult(
-      coverage: coverage,
-      templateFill: templateFill,
-      userPixelCount: userPixelCount,
-      overlapCount: overlapCount,
+    return BitmapComparisonResult(
+      iou: iou,
+      intersectionCount: intersectionCount,
+      unionCount: unionCount,
       templatePixelCount: templatePixelCount,
+      userPixelCount: userPixelCount,
     );
   }
 
   // ===========================================================================
-  // Rasterisation (Bresenham with thickness)
+  // Rasterisation (stamp-along-line with thickness)
   // ===========================================================================
 
   static List<List<bool>> _createGrid() =>
@@ -172,8 +163,8 @@ class BitmapComparisonService {
   }
 
   /// Rasterise a polyline onto the grid with the given stroke thickness.
-  /// Uses stamp-along-line approach: stamp a circle at each point and at
-  /// interpolated positions along each segment to avoid gaps.
+  /// Stamps a circle at each point and interpolates between consecutive
+  /// points to avoid gaps.
   static void _rasterisePath(
     List<List<bool>> grid,
     List<Offset> points,
@@ -192,7 +183,8 @@ class BitmapComparisonService {
 
       if (i > 0) {
         // Interpolate between consecutive points to fill gaps.
-        final (prevGx, prevGy) = _toGrid(points[i - 1], vpMinX, vpMinY, scale);
+        final (prevGx, prevGy) =
+            _toGrid(points[i - 1], vpMinX, vpMinY, scale);
         final dx = gx - prevGx;
         final dy = gy - prevGy;
         final steps = dx.abs() > dy.abs() ? dx.abs() : dy.abs();
@@ -209,32 +201,32 @@ class BitmapComparisonService {
   }
 }
 
-/// Result of bitmap coverage comparison.
-class BitmapCoverageResult {
-  const BitmapCoverageResult({
-    required this.coverage,
-    required this.templateFill,
-    required this.userPixelCount,
-    required this.overlapCount,
+/// Result of bitmap IoU comparison.
+class BitmapComparisonResult {
+  const BitmapComparisonResult({
+    required this.iou,
+    required this.intersectionCount,
+    required this.unionCount,
     required this.templatePixelCount,
+    required this.userPixelCount,
   });
 
-  /// Fraction of user ink pixels that overlap template ink (0.0–1.0).
-  /// High = user drew within the template shape.
-  /// Low = user drew outside the template (wrong shape or position post-alignment).
-  final double coverage;
+  /// Intersection over Union (0.0–1.0).
+  /// 1.0 = shapes overlap perfectly.
+  /// 0.0 = no overlap at all.
+  /// Low when: user drew a fragment (template pixels in union, not intersection),
+  /// or user drew outside the template (user pixels in union, not intersection).
+  final double iou;
 
-  /// Fraction of template ink pixels covered by user ink (0.0–1.0).
-  /// High = user drew the whole letter.
-  /// Low = user only drew a fragment (e.g., just the tail of 'q').
-  final double templateFill;
+  /// Pixels present in BOTH template and user grids.
+  final int intersectionCount;
 
-  /// Total number of user ink pixels on the grid.
-  final int userPixelCount;
+  /// Pixels present in EITHER template or user grid (or both).
+  final int unionCount;
 
-  /// Pixels present in both template and user grids.
-  final int overlapCount;
-
-  /// Total number of template ink pixels on the grid.
+  /// Total template ink pixels on the grid.
   final int templatePixelCount;
+
+  /// Total user ink pixels on the grid.
+  final int userPixelCount;
 }
