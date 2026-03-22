@@ -69,6 +69,7 @@ const int kPreviewDurationMs = 3000;
 // ---------------------------------------------------------------------------
 
 /// Map of difficulty → list of (maxError, score) pairs, checked top to bottom.
+/// Used for placement, proportion, and size scoring.
 const Map<String, List<(double, int)>> kDifficultyThresholds = {
   'beginner': [
     (0.08, 10),
@@ -92,6 +93,37 @@ const Map<String, List<(double, int)>> kDifficultyThresholds = {
     (0.09, 7),
     (0.15, 5),
     (0.25, 3),
+    (double.infinity, 1),
+  ],
+};
+
+/// Shape-specific thresholds — calibrated for the hybrid Procrustes + bitmap
+/// IoU error range.  The bitmap component (1 - IoU) adds 0.10–0.30 to the
+/// error for hand-drawn input because pixel overlap is never perfect, even
+/// for good drawings.  These thresholds accommodate that higher baseline.
+const Map<String, List<(double, int)>> kShapeDifficultyThresholds = {
+  'beginner': [
+    (0.15, 10),
+    (0.22, 9),
+    (0.32, 7),
+    (0.45, 5),
+    (0.65, 3),
+    (double.infinity, 1),
+  ],
+  'intermediate': [
+    (0.10, 10),
+    (0.16, 9),
+    (0.25, 7),
+    (0.38, 5),
+    (0.55, 3),
+    (double.infinity, 1),
+  ],
+  'advanced': [
+    (0.06, 10),
+    (0.10, 9),
+    (0.18, 7),
+    (0.30, 5),
+    (0.45, 3),
     (double.infinity, 1),
   ],
 };

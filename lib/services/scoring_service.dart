@@ -105,7 +105,9 @@ class ScoringService {
     }
 
     // 10. Map errors → scores via difficulty thresholds.
-    final shapeScore = _errorToScore(shapeError, difficulty);
+    //     Shape uses its own thresholds (calibrated for the higher error
+    //     range produced by the hybrid Procrustes + bitmap formula).
+    final shapeScore = _errorToScore(shapeError, difficulty, shape: true);
     final placementScore = _errorToScore(placementError, difficulty);
     final thirdScore = _errorToScore(thirdError, difficulty);
 
@@ -323,8 +325,11 @@ class ScoringService {
   // Error → score mapping
   // ===========================================================================
 
-  static int _errorToScore(double error, Difficulty difficulty) {
-    final thresholds = kDifficultyThresholds[difficulty.name]!;
+  static int _errorToScore(double error, Difficulty difficulty,
+      {bool shape = false}) {
+    final table =
+        shape ? kShapeDifficultyThresholds : kDifficultyThresholds;
+    final thresholds = table[difficulty.name]!;
     for (final (maxError, score) in thresholds) {
       if (error < maxError) return score;
     }
