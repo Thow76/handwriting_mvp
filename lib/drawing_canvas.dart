@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'models/stroke.dart';
 import 'models/guidelines.dart';
+import 'models/score_integrator.dart';
+import 'models/score_result.dart';
+import 'models/stroke.dart';
+import 'models/template_rasterizer.dart';
+import 'widgets/score_display.dart';
 
 const _letters = 'abcdefghijklmnopqrstuvwxyz';
 const _fontFamily = 'Comic Sans MS';
@@ -17,6 +21,9 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
   final List<Stroke> _strokes = [];
   Stroke? _currentStroke;
   int _letterIndex = 0;
+  ScoreResult? _scoreResult;
+  Guidelines? _guidelines;
+  double _canvasWidth = 0;
 
   String get _currentLetter => _letters[_letterIndex];
 
@@ -35,21 +42,37 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
   }
 
   void _onPanEnd(DragEndDetails details) {
-    if (_currentStroke != null) {
-      debugPrint(
-        'Stroke complete: ${_currentStroke!.points.length} points, '
-        'x: ${_currentStroke!.points.map((p) => p.dx.toStringAsFixed(1)).reduce((a, b) => a.compareTo(b) < 0 ? a : b)}'
-        '–${_currentStroke!.points.map((p) => p.dx.toStringAsFixed(1)).reduce((a, b) => a.compareTo(b) > 0 ? a : b)}, '
-        'y: ${_currentStroke!.points.map((p) => p.dy.toStringAsFixed(1)).reduce((a, b) => a.compareTo(b) < 0 ? a : b)}'
-        '–${_currentStroke!.points.map((p) => p.dy.toStringAsFixed(1)).reduce((a, b) => a.compareTo(b) > 0 ? a : b)}',
-      );
-    }
     _currentStroke = null;
+    _runScoring();
+  }
+
+  Future<void> _runScoring() async {
+    if (_strokes.isEmpty || _guidelines == null) return;
+
+    final templateResult = await TemplateRasterizer.rasterize(
+      letter: _currentLetter,
+      fontFamily: _fontFamily,
+      fontSize: _fontSize,
+      guidelines: _guidelines!,
+      canvasWidth: _canvasWidth,
+    );
+
+    final result = ScoreIntegrator.score(
+      referenceMask: templateResult.mask,
+      bounds: templateResult.bounds,
+      strokes: _strokes,
+      strokeWidth: 3.0,
+    );
+
+    setState(() {
+      _scoreResult = result;
+    });
   }
 
   void _clear() {
     setState(() {
       _strokes.clear();
+      _scoreResult = null;
     });
   }
 
@@ -57,6 +80,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
     setState(() {
       _letterIndex = (_letterIndex - 1) % _letters.length;
       _strokes.clear();
+      _scoreResult = null;
     });
   }
 
@@ -64,6 +88,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
     setState(() {
       _letterIndex = (_letterIndex + 1) % _letters.length;
       _strokes.clear();
+      _scoreResult = null;
     });
   }
 
@@ -90,6 +115,8 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
                   fontFamily: _fontFamily,
                   fontSize: _fontSize,
                 );
+                _guidelines = guidelines;
+                _canvasWidth = constraints.maxWidth;
                 return GestureDetector(
                   onPanStart: _onPanStart,
                   onPanUpdate: _onPanUpdate,
@@ -107,6 +134,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
               },
             ),
           ),
+          ScoreDisplay(result: _scoreResult),
           _LetterNav(
             letter: _currentLetter,
             onPrevious: _previousLetter,
