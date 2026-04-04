@@ -20,14 +20,14 @@ class Guidelines {
   /// Creates guidelines by measuring the font's actual baseline and applying
   /// known typographic ratios for [fontFamily], centered within [canvasHeight].
   ///
-  /// Comic Sans MS ratios (proportion of em/fontSize):
+  /// Comic Neue ratios (proportion of em/fontSize):
   ///   x-height ≈ 0.54, ascender ≈ 0.93, descender ≈ 0.25
   factory Guidelines.fromFont({
     required double canvasHeight,
     required String fontFamily,
     double fontSize = 120.0,
   }) {
-    // Known Comic Sans MS metrics as proportions of fontSize.
+    // Known Comic Neue metrics as proportions of fontSize.
     // These come from the font's OS/2 table values.
     const xHeightRatio = 0.54;
     const ascenderRatio = 0.93;

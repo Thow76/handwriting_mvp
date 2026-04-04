@@ -7,7 +7,7 @@ import 'models/template_rasterizer.dart';
 import 'widgets/score_display.dart';
 
 const _letters = 'abcdefghijklmnopqrstuvwxyz';
-const _fontFamily = 'Comic Sans MS';
+const _fontFamily = 'Comic Neue';
 const _fontSize = 120.0;
 
 class DrawingCanvas extends StatefulWidget {
