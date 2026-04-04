@@ -50,6 +50,7 @@ class ScoreIntegrator {
         referenceMask: referenceMask,
         strokeMask: strokeMask,
       ),
+      placement: 0.0,
     );
   }
 }

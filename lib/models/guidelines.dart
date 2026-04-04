@@ -20,18 +20,20 @@ class Guidelines {
   /// Creates guidelines by measuring the font's actual baseline and applying
   /// known typographic ratios for [fontFamily], centered within [canvasHeight].
   ///
-  /// Comic Neue ratios (proportion of em/fontSize):
-  ///   x-height ≈ 0.54, ascender ≈ 0.93, descender ≈ 0.25
+  /// Comic Neue ratios (proportion of em/fontSize, from per-glyph bounding boxes):
+  ///   x-height ≈ 0.493, ascender ≈ 0.685, descender ≈ 0.193
   factory Guidelines.fromFont({
     required double canvasHeight,
     required String fontFamily,
     double fontSize = 120.0,
   }) {
     // Known Comic Neue metrics as proportions of fontSize.
-    // These come from the font's OS/2 table values.
-    const xHeightRatio = 0.54;
-    const ascenderRatio = 0.93;
-    const descenderRatio = 0.25;
+    // These come from per-glyph bounding boxes in the font's glyf table.
+    // Short letters (a,c,e,o,s): yMax ≈ 493, tall letters (b,d,h,k,l): yMax ≈ 681,
+    // descenders (g,p,q,y): yMin ≈ -193 (average of -188,-198,-186,-200).
+    const xHeightRatio = 0.493;
+    const ascenderRatio = 0.685;
+    const descenderRatio = 0.193;
 
     final xHeight = fontSize * xHeightRatio;
     final ascenderHeight = fontSize * ascenderRatio;

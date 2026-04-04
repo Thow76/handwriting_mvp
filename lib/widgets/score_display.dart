@@ -17,6 +17,7 @@ class ScoreDisplay extends StatelessWidget {
       children: [
         _ScoreItem(label: 'Coverage', value: result?.coverage ?? 0),
         _ScoreItem(label: 'Precision', value: result?.precision ?? 0),
+        _ScoreItem(label: 'Placement', value: result?.placement ?? 0),
       ],
     ),
     );

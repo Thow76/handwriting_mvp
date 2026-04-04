@@ -15,6 +15,29 @@ class TemplateRasterResult {
   final Rect bounds;
 
   const TemplateRasterResult({required this.mask, required this.bounds});
+
+  /// Returns the tight bounding box around actual ink pixels, in canvas
+  /// coordinates. Returns `null` if the mask contains no ink.
+  Rect? get inkBounds {
+    int? firstInkRow;
+    int? lastInkRow;
+
+    for (var row = 0; row < mask.length; row++) {
+      if (mask[row].any((pixel) => pixel)) {
+        firstInkRow ??= row;
+        lastInkRow = row;
+      }
+    }
+
+    if (firstInkRow == null || lastInkRow == null) return null;
+
+    return Rect.fromLTRB(
+      bounds.left,
+      bounds.top + firstInkRow,
+      bounds.right,
+      bounds.top + lastInkRow + 1,
+    );
+  }
 }
 
 /// Renders a reference letter to an offscreen image and converts

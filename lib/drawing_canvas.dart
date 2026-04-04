@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models/guidelines.dart';
+import 'models/placement_scorer.dart';
 import 'models/score_integrator.dart';
 import 'models/score_result.dart';
 import 'models/stroke.dart';
@@ -57,15 +58,30 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       canvasWidth: _canvasWidth,
     );
 
-    final result = ScoreIntegrator.score(
+    final bitmapResult = ScoreIntegrator.score(
       referenceMask: templateResult.mask,
       bounds: templateResult.bounds,
       strokes: _strokes,
       strokeWidth: 3.0,
     );
 
+    // Calculate placement score using the template's actual ink bounds.
+    var placement = 0.0;
+    final inkBounds = templateResult.inkBounds;
+    if (inkBounds != null && _strokes.isNotEmpty) {
+      placement = PlacementScorer.score(
+        expectedTop: inkBounds.top,
+        expectedBottom: inkBounds.bottom,
+        strokes: _strokes,
+      );
+    }
+
     setState(() {
-      _scoreResult = result;
+      _scoreResult = ScoreResult(
+        coverage: bitmapResult.coverage,
+        precision: bitmapResult.precision,
+        placement: placement,
+      );
     });
   }
 
