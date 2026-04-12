@@ -1,154 +1,50 @@
-# Handover Document — Session 2026-04-04 (Session 2)
+# Handover Document — Session 2026-04-12 (Session 3)
 
 ## What Was Built This Session
 
-### 1. Font Change: Comic Sans MS → Comic Neue
+### 1. Coverage Normalisation (completed)
 
-**Problem:** The app referenced `'Comic Sans MS'` but never bundled the font file. On Android it silently fell back to Roboto. Comic Sans MS is Microsoft-licensed and can't be redistributed.
+**Problem:** The user's drawing stroke (3px) is much thinner than the template glyph's filled shape. Even a perfect trace only covered ~40-45% of the template's pixels, making raw coverage misleading.
 
-**Solution:** Bundled Comic Neue (open-source, OFL license) from the original GitHub repo.
+**Solution:** Skeletonize the template, rasterize the skeleton with the user's stroke width, measure what fraction of the template that ideal trace covers, then divide the user's actual coverage by that maximum.
 
-**Files changed:**
-- Added `fonts/ComicNeue-Regular.ttf`
-- `pubspec.yaml` — added `fonts:` section declaring the font
-- `lib/drawing_canvas.dart` — changed `_fontFamily` from `'Comic Sans MS'` to `'Comic Neue'`
-
-### 2. Guidelines Corrected with Per-Glyph Metrics
-
-**Problem:** The guideline ratios came from the font's OS/2 table, which describes the overall design envelope — not where individual glyphs actually render. The ascender line was at 0.90 but tall letters (b, d, h) only reach ~0.685. The descender was at 0.25 but descender letters only drop to ~0.193.
-
-**Solution:** Parsed the TTF's `glyf` table to extract per-glyph bounding boxes for all 26 lowercase letters, then derived category-specific ratios:
-
-| Metric | Old (OS/2) | New (per-glyph) |
-|--------|-----------|-----------------|
-| x-height (midline) | 0.487 | **0.493** |
-| ascender | 0.900 | **0.685** |
-| descender | 0.250 | **0.193** |
-
-Per-glyph measurements from the font file (unitsPerEm = 1000):
-- Short letters (a,c,e,m,n,o,r,s,u,v,w,x,z): yMax ≈ 493
-- Tall letters (b,d,f,h,k,l): yMax ≈ 681
-- t: yMax = 663 (slightly shorter than other tall letters)
-- Descenders (g,p,q,y): yMin ≈ -193 (average of -188,-198,-186,-200)
-- j: yMax = 679, yMin = -184
-- i: yMax = 674
-
-**Files changed:**
-- `lib/models/guidelines.dart` — updated ratios and comments
-
-**Note:** These are hardcoded ratios derived from the TTF file's glyph table. If the font changes, these would need re-measuring. The ratios describe where the font's glyph outlines sit, which should closely match what Flutter renders.
-
-### 3. Placement Scorer (new component)
-
-**What it does:** Scores how closely the user's strokes match the expected vertical zone for a letter. Compares the top and bottom of the stroke bounding box against the template's actual ink bounds.
-
-**Scoring formula:**
-```
-edge_score = max(0, 1 - abs(actual - expected) / zone_height)
-placement_score = average(top_score, bottom_score)
-```
-
-- Scores both top and bottom edges of the user's strokes
-- Zone height = expected bottom - expected top (varies per letter)
-- Overshooting and undershooting are penalised equally
-- Score is 0.0 to 1.0
-
-**Files added:**
-- `lib/models/placement_scorer.dart` — 12 tests
-- `test/placement_scorer_test.dart`
-
-### 4. Ink Bounds on TemplateRasterResult
-
-**What it does:** Scans the template mask to find the topmost and bottommost rows containing ink pixels, returning a tight `Rect` in canvas coordinates. This gives the actual rendered glyph bounds (not the TextPainter layout bounds, which are the same for every character).
-
-**Files changed:**
-- `lib/models/template_rasterizer.dart` — added `inkBounds` getter to `TemplateRasterResult`
-- `test/ink_bounds_test.dart` — 5 tests
-
-### 5. ScoreResult Extended with Placement
-
-**Files changed:**
-- `lib/models/score_result.dart` — added `placement` field
-- `lib/models/score_integrator.dart` — passes `placement: 0.0` (bitmap pipeline doesn't calculate placement)
-- `lib/widgets/score_display.dart` — displays "Placement: X%" alongside Coverage and Precision
-- `test/score_display_test.dart` — updated to include placement in all test cases (7 tests)
-
-### 6. Placement Scoring Wired into Drawing Canvas
-
-**How it works at runtime:**
-1. `TemplateRasterizer.rasterize()` is called (already existed for coverage/precision)
-2. `templateResult.inkBounds` extracts the actual ink top/bottom from the mask
-3. `PlacementScorer.score()` compares user stroke bounds against the ink bounds
-4. All three scores (coverage, precision, placement) are displayed independently
-
-**Files changed:**
-- `lib/drawing_canvas.dart` — imports PlacementScorer, calculates placement after bitmap scoring, constructs ScoreResult with all three scores
-
-### 7. Font Metrics Test (diagnostic, not production)
-
-**What it does:** Rasterizes representative letters from each category and prints their ink bounds. Used during development to verify glyph positioning. All letters render as identical rectangles in the test environment due to the Flutter test font limitation.
-
-**Files added:**
-- `test/font_metrics_test.dart` — 22 tests (all pass but measurements are meaningless due to test font)
-
----
-
-## Test Suite
-- **97 tests total**, all passing
-- Coverage scorer: 12 tests
-- Precision scorer: 12 tests
-- Stroke rasterizer: 10 tests
-- Template rasterizer: 8 tests
-- Score integrator: 9 tests
-- Score display: 7 tests
-- Placement scorer: 12 tests
-- Ink bounds: 5 tests
-- Font metrics: 22 tests (diagnostic)
-
----
-
-## Issues Identified — Next Steps
-
-### 1. Normalised Coverage (Priority: High)
-
-**Status:** Not started. Carried forward from previous session.
-
-**Problem:** The user's drawing stroke width (3px) is much thinner than the template glyph's filled shape. Even a perfect trace only covers ~40-45% of the template's pixels, making raw coverage misleading.
-
-**Solution:** Calculate the maximum achievable coverage for a given stroke width against each template letter, then normalise:
 ```
 normalised_coverage = actual_coverage / max_achievable_coverage
 ```
 
-**Implementation approach:**
-1. Skeletonise the template — reduce the filled glyph to its centre-line path
-2. Rasterize the skeleton with the same stroke width as the user's drawing
-3. Run the existing coverage scorer on that ideal skeleton vs the full template → max_achievable_coverage
-4. Divide the user's actual coverage by this maximum
+**How it works:**
+1. Zhang-Suen thinning algorithm reduces the filled template glyph to a 1-pixel-wide centre-line skeleton
+2. Each skeleton pixel is stamped as a single-point stroke at the user's stroke width
+3. Coverage of that ideal trace against the full template = `maxCoverage`
+4. User's raw coverage is divided by `maxCoverage`, clamped to 1.0
 
-### 2. Precision Gating (Priority: Medium)
+**Key design decision:** We discussed whether to increase the user's stroke width to improve coverage scores. Concluded that normalisation is the right fix — it makes scores independent of stroke width. A thin stroke with normalisation gives the best of both worlds: precision stays naturally high (less ink to bleed outside) and coverage becomes meaningful. The stroke width remains a UI/comfort choice, not a scoring lever.
 
-**Status:** Not started. Carried forward from previous session.
+**Files added:**
+- `lib/models/skeletonizer.dart` — Zhang-Suen thinning algorithm
+- `test/skeletonizer_test.dart` — 9 tests
+- `test/normalised_coverage_test.dart` — 6 tests
 
-**Problem:** Precision is meaningless when coverage is low — a single dot inside the template scores 100% precision.
+**Files changed:**
+- `lib/models/score_integrator.dart` — added `_maxAchievableCoverage()` private method; `score()` now returns normalised coverage transparently
 
-**Solution:** Only display precision when normalised coverage exceeds a threshold (e.g. 80%). This is a UI/display logic change, not a scorer change.
-
-### 3. Guideline Ratios: Hardcoded vs Runtime (Priority: Low)
-
-**Status:** Currently using hardcoded per-glyph ratios from the TTF file. These are accurate for Comic Neue but would break if the font changes.
-
-**Alternative:** Measure ink bounds at runtime from the TemplateRasterizer output. This would always be accurate regardless of font, but adds a startup cost.
-
-**Decision:** Hardcoded ratios are fine for now. If the font changes, re-run the TTF parsing script to get new ratios. The Python script used is documented in the git history.
-
-### 4. Placement Scoring: Baseline-Only Option (Priority: Low)
-
-**Open question from user:** Should placement score both edges (top and bottom) or focus specifically on the baseline (bottom edge)? Currently scores both. The user asked about this but didn't express a strong preference. Worth revisiting after testing on the simulator.
+No changes needed to `drawing_canvas.dart` or `score_display.dart` — normalisation happens inside `ScoreIntegrator.score()`.
 
 ---
 
-## Architecture Overview
+## Current State of the App
+
+### Scoring Pipeline
+
+Three independent scores are calculated and displayed after each stroke:
+
+| Score | What it measures | Status |
+|-------|-----------------|--------|
+| **Coverage** | % of the template shape traced, normalised against max achievable for the stroke width | Working — normalised this session |
+| **Precision** | % of the user's ink that falls inside the template shape | Working — raw value, not yet normalised |
+| **Placement** | Vertical position accuracy (top/bottom edge alignment with template ink bounds) | Working — but overly harsh (see Known Issues) |
+
+### Architecture
 
 ```
 User draws strokes
@@ -157,18 +53,96 @@ User draws strokes
        ↓
   [StrokeRasterizer] → boolean grid (stroke mask)
        ↓
-  [ScoreIntegrator] ← also receives template mask + bounds
-       ↓                    ↑
-  [ScoreResult]    [TemplateRasterizer] → boolean grid + bounds + inkBounds
-       ↓                    ↑
-  [ScoreDisplay]   [PlacementScorer] ← uses inkBounds + strokes
+  [ScoreIntegrator] ← receives template mask + bounds
+       |    ↓                    ↑
+       |  normalised     [TemplateRasterizer] → boolean grid + bounds + inkBounds
+       |  coverage              ↑
+       |    ↓            [Skeletonizer] → centre-line skeleton of template
+       |  [ScoreResult]
+       |    ↓
+       |  [ScoreDisplay]   [PlacementScorer] ← uses inkBounds + strokes
        ↓
   UI: Coverage %, Precision %, Placement %
 ```
 
-The bitmap pipeline (coverage + precision) and placement scoring are independent. Both consume the TemplateRasterizer output but use different parts of it:
-- Bitmap pipeline uses `mask` and `bounds`
-- Placement scoring uses `inkBounds` (derived from `mask`)
+### Test Suite — 112 tests, all passing
+
+| Test file | Count | Component |
+|-----------|-------|-----------|
+| coverage_scorer_test.dart | 12 | CoverageScorer |
+| precision_scorer_test.dart | 12 | PrecisionScorer |
+| stroke_rasterizer_test.dart | 10 | StrokeRasterizer |
+| template_rasterizer_test.dart | 8 | TemplateRasterizer |
+| score_integrator_test.dart | 9 | ScoreIntegrator |
+| score_display_test.dart | 7 | ScoreDisplay widget |
+| placement_scorer_test.dart | 12 | PlacementScorer |
+| ink_bounds_test.dart | 5 | TemplateRasterResult.inkBounds |
+| font_metrics_test.dart | 22 | Diagnostic (test font limitation) |
+| skeletonizer_test.dart | 9 | Skeletonizer (new) |
+| normalised_coverage_test.dart | 6 | Normalised coverage (new) |
+
+---
+
+## Known Issues — Adjustments Needed
+
+### 1. Placement Scoring Is Overly Harsh (Priority: High)
+
+**Problem:** Placement compares the user's stroke bounding box (raw touch points) against pixel-precise template ink bounds. Scoring 100% is practically impossible because:
+
+1. **Touch vs ink mismatch** — The rendered ink extends `strokeWidth / 2` beyond the touch points, but the scorer only looks at raw touch coordinates. So the visible ink is correct but the score penalises the offset.
+2. **Sub-pixel precision** — Template ink bounds come from rasterized pixel scanning (integer boundaries). Touch points would need to land at those exact Y coordinates.
+
+**Proposed fix:** Add a tolerance zone — any error within a threshold (e.g. a few pixels, or a small percentage of zone height) counts as a perfect score. This makes placement a "are you roughly in the right zone?" check rather than a pixel-precision test. Should be calibrated alongside the combined scoring system.
+
+### 2. Precision Normalisation (Priority: Medium)
+
+**Problem:** Same issue coverage had before normalisation. A wider stroke bleeds more pixels outside the template even on a perfect centre-line trace. Max achievable precision at a given stroke width is less than 100%.
+
+**Proposed fix:** Mirror the coverage normalisation — calculate max achievable precision from the ideal skeleton trace and divide. The infrastructure (skeletonizer + ideal trace) already exists.
+
+**Status:** Deferred until simulator testing shows whether raw precision is problematic in practice.
+
+### 3. Precision Gating (Priority: Low)
+
+**Problem:** Precision is meaningless when coverage is low — a single dot inside the template scores 100% precision.
+
+**Proposed fix:** Exclude or de-weight precision when coverage is below a threshold. More relevant once the combined scoring system is designed.
+
+---
+
+## Proposed Advanced Features (Future Sessions)
+
+These are fundamentally different from the current bitmap-based pipeline. The current system analyses **where ink landed** (the result). These features would analyse **how the ink was drawn** (the process), requiring a **per-letter stroke model** that defines expected stroke count, order, and direction for all 26 letters. This model does not exist in the font file and must be authored manually.
+
+### Stroke Count (Complexity: Low, Value: High)
+Does the user use the correct number of strokes? Simple count comparison against a lookup table. Important for letter formation learning.
+
+### Stroke Direction (Complexity: Medium, Value: High)
+Was each stroke drawn in the expected direction? (top-to-bottom, left-to-right) Requires matching user strokes to expected strokes and comparing start/end points. Important for developing proper motor habits.
+
+### Stroke Order (Complexity: Medium-High, Value: Medium)
+Were the strokes drawn in the correct sequence? Depends on reliable stroke matching. Matters for fluency development.
+
+### Smoothness / Fluency (Complexity: Medium, Value: Medium)
+Are the strokes smooth curves or jerky zigzags? Requires analysing point-to-point velocity and angle changes. Captures motor control quality that bitmap comparison cannot detect.
+
+### Proportion (Complexity: Low, Value: Low-Medium)
+Is the letter the right width relative to its height? Bounding box width comparison against per-letter expected ratios. Coverage and precision already partially capture this.
+
+---
+
+## Next Priority: Combined Scoring System
+
+The immediate focus is bringing coverage, precision, and placement together into a coherent system that:
+
+1. **Encourages practice** — does not over-penalise small imperfections that are normal for handwriting
+2. **Doesn't over-reward poor performance** — scribbles outside the lines should not score well
+3. **Feels fair to the learner** — the score should be motivating, not discouraging
+
+This is a UX/pedagogy design challenge as much as a technical one. It requires:
+- Calibrating what score ranges feel right through simulator testing with real handwriting
+- Deciding on weighting, thresholds, and tolerance zones
+- Designing how feedback is presented (numeric scores, star ratings, colour coding, messages)
 
 ---
 
@@ -176,7 +150,7 @@ The bitmap pipeline (coverage + precision) and placement scoring are independent
 
 ```
 lib/
-  main.dart                         — App entry point, launches DrawingCanvas
+  main.dart                         — App entry point
   drawing_canvas.dart               — Main screen: canvas, guidelines, scoring integration
   models/
     stroke.dart                     — Stroke data model
@@ -185,7 +159,8 @@ lib/
     precision_scorer.dart           — % of stroke pixels inside reference
     stroke_rasterizer.dart          — Strokes → boolean grid
     template_rasterizer.dart        — Font glyph → boolean grid + bounds + inkBounds
-    score_integrator.dart           — Orchestrates bitmap rasterization + scoring
+    skeletonizer.dart               — Zhang-Suen thinning → centre-line skeleton (new)
+    score_integrator.dart           — Orchestrates rasterization + normalised scoring
     score_result.dart               — Data class for coverage, precision, placement
     placement_scorer.dart           — Vertical placement accuracy scorer
   widgets/
@@ -204,17 +179,16 @@ test/
   placement_scorer_test.dart        — 12 tests
   ink_bounds_test.dart              — 5 tests
   font_metrics_test.dart            — 22 tests (diagnostic)
-  widget_test.dart                  — default (can be removed)
+  skeletonizer_test.dart            — 9 tests (new)
+  normalised_coverage_test.dart     — 6 tests (new)
 ```
 
 ---
 
-## User Preferences (for reference)
+## Session History
 
-- Build incrementally with real-data validation at each step
-- Tests first, then implementation
-- No combined/merged scores in the UI — show individual metrics separately
-- Comic Neue as the reference font (changed from Comic Sans MS this session)
-- Individual print letters, not cursive
-- Wants deep understanding of technical decisions before proceeding
-- Running on Android simulator (macOS host)
+| Session | Date | Key work |
+|---------|------|----------|
+| 1 | 2026-03-28 | Project reset, drawing canvas, stroke capture, guidelines, bitmap scoring pipeline (coverage + precision) |
+| 2 | 2026-04-04 | Font change to Comic Neue, per-glyph guideline metrics, placement scorer, ink bounds |
+| 3 | 2026-04-12 | Coverage normalisation via skeletonization, handover with combined scoring system as next priority |
