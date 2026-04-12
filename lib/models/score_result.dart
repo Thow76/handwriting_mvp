@@ -9,9 +9,14 @@ class ScoreResult {
   /// How closely the user's strokes match the expected vertical zone (0.0–1.0).
   final double placement;
 
+  /// Ratio of ideal path length to actual path length (0.0–1.0).
+  /// High efficiency means the user traced cleanly without excessive movement.
+  final double efficiency;
+
   const ScoreResult({
     required this.coverage,
     required this.precision,
     required this.placement,
+    required this.efficiency,
   });
 }

@@ -18,6 +18,7 @@ class ScoreDisplay extends StatelessWidget {
         _ScoreItem(label: 'Coverage', value: result?.coverage ?? 0),
         _ScoreItem(label: 'Precision', value: result?.precision ?? 0),
         _ScoreItem(label: 'Placement', value: result?.placement ?? 0),
+        _ScoreItem(label: 'Efficiency', value: result?.efficiency ?? 0),
       ],
     ),
     );

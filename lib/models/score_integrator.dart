@@ -1,6 +1,7 @@
 import 'dart:ui' show Offset, Rect;
 
 import 'coverage_scorer.dart';
+import 'efficiency_scorer.dart';
 import 'precision_scorer.dart';
 import 'score_result.dart';
 import 'skeletonizer.dart';
@@ -52,8 +53,12 @@ class ScoreIntegrator {
       strokeMask: strokeMask,
     );
 
+    // Skeletonize once and reuse for both coverage normalisation and efficiency.
+    final skeleton = Skeletonizer.skeletonize(referenceMask);
+
     // Normalise coverage against the maximum achievable for this stroke width.
-    final maxCoverage = _maxAchievableCoverage(
+    final maxCoverage = _maxAchievableCoverageFromSkeleton(
+      skeleton: skeleton,
       referenceMask: referenceMask,
       bounds: bounds,
       strokeWidth: strokeWidth,
@@ -63,6 +68,14 @@ class ScoreIntegrator {
         ? (rawCoverage / maxCoverage).clamp(0.0, 1.0)
         : 0.0;
 
+    // Calculate efficiency: ideal path length vs actual path length.
+    final idealLength = EfficiencyScorer.idealPathLength(skeleton);
+    final actualLength = EfficiencyScorer.actualPathLength(strokes);
+    final efficiency = EfficiencyScorer.calculate(
+      idealPathLength: idealLength,
+      actualPathLength: actualLength,
+    );
+
     return ScoreResult(
       coverage: normalisedCoverage,
       precision: PrecisionScorer.calculate(
@@ -70,23 +83,23 @@ class ScoreIntegrator {
         strokeMask: strokeMask,
       ),
       placement: 0.0,
+      efficiency: efficiency,
     );
   }
 
   /// Computes the maximum coverage achievable by a perfect centre-line
   /// trace of the reference shape at the given stroke width.
   ///
-  /// 1. Skeletonize the reference mask to get the medial axis.
-  /// 2. Create synthetic strokes from each skeleton pixel.
-  /// 3. Rasterize those strokes at [strokeWidth].
-  /// 4. Measure coverage of the ideal trace against the reference.
-  static double _maxAchievableCoverage({
+  /// Uses a pre-computed [skeleton] to avoid redundant skeletonization.
+  /// 1. Create synthetic strokes from each skeleton pixel.
+  /// 2. Rasterize those strokes at [strokeWidth].
+  /// 3. Measure coverage of the ideal trace against the reference.
+  static double _maxAchievableCoverageFromSkeleton({
+    required List<List<bool>> skeleton,
     required List<List<bool>> referenceMask,
     required Rect bounds,
     required double strokeWidth,
   }) {
-    final skeleton = Skeletonizer.skeletonize(referenceMask);
-
     // Convert skeleton pixels to canvas-coordinate stroke points.
     // Each skeleton pixel becomes a single-point stroke at its cell centre.
     final skeletonStrokes = <Stroke>[];

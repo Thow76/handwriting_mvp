@@ -81,6 +81,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         coverage: bitmapResult.coverage,
         precision: bitmapResult.precision,
         placement: placement,
+        efficiency: bitmapResult.efficiency,
       );
     });
   }

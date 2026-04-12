@@ -16,7 +16,7 @@ void main() {
     });
 
     testWidgets('displays coverage percentage', (tester) async {
-      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90);
+      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('Coverage'), findsOneWidget);
@@ -24,7 +24,7 @@ void main() {
     });
 
     testWidgets('displays precision percentage', (tester) async {
-      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90);
+      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('Precision'), findsOneWidget);
@@ -32,7 +32,7 @@ void main() {
     });
 
     testWidgets('displays placement percentage', (tester) async {
-      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90);
+      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('Placement'), findsOneWidget);
@@ -40,26 +40,35 @@ void main() {
     });
 
     testWidgets('rounds percentages to nearest integer', (tester) async {
-      const result = ScoreResult(coverage: 0.666, precision: 0.333, placement: 0.555);
+      const result = ScoreResult(coverage: 0.666, precision: 0.333, placement: 0.555, efficiency: 0.444);
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('67%'), findsOneWidget);
       expect(find.text('33%'), findsOneWidget);
       expect(find.text('56%'), findsOneWidget);
+      expect(find.text('44%'), findsOneWidget);
+    });
+
+    testWidgets('displays efficiency percentage', (tester) async {
+      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
+      await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
+
+      expect(find.text('Efficiency'), findsOneWidget);
+      expect(find.text('80%'), findsOneWidget);
     });
 
     testWidgets('displays 0% for zero scores', (tester) async {
-      const result = ScoreResult(coverage: 0.0, precision: 0.0, placement: 0.0);
+      const result = ScoreResult(coverage: 0.0, precision: 0.0, placement: 0.0, efficiency: 0.0);
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
-      expect(find.text('0%'), findsNWidgets(3));
+      expect(find.text('0%'), findsNWidgets(4));
     });
 
     testWidgets('displays 100% for perfect scores', (tester) async {
-      const result = ScoreResult(coverage: 1.0, precision: 1.0, placement: 1.0);
+      const result = ScoreResult(coverage: 1.0, precision: 1.0, placement: 1.0, efficiency: 1.0);
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
-      expect(find.text('100%'), findsNWidgets(3));
+      expect(find.text('100%'), findsNWidgets(4));
     });
   });
 }
