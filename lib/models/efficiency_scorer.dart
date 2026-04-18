@@ -1,4 +1,4 @@
-import 'dart:math' show sqrt;
+import 'dart:math' show min, sqrt;
 
 import 'stroke.dart';
 
@@ -45,9 +45,13 @@ class EfficiencyScorer {
 
   /// Returns an efficiency ratio between 0.0 and 1.0.
   ///
-  /// Calculated as `idealPathLength / actualPathLength`, clamped to 1.0.
-  /// A ratio of 1.0 means the user used exactly the right amount of
-  /// pen movement. Lower values indicate excessive movement (scribbling).
+  /// Penalises in both directions:
+  /// - Too long (scribbling): `idealPathLength / actualPathLength`
+  /// - Too short (partial trace): `actualPathLength / idealPathLength`
+  ///
+  /// The lower of the two ratios is returned, so only a path close to
+  /// the ideal length scores near 1.0. The scoring is symmetric:
+  /// drawing 2x too much ink scores the same as drawing half too little.
   ///
   /// Returns 0.0 if either path length is zero or negative.
   static double calculate({
@@ -55,6 +59,9 @@ class EfficiencyScorer {
     required double actualPathLength,
   }) {
     if (idealPathLength <= 0 || actualPathLength <= 0) return 0.0;
-    return (idealPathLength / actualPathLength).clamp(0.0, 1.0);
+    return min(
+      idealPathLength / actualPathLength,
+      actualPathLength / idealPathLength,
+    );
   }
 }

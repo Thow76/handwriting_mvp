@@ -137,11 +137,31 @@ void main() {
       );
     });
 
-    test('clamps to 1.0 when actual is shorter than ideal', () {
+    test('returns 0.5 when actual is half the ideal (too short)', () {
+      // Half the required path drawn → penalised the same as drawing double
       expect(
         EfficiencyScorer.calculate(idealPathLength: 100, actualPathLength: 50),
-        1.0,
+        closeTo(0.5, 0.001),
       );
+    });
+
+    test('returns 0.2 when actual is one-fifth of the ideal (very short)', () {
+      expect(
+        EfficiencyScorer.calculate(idealPathLength: 100, actualPathLength: 20),
+        closeTo(0.2, 0.001),
+      );
+    });
+
+    test('is symmetric: 2x too long scores same as 0.5x too short', () {
+      final tooLong = EfficiencyScorer.calculate(
+        idealPathLength: 100,
+        actualPathLength: 200,
+      );
+      final tooShort = EfficiencyScorer.calculate(
+        idealPathLength: 100,
+        actualPathLength: 50,
+      );
+      expect(tooLong, closeTo(tooShort, 0.001));
     });
 
     test('returns 0.0 when ideal path length is zero', () {
