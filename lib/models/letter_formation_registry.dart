@@ -69,6 +69,28 @@ import 'stroke_formation_enums.dart';
 /// | x      | 1      | topToBottom     | top         | Diagonal stroke (top-left to bottom-right) |
 /// | x      | 2      | topToBottom     | top         | Diagonal stroke (top-right to bottom-left) |
 ///
+/// ## Compound-stroke letters — `h, k, m, n, u`
+///
+/// Letters whose pen never lifts but travels through multiple directional
+/// phases. Compound [ExpectedStroke]s have `primaryDirection = compound` and
+/// a non-empty `waypoints` list specifying the ordered 3×3 grid cells the
+/// stroke must pass through.
+///
+/// | Letter | Stroke | primaryDirection | startRegion | Waypoints                                               |
+/// |--------|--------|-----------------|-------------|---------------------------------------------------------|
+/// | h      | 1      | topToBottom     | top         | — (stem)                                                |
+/// | h      | 2      | compound        | middle      | left → top → bottomRight                               |
+/// | k      | 1      | topToBottom     | top         | — (stem)                                                |
+/// | k      | 2      | compound        | top         | topRight → middle → bottomRight                        |
+/// | m      | 1      | compound        | top         | topLeft → bottomLeft → top → bottom → top → bottomRight |
+/// | n      | 1      | compound        | top         | topLeft → bottomLeft → top → bottomRight               |
+/// | u      | 1      | compound        | top         | topLeft → bottomLeft → bottom → bottomRight → topRight |
+///
+/// `h` and `k` have `minRequiredStrokes = 2` — the pen-lift between stem and
+/// compound stroke is mandatory. `m`, `n`, and `u` have
+/// `minRequiredStrokes = 1` — they are drawn in a single continuous compound
+/// stroke.
+///
 /// Returns `null` for any letter not yet authored.
 const Map<String, LetterFormationData> letterFormationRegistry = {
   'c': LetterFormationData(
@@ -320,6 +342,109 @@ const Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  // -------------------------------------------------------------------------
+  // Compound-stroke letters — h, k, m, n, u
+  //
+  // Letters whose pen never lifts but travels through multiple directional
+  // phases. Compound strokes have primaryDirection = compound and a non-empty
+  // waypoints list specifying the ordered 3×3 WaypointRegion grid cells the
+  // stroke must pass through.
+  //
+  // h and k: stem (topToBottom) + compound second stroke.
+  //   minRequiredStrokes = 2 — the pen-lift between stem and arch/kick is
+  //   mandatory.
+  //
+  // m, n, u: single continuous compound stroke.
+  //   minRequiredStrokes = 1.
+  //
+  // Waypoint sequences are starting-point calibrations; exact cell assignments
+  // will be refined against real learner data in a post-launch calibration
+  // ticket.
+  // -------------------------------------------------------------------------
+  'h': LetterFormationData(
+    minRequiredStrokes: 2,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.compound,
+        startRegion: StrokeStartRegion.middle,
+        waypoints: [
+          WaypointRegion.left,
+          WaypointRegion.top,
+          WaypointRegion.bottomRight,
+        ],
+      ),
+    ],
+  ),
+  'k': LetterFormationData(
+    minRequiredStrokes: 2,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.compound,
+        startRegion: StrokeStartRegion.top,
+        waypoints: [
+          WaypointRegion.topRight,
+          WaypointRegion.middle,
+          WaypointRegion.bottomRight,
+        ],
+      ),
+    ],
+  ),
+  'm': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.compound,
+        startRegion: StrokeStartRegion.top,
+        waypoints: [
+          WaypointRegion.topLeft,
+          WaypointRegion.bottomLeft,
+          WaypointRegion.top,
+          WaypointRegion.bottom,
+          WaypointRegion.top,
+          WaypointRegion.bottomRight,
+        ],
+      ),
+    ],
+  ),
+  'n': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.compound,
+        startRegion: StrokeStartRegion.top,
+        waypoints: [
+          WaypointRegion.topLeft,
+          WaypointRegion.bottomLeft,
+          WaypointRegion.top,
+          WaypointRegion.bottomRight,
+        ],
+      ),
+    ],
+  ),
+  'u': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.compound,
+        startRegion: StrokeStartRegion.top,
+        waypoints: [
+          WaypointRegion.topLeft,
+          WaypointRegion.bottomLeft,
+          WaypointRegion.bottom,
+          WaypointRegion.bottomRight,
+          WaypointRegion.topRight,
+        ],
       ),
     ],
   ),
