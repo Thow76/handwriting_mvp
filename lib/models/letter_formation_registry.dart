@@ -22,6 +22,35 @@ import 'stroke_formation_enums.dart';
 /// | w      | topToBottom     | Diagonal (two v-shapes joined) |
 /// | z      | topToBottom     | Diagonal class (top bar → diagonal → base bar) |
 ///
+/// ## Optional-lift oval-and-bowl letters — `a, b, d, g, p, q, r, y`
+///
+/// All entries have `minRequiredStrokes = 1`. Connected (one-stroke) and
+/// separated (multi-stroke) formations are both pedagogically correct; the
+/// scoring floor is 1, not the canonical count.
+///
+/// For b, d, g, p, q the strokes list contains two [ExpectedStroke]s
+/// representing the canonical separated form (stem + bowl/oval). This gives
+/// direction scoring the correct structure without requiring a lift.
+/// `strokes.length` is the canonical count; `minRequiredStrokes` is the
+/// scoring floor — these are intentionally different for these five letters.
+///
+/// | Letter | Stroke | primaryDirection | startRegion | Notes |
+/// |--------|--------|-----------------|-------------|-------|
+/// | a      | 1      | anticlockwise   | top         | Closed left-opening oval (single stroke) |
+/// | b      | 1      | topToBottom     | top         | Vertical stem |
+/// | b      | 2      | clockwise       | top         | Right-opening bowl |
+/// | d      | 1      | anticlockwise   | top         | Left-opening oval |
+/// | d      | 2      | topToBottom     | top         | Vertical stem |
+/// | g      | 1      | anticlockwise   | top         | Left-opening oval |
+/// | g      | 2      | topToBottom     | top         | Descending tail |
+/// | p      | 1      | topToBottom     | top         | Vertical stem |
+/// | p      | 2      | clockwise       | top         | Right-opening bowl |
+/// | q      | 1      | anticlockwise   | top         | Left-opening oval |
+/// | q      | 2      | topToBottom     | top         | Vertical stem |
+/// | r      | 1      | topToBottom     | top         | Stem/entry stroke |
+/// | y      | 1      | topToBottom     | top         | Diagonal stem (down-left) |
+/// | y      | 2      | topToBottom     | top         | Diagonal tail (down-right) |
+///
 /// ## Required-lift letters — `f, i, j, t, x`
 ///
 /// Every entry has `minRequiredStrokes = 2` and two [ExpectedStroke]s.
@@ -113,6 +142,112 @@ const Map<String, LetterFormationData> letterFormationRegistry = {
   'z': LetterFormationData(
     minRequiredStrokes: 1,
     strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  // -------------------------------------------------------------------------
+  // Optional-lift oval-and-bowl letters — a, b, d, g, p, q, r, y
+  //
+  // minRequiredStrokes = 1 for all. Connected and separated formations are
+  // both correct; the scoring floor is 1, not the canonical stroke count.
+  //
+  // For b, d, g, p, q the strokes list has two entries (canonical separated
+  // form) so direction scoring has the right structure; minRequiredStrokes
+  // remains 1 because failing to lift is NOT a formation error for these.
+  // -------------------------------------------------------------------------
+  'a': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.anticlockwise,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  'b': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.clockwise,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  'd': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.anticlockwise,
+        startRegion: StrokeStartRegion.top,
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  'g': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.anticlockwise,
+        startRegion: StrokeStartRegion.top,
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  'p': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.clockwise,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  'q': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.anticlockwise,
+        startRegion: StrokeStartRegion.top,
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  'r': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
+    ],
+  ),
+  'y': LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRegion: StrokeStartRegion.top,
+      ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
