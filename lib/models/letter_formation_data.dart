@@ -26,7 +26,7 @@ class ExpectedStroke {
   ///
   /// Asserts that [waypoints] is empty whenever [primaryDirection] is not
   /// [StrokeDirection.compound].
-  const ExpectedStroke({
+  ExpectedStroke({
     required this.primaryDirection,
     required this.startRegion,
     this.waypoints = const [],
@@ -57,7 +57,7 @@ class LetterFormationData {
   /// Creates a [LetterFormationData].
   ///
   /// Asserts that [minRequiredStrokes] is at least 1.
-  const LetterFormationData({
+  LetterFormationData({
     required this.strokes,
     required this.minRequiredStrokes,
   }) : assert(
