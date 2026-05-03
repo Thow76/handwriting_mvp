@@ -270,4 +270,206 @@ void main() {
       }
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // Compound-stroke letters — h, k, m, n, u
+  //
+  // Asserts that:
+  //   1. Each letter has a non-null entry in the registry.
+  //   2. minRequiredStrokes matches the spec (2 for h/k, 1 for m/n/u).
+  //   3. Stroke counts and directions are correct.
+  //   4. Every compound ExpectedStroke has primaryDirection == compound and a
+  //      non-empty waypoints list.
+  //   5. Waypoint sequences match the scope table exactly.
+  // ---------------------------------------------------------------------------
+
+  group('letterFormationRegistry — compound-stroke letters', () {
+    // -------------------------------------------------------------------------
+    // n — single compound stroke
+    // -------------------------------------------------------------------------
+    test('n: entry is non-null', () {
+      expect(letterFormationRegistry['n'], isNotNull);
+    });
+
+    test('n: minRequiredStrokes == 1', () {
+      expect(letterFormationRegistry['n']!.minRequiredStrokes, 1);
+    });
+
+    test('n: has exactly one stroke', () {
+      expect(letterFormationRegistry['n']!.strokes, hasLength(1));
+    });
+
+    test('n: stroke is compound starting at top', () {
+      final stroke = letterFormationRegistry['n']!.strokes[0];
+      expect(stroke.primaryDirection, StrokeDirection.compound);
+      expect(stroke.startRegion, StrokeStartRegion.top);
+    });
+
+    test('n: compound stroke has non-empty waypoints', () {
+      expect(letterFormationRegistry['n']!.strokes[0].waypoints, isNotEmpty);
+    });
+
+    test('n: waypoints are topLeft → bottomLeft → top → bottomRight', () {
+      final waypoints = letterFormationRegistry['n']!.strokes[0].waypoints;
+      expect(waypoints, [
+        WaypointRegion.topLeft,
+        WaypointRegion.bottomLeft,
+        WaypointRegion.top,
+        WaypointRegion.bottomRight,
+      ]);
+    });
+
+    // -------------------------------------------------------------------------
+    // m — single compound stroke
+    // -------------------------------------------------------------------------
+    test('m: entry is non-null', () {
+      expect(letterFormationRegistry['m'], isNotNull);
+    });
+
+    test('m: minRequiredStrokes == 1', () {
+      expect(letterFormationRegistry['m']!.minRequiredStrokes, 1);
+    });
+
+    test('m: has exactly one stroke', () {
+      expect(letterFormationRegistry['m']!.strokes, hasLength(1));
+    });
+
+    test('m: stroke is compound starting at top', () {
+      final stroke = letterFormationRegistry['m']!.strokes[0];
+      expect(stroke.primaryDirection, StrokeDirection.compound);
+      expect(stroke.startRegion, StrokeStartRegion.top);
+    });
+
+    test('m: compound stroke has non-empty waypoints', () {
+      expect(letterFormationRegistry['m']!.strokes[0].waypoints, isNotEmpty);
+    });
+
+    test('m: waypoints are topLeft → bottomLeft → top → bottom → top → bottomRight', () {
+      final waypoints = letterFormationRegistry['m']!.strokes[0].waypoints;
+      expect(waypoints, [
+        WaypointRegion.topLeft,
+        WaypointRegion.bottomLeft,
+        WaypointRegion.top,
+        WaypointRegion.bottom,
+        WaypointRegion.top,
+        WaypointRegion.bottomRight,
+      ]);
+    });
+
+    // -------------------------------------------------------------------------
+    // u — single compound stroke
+    // -------------------------------------------------------------------------
+    test('u: entry is non-null', () {
+      expect(letterFormationRegistry['u'], isNotNull);
+    });
+
+    test('u: minRequiredStrokes == 1', () {
+      expect(letterFormationRegistry['u']!.minRequiredStrokes, 1);
+    });
+
+    test('u: has exactly one stroke', () {
+      expect(letterFormationRegistry['u']!.strokes, hasLength(1));
+    });
+
+    test('u: stroke is compound starting at top', () {
+      final stroke = letterFormationRegistry['u']!.strokes[0];
+      expect(stroke.primaryDirection, StrokeDirection.compound);
+      expect(stroke.startRegion, StrokeStartRegion.top);
+    });
+
+    test('u: compound stroke has non-empty waypoints', () {
+      expect(letterFormationRegistry['u']!.strokes[0].waypoints, isNotEmpty);
+    });
+
+    test('u: waypoints are topLeft → bottomLeft → bottom → bottomRight → topRight', () {
+      final waypoints = letterFormationRegistry['u']!.strokes[0].waypoints;
+      expect(waypoints, [
+        WaypointRegion.topLeft,
+        WaypointRegion.bottomLeft,
+        WaypointRegion.bottom,
+        WaypointRegion.bottomRight,
+        WaypointRegion.topRight,
+      ]);
+    });
+
+    // -------------------------------------------------------------------------
+    // h — stem (topToBottom) + compound second stroke
+    // -------------------------------------------------------------------------
+    test('h: entry is non-null', () {
+      expect(letterFormationRegistry['h'], isNotNull);
+    });
+
+    test('h: minRequiredStrokes == 2', () {
+      expect(letterFormationRegistry['h']!.minRequiredStrokes, 2);
+    });
+
+    test('h: has exactly two strokes', () {
+      expect(letterFormationRegistry['h']!.strokes, hasLength(2));
+    });
+
+    test('h: stroke 1 is topToBottom starting at top', () {
+      final stroke = letterFormationRegistry['h']!.strokes[0];
+      expect(stroke.primaryDirection, StrokeDirection.topToBottom);
+      expect(stroke.startRegion, StrokeStartRegion.top);
+    });
+
+    test('h: stroke 2 is compound starting at middle', () {
+      final stroke = letterFormationRegistry['h']!.strokes[1];
+      expect(stroke.primaryDirection, StrokeDirection.compound);
+      expect(stroke.startRegion, StrokeStartRegion.middle);
+    });
+
+    test('h: stroke 2 has non-empty waypoints', () {
+      expect(letterFormationRegistry['h']!.strokes[1].waypoints, isNotEmpty);
+    });
+
+    test('h: stroke 2 waypoints are left → top → bottomRight', () {
+      final waypoints = letterFormationRegistry['h']!.strokes[1].waypoints;
+      expect(waypoints, [
+        WaypointRegion.left,
+        WaypointRegion.top,
+        WaypointRegion.bottomRight,
+      ]);
+    });
+
+    // -------------------------------------------------------------------------
+    // k — stem (topToBottom) + compound second stroke
+    // -------------------------------------------------------------------------
+    test('k: entry is non-null', () {
+      expect(letterFormationRegistry['k'], isNotNull);
+    });
+
+    test('k: minRequiredStrokes == 2', () {
+      expect(letterFormationRegistry['k']!.minRequiredStrokes, 2);
+    });
+
+    test('k: has exactly two strokes', () {
+      expect(letterFormationRegistry['k']!.strokes, hasLength(2));
+    });
+
+    test('k: stroke 1 is topToBottom starting at top', () {
+      final stroke = letterFormationRegistry['k']!.strokes[0];
+      expect(stroke.primaryDirection, StrokeDirection.topToBottom);
+      expect(stroke.startRegion, StrokeStartRegion.top);
+    });
+
+    test('k: stroke 2 is compound starting at top', () {
+      final stroke = letterFormationRegistry['k']!.strokes[1];
+      expect(stroke.primaryDirection, StrokeDirection.compound);
+      expect(stroke.startRegion, StrokeStartRegion.top);
+    });
+
+    test('k: stroke 2 has non-empty waypoints', () {
+      expect(letterFormationRegistry['k']!.strokes[1].waypoints, isNotEmpty);
+    });
+
+    test('k: stroke 2 waypoints are topRight → middle → bottomRight', () {
+      final waypoints = letterFormationRegistry['k']!.strokes[1].waypoints;
+      expect(waypoints, [
+        WaypointRegion.topRight,
+        WaypointRegion.middle,
+        WaypointRegion.bottomRight,
+      ]);
+    });
+  });
 }
