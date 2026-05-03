@@ -92,7 +92,7 @@ import 'stroke_formation_enums.dart';
 /// stroke.
 ///
 /// Returns `null` for any letter not yet authored.
-const Map<String, LetterFormationData> letterFormationRegistry = {
+final Map<String, LetterFormationData> letterFormationRegistry = {
   'c': LetterFormationData(
     minRequiredStrokes: 1,
     strokes: [

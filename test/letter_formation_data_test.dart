@@ -88,7 +88,7 @@ void main() {
 
   group('ExpectedStroke', () {
     test('can be created with compound direction and non-empty waypoints', () {
-      const stroke = ExpectedStroke(
+      final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
         startRegion: StrokeStartRegion.top,
         waypoints: [WaypointRegion.top, WaypointRegion.bottomLeft, WaypointRegion.top],
@@ -103,7 +103,7 @@ void main() {
     });
 
     test('defaults waypoints to empty list', () {
-      const stroke = ExpectedStroke(
+      final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
       );
@@ -111,7 +111,7 @@ void main() {
     });
 
     test('allows empty waypoints for non-compound direction', () {
-      const stroke = ExpectedStroke(
+      final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
         startRegion: StrokeStartRegion.middle,
         waypoints: [],
@@ -159,7 +159,7 @@ void main() {
 
   group('LetterFormationData', () {
     test('canonicalStrokeCount equals strokes.length', () {
-      const data = LetterFormationData(
+      final data = LetterFormationData(
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
@@ -177,7 +177,7 @@ void main() {
     });
 
     test('accepts minRequiredStrokes == 1', () {
-      const data = LetterFormationData(
+      final data = LetterFormationData(
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.anticlockwise,
@@ -190,7 +190,7 @@ void main() {
     });
 
     test('accepts minRequiredStrokes > 1', () {
-      const data = LetterFormationData(
+      final data = LetterFormationData(
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
