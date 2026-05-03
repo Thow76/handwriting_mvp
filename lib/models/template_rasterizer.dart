@@ -38,6 +38,43 @@ class TemplateRasterResult {
       bounds.top + lastInkRow + 1,
     );
   }
+
+  /// Returns the tight bounding box around actual ink pixels, tight on both
+  /// horizontal and vertical axes, in canvas coordinates.
+  /// Returns `null` if the mask contains no ink.
+  Rect? get tightBounds {
+    int? firstInkRow;
+    int? lastInkRow;
+
+    for (var row = 0; row < mask.length; row++) {
+      if (mask[row].any((pixel) => pixel)) {
+        firstInkRow ??= row;
+        lastInkRow = row;
+      }
+    }
+
+    if (firstInkRow == null || lastInkRow == null) return null;
+
+    final colCount = mask.isEmpty ? 0 : mask[0].length;
+    int? firstInkCol;
+    int? lastInkCol;
+
+    for (var col = 0; col < colCount; col++) {
+      if (mask.any((row) => row[col])) {
+        firstInkCol ??= col;
+        lastInkCol = col;
+      }
+    }
+
+    if (firstInkCol == null || lastInkCol == null) return null;
+
+    return Rect.fromLTRB(
+      bounds.left + firstInkCol,
+      bounds.top + firstInkRow,
+      bounds.left + lastInkCol + 1,
+      bounds.top + lastInkRow + 1,
+    );
+  }
 }
 
 /// Renders a reference letter to an offscreen image and converts
