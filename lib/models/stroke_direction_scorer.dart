@@ -104,7 +104,7 @@ class StrokeDirectionScorer {
         expected: dir.name,
         observed: observedDir,
         score: strokeScore,
-        note: _buildNote(dir, dir.name, observedDir, strokeScore),
+        note: _buildNote(dir, observedDir, strokeScore),
       ));
     }
 
@@ -189,7 +189,6 @@ class StrokeDirectionScorer {
   /// be drawn anticlockwise.").
   String _buildNote(
     StrokeDirection expectedDir,
-    String expected,
     String observed,
     double strokeScore,
   ) {
@@ -197,7 +196,7 @@ class StrokeDirectionScorer {
         expectedDir == StrokeDirection.anticlockwise;
     final subject = isCircular ? 'the circle' : 'the stroke';
     final observedDesc = _describeDirection(observed);
-    final expectedDesc = _describeDirection(expected);
+    final expectedDesc = _describeDirection(expectedDir.name);
 
     if (strokeScore == 1.0) {
       return 'Drew $subject $observedDesc — correct.';

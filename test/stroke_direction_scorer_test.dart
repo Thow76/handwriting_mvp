@@ -54,11 +54,11 @@ void main() {
 
   /// A horizontal stroke drawn left to right.
   Stroke leftToRightStroke({double y = 150}) =>
-      Stroke([const Offset(10, 150), Offset(290, y)]);
+      Stroke([Offset(10, y), Offset(290, y)]);
 
   /// A horizontal stroke drawn right to left.
   Stroke rightToLeftStroke({double y = 150}) =>
-      Stroke([Offset(290, y), const Offset(10, 150)]);
+      Stroke([Offset(290, y), Offset(10, y)]);
 
   // ---------------------------------------------------------------------------
   // Helper data factories
