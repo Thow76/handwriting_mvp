@@ -128,7 +128,7 @@ void main() {
 
     test('observation observed string flags the missed waypoint', () {
       final result = scorer.score([missTopStroke]);
-      expect(result.observations.first.observed, contains('(missed top)'));
+      expect(result.observations.first.observed, contains('[missed top]'));
     });
 
     test('observation note says 3 of 4 hit', () {
@@ -357,6 +357,116 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
+  // 'm' — six-waypoint compound stroke; proportional scoring
+  // ---------------------------------------------------------------------------
+  //
+  // 'm' waypoints: topLeft → bottomLeft → top → bottom → top → bottomRight
+  //                (6 waypoints)
+  //
+  // Centroids in the 300×300 box:
+  //   topLeft (50,50), bottomLeft (50,250), top (150,50),
+  //   bottom (150,250), top (150,50) [again], bottomRight (250,250)
+
+  group("'m' drawn with all six waypoints in order → 6/6", () {
+    // Visit each centroid once in sequence; the 'top' cell is visited twice
+    // as required by the waypoint list.
+    final perfectM = Stroke(const [
+      Offset(50, 50),   // topLeft
+      Offset(50, 250),  // bottomLeft
+      Offset(150, 50),  // top (first arch)
+      Offset(150, 250), // bottom
+      Offset(150, 50),  // top (second arch)
+      Offset(250, 250), // bottomRight
+    ]);
+
+    late CompoundStrokeScorer scorer;
+
+    setUp(() {
+      scorer = CompoundStrokeScorer(
+        letter: 'm',
+        data: letterFormationRegistry['m']!,
+        bounds: bounds,
+      );
+    });
+
+    test('overallScore is 1.0', () {
+      final result = scorer.score([perfectM]);
+      expect(result.overallScore, 1.0);
+    });
+
+    test('one observation is produced', () {
+      final result = scorer.score([perfectM]);
+      expect(result.observations.length, 1);
+    });
+
+    test('observation expected string lists all six waypoints', () {
+      final result = scorer.score([perfectM]);
+      expect(
+        result.observations.first.expected,
+        'topLeft → bottomLeft → top → bottom → top → bottomRight',
+      );
+    });
+
+    test('observation observed string shows all six as hits', () {
+      final result = scorer.score([perfectM]);
+      expect(
+        result.observations.first.observed,
+        'topLeft → bottomLeft → top → bottom → top → bottomRight',
+      );
+    });
+
+    test('observation score is 1.0', () {
+      final result = scorer.score([perfectM]);
+      expect(result.observations.first.score, 1.0);
+    });
+  });
+
+  group("'m' with the second arch peak missed → 5/6", () {
+    // Omit the second visit to 'top' — only 5 of 6 waypoints are hit.
+    // Stroke: topLeft → bottomLeft → top → bottom → bottomRight
+    // After matching bottom at index 3, the matcher scans index 4 = (250,250)
+    // for the second 'top' centroid (150,50): distance ≈ 224 > tolerance 50
+    // → miss. Then bottomRight matches (250,250) → hit. Score = 5/6.
+    final partialM = Stroke(const [
+      Offset(50, 50),   // topLeft      ✓
+      Offset(50, 250),  // bottomLeft   ✓
+      Offset(150, 50),  // top (first)  ✓
+      Offset(150, 250), // bottom       ✓
+      Offset(250, 250), // bottomRight  ✓ (second 'top' is missed)
+    ]);
+
+    late CompoundStrokeScorer scorer;
+
+    setUp(() {
+      scorer = CompoundStrokeScorer(
+        letter: 'm',
+        data: letterFormationRegistry['m']!,
+        bounds: bounds,
+      );
+    });
+
+    test('overallScore is 5/6', () {
+      final result = scorer.score([partialM]);
+      expect(result.overallScore, closeTo(5 / 6, 1e-9));
+    });
+
+    test('observation observed string flags the missed second top', () {
+      final result = scorer.score([partialM]);
+      expect(result.observations.first.observed, contains('[missed top]'));
+    });
+
+    test('observation score is 5/6', () {
+      final result = scorer.score([partialM]);
+      expect(result.observations.first.score, closeTo(5 / 6, 1e-9));
+    });
+
+    test('observation note mentions 5 of 6 hit', () {
+      final result = scorer.score([partialM]);
+      expect(result.observations.first.note, contains('5 of 6'));
+    });
+  });
+
+  // ---------------------------------------------------------------------------
   // Edge cases
   // ---------------------------------------------------------------------------
 
@@ -383,9 +493,9 @@ void main() {
       final result = scorer.score([
         Stroke(const [Offset(150, 10), Offset(150, 290)]),
       ]);
-      expect(result.overallScore, 0.0);
+      expect(result.overallScore, 1.0);
       expect(result.observations, isEmpty);
-      expect(result.summary, 'No compound strokes were found to score.');
+      expect(result.summary, 'No compound strokes in this letter.');
     });
 
     test('extra observed strokes that do not match any expected are ignored',
