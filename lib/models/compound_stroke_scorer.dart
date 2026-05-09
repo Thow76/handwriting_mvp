@@ -22,9 +22,9 @@ import 'stroke_matcher.dart';
 ///
 /// ## Tolerance
 ///
-/// Tolerance is `defaultToleranceFraction × min(cellWidth, cellHeight)` where
+/// Tolerance is `waypointToleranceFraction × min(cellWidth, cellHeight)` where
 /// the cell dimensions come from dividing [bounds] into a 3×3 grid.  The
-/// fraction is exposed as [defaultToleranceFraction] so callers can read or
+/// fraction is exposed as [waypointToleranceFraction] so callers can read or
 /// override it.
 class CompoundStrokeScorer {
   /// Default fraction of the smaller cell dimension used as the hit-zone
@@ -33,7 +33,7 @@ class CompoundStrokeScorer {
   /// Value of 0.5 means the hit zone diameter equals one full cell — forgiving
   /// enough to handle natural wobble without being so loose that adjacent cells
   /// bleed into each other.
-  static const double defaultToleranceFraction = 0.5;
+  static const double waypointToleranceFraction = 0.5;
 
   /// The letter being scored. Used in observations and summaries.
   final String letter;
@@ -48,7 +48,7 @@ class CompoundStrokeScorer {
 
   /// Fraction of the smaller cell dimension used as the hit-zone radius.
   ///
-  /// Defaults to [defaultToleranceFraction].
+  /// Defaults to [waypointToleranceFraction].
   final double toleranceFraction;
 
   /// Creates a [CompoundStrokeScorer].
@@ -56,7 +56,7 @@ class CompoundStrokeScorer {
     required this.letter,
     required this.data,
     required this.bounds,
-    this.toleranceFraction = defaultToleranceFraction,
+    this.toleranceFraction = waypointToleranceFraction,
   });
 
   /// Scores [observed] strokes against the expected compound waypoint
