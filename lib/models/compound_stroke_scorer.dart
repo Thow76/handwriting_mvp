@@ -63,12 +63,25 @@ class CompoundStrokeScorer {
   /// sequences.
   ///
   /// Returns a [FormationScore] containing:
-  /// - [FormationScore.overallScore]: mean of per-compound-stroke scores
-  ///   (0.0 when no compound strokes are present).
+  /// - [FormationScore.overallScore]: mean of per-compound-stroke scores.
+  ///   Returns 1.0 when the letter has no compound expected strokes at all.
   /// - [FormationScore.observations]: one [StrokeObservation] per observed
   ///   stroke that was matched to a compound expected stroke.
   /// - [FormationScore.summary]: a learner-facing summary sentence.
   FormationScore score(List<Stroke> observed) {
+    // If the letter definition has no compound expected strokes there is
+    // nothing for this scorer to evaluate — vacuously correct.
+    final hasCompoundStrokes = data.strokes.any(
+      (s) => s.primaryDirection == StrokeDirection.compound,
+    );
+    if (!hasCompoundStrokes) {
+      return const FormationScore(
+        overallScore: 1.0,
+        observations: [],
+        summary: 'No compound strokes in this letter.',
+      );
+    }
+
     final matchIndices = matchStrokes(observed, data.strokes, bounds);
     final observations = <StrokeObservation>[];
     final scoredValues = <double>[];
@@ -106,7 +119,7 @@ class CompoundStrokeScorer {
       final expectedStr =
           waypoints.map((w) => w.name).join(' → ');
       final hitLabels = result.hits
-          .map((h) => h.isHit ? h.waypoint.name : '(missed ${h.waypoint.name})')
+          .map((h) => h.isHit ? h.waypoint.name : '[missed ${h.waypoint.name}]')
           .join(' → ');
 
       observations.add(StrokeObservation(
