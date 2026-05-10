@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models/guidelines.dart';
 import 'models/letter_formation_registry.dart';
-import 'models/placement_scorer.dart';
-import 'models/score_integrator.dart';
+import 'models/score_builder.dart';
 import 'models/score_result.dart';
 import 'models/stroke.dart';
 import 'models/template_rasterizer.dart';
@@ -59,35 +58,11 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       canvasWidth: _canvasWidth,
     );
 
-    final bitmapResult = ScoreIntegrator.score(
-      referenceMask: templateResult.mask,
-      bounds: templateResult.bounds,
-      strokes: _strokes,
-      strokeWidth: 3.0,
-      letter: _currentLetter,
-    );
-
-    // Calculate placement score using the template's actual ink bounds.
-    var placement = 0.0;
-    final inkBounds = templateResult.inkBounds;
-    if (inkBounds != null && _strokes.isNotEmpty) {
-      placement = PlacementScorer.score(
-        expectedTop: inkBounds.top,
-        expectedBottom: inkBounds.bottom,
-        strokes: _strokes,
-      );
-    }
-
     setState(() {
-      _scoreResult = ScoreResult(
-        coverage: bitmapResult.coverage,
-        precision: bitmapResult.precision,
-        placement: placement,
-        efficiency: bitmapResult.efficiency,
-        strokeStart: bitmapResult.strokeStart,
-        strokeDirection: bitmapResult.strokeDirection,
-        compoundStroke: bitmapResult.compoundStroke,
-        strokeBreak: bitmapResult.strokeBreak,
+      _scoreResult = buildScoreResult(
+        templateResult: templateResult,
+        strokes: _strokes,
+        letter: _currentLetter,
       );
     });
   }
