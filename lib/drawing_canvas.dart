@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models/guidelines.dart';
+import 'models/letter_formation_registry.dart';
 import 'models/placement_scorer.dart';
 import 'models/score_integrator.dart';
 import 'models/score_result.dart';
@@ -156,7 +157,11 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
               },
             ),
           ),
-          ScoreDisplay(result: _scoreResult),
+          ScoreDisplay(
+            result: _scoreResult,
+            minRequiredStrokes:
+                letterFormationRegistry[_currentLetter]?.minRequiredStrokes,
+          ),
           _LetterNav(
             letter: _currentLetter,
             onPrevious: _previousLetter,

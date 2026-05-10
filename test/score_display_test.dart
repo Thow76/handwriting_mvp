@@ -182,4 +182,50 @@ void main() {
       expect(find.text('100%'), findsNWidgets(8));
     });
   });
+
+  group('ScoreDisplay — stroke break suppression', () {
+    testWidgets('hides Strokes row when minRequiredStrokes == 1 (e.g. o)', (tester) async {
+      final result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+        strokeBreak: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
+      );
+      await tester.pumpWidget(
+        _app(ScoreDisplay(result: result, minRequiredStrokes: 1)),
+      );
+
+      expect(find.text('Strokes'), findsNothing);
+    });
+
+    testWidgets('shows Strokes row when minRequiredStrokes == 2 (e.g. t)', (tester) async {
+      final result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+        strokeBreak: const FormationScore(overallScore: 0.80, observations: [], summary: ''),
+      );
+      await tester.pumpWidget(
+        _app(ScoreDisplay(result: result, minRequiredStrokes: 2)),
+      );
+
+      expect(find.text('Strokes'), findsOneWidget);
+      expect(find.text('80%'), findsOneWidget);
+    });
+
+    testWidgets('shows Strokes row when minRequiredStrokes is null (default)', (tester) async {
+      final result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+        strokeBreak: const FormationScore(overallScore: 0.60, observations: [], summary: ''),
+      );
+      await tester.pumpWidget(_app(ScoreDisplay(result: result)));
+
+      expect(find.text('Strokes'), findsOneWidget);
+    });
+  });
 }
