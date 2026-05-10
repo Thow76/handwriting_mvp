@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'models/guidelines.dart';
 import 'models/letter_formation_registry.dart';
@@ -5,6 +6,7 @@ import 'models/score_builder.dart';
 import 'models/score_result.dart';
 import 'models/stroke.dart';
 import 'models/template_rasterizer.dart';
+import 'widgets/debug_score_view.dart';
 import 'widgets/score_display.dart';
 
 const _letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -23,8 +25,10 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
   Stroke? _currentStroke;
   int _letterIndex = 0;
   ScoreResult? _scoreResult;
+  Rect? _tightBounds;
   Guidelines? _guidelines;
   double _canvasWidth = 0;
+  bool _showDebugView = kDebugMode;
 
   String get _currentLetter => _letters[_letterIndex];
 
@@ -64,6 +68,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         strokes: _strokes,
         letter: _currentLetter,
       );
+      _tightBounds = templateResult.tightBounds;
     });
   }
 
@@ -71,6 +76,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
     setState(() {
       _strokes.clear();
       _scoreResult = null;
+      _tightBounds = null;
     });
   }
 
@@ -79,6 +85,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       _letterIndex = (_letterIndex - 1) % _letters.length;
       _strokes.clear();
       _scoreResult = null;
+      _tightBounds = null;
     });
   }
 
@@ -87,6 +94,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       _letterIndex = (_letterIndex + 1) % _letters.length;
       _strokes.clear();
       _scoreResult = null;
+      _tightBounds = null;
     });
   }
 
@@ -96,6 +104,12 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       appBar: AppBar(
         title: const Text('Handwriting MVP'),
         actions: [
+          if (kDebugMode)
+            IconButton(
+              icon: Icon(_showDebugView ? Icons.bug_report : Icons.bug_report_outlined),
+              tooltip: 'Toggle debug view',
+              onPressed: () => setState(() => _showDebugView = !_showDebugView),
+            ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
             tooltip: 'Clear',
@@ -137,6 +151,14 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
             minRequiredStrokes:
                 letterFormationRegistry[_currentLetter]?.minRequiredStrokes,
           ),
+          if (_showDebugView)
+            SizedBox(
+              height: 280,
+              child: DebugScoreView(
+                result: _scoreResult,
+                tightBounds: _tightBounds,
+              ),
+            ),
           _LetterNav(
             letter: _currentLetter,
             onPrevious: _previousLetter,
