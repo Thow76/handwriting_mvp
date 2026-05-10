@@ -3,13 +3,24 @@ import 'package:flutter/material.dart';
 import '../models/score_result.dart';
 
 /// Displays coverage and precision scores for the current handwriting attempt.
+///
+/// [minRequiredStrokes] controls whether the "Strokes" formation row is shown.
+/// When it equals 1 the score carries no signal (the letter never requires a
+/// lift), so the row is suppressed to avoid showing a spurious 100%.  Pass
+/// `null` (the default) or any value other than 1 to keep the row visible.
 class ScoreDisplay extends StatelessWidget {
   final ScoreResult? result;
 
-  const ScoreDisplay({super.key, this.result});
+  /// The minimum number of strokes required for the current letter, sourced
+  /// from [LetterFormationData.minRequiredStrokes].  When this equals 1 the
+  /// "Strokes" row is hidden; when `null` or greater than 1 it is shown.
+  final int? minRequiredStrokes;
+
+  const ScoreDisplay({super.key, this.result, this.minRequiredStrokes});
 
   @override
   Widget build(BuildContext context) {
+    final showStrokes = minRequiredStrokes != 1;
     return Opacity(
       opacity: result == null ? 0.0 : 1.0,
       child: Column(
@@ -30,7 +41,8 @@ class ScoreDisplay extends StatelessWidget {
               _FormationScoreItem(label: 'Start', value: result?.strokeStart?.overallScore),
               _FormationScoreItem(label: 'Direction', value: result?.strokeDirection?.overallScore),
               _FormationScoreItem(label: 'Path', value: result?.compoundStroke?.overallScore),
-              _FormationScoreItem(label: 'Strokes', value: result?.strokeBreak?.overallScore),
+              if (showStrokes)
+                _FormationScoreItem(label: 'Strokes', value: result?.strokeBreak?.overallScore),
             ],
           ),
         ],
