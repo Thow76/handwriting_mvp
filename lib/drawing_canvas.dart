@@ -63,6 +63,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
       bounds: templateResult.bounds,
       strokes: _strokes,
       strokeWidth: 3.0,
+      letter: _currentLetter,
     );
 
     // Calculate placement score using the template's actual ink bounds.
@@ -82,6 +83,10 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         precision: bitmapResult.precision,
         placement: placement,
         efficiency: bitmapResult.efficiency,
+        strokeStart: bitmapResult.strokeStart,
+        strokeDirection: bitmapResult.strokeDirection,
+        compoundStroke: bitmapResult.compoundStroke,
+        strokeBreak: bitmapResult.strokeBreak,
       );
     });
   }
