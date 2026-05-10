@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/score_integrator.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 
+
 /// Helper to build a [rows]×[cols] mask from a list of (row, col) pairs.
 List<List<bool>> _mask(int rows, int cols, [List<(int, int)> active = const []]) {
   final grid = List.generate(rows, (_) => List.filled(cols, false));
@@ -158,6 +159,123 @@ void main() {
         ),
         throwsArgumentError,
       );
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Formation-scoring integration tests
+  // ---------------------------------------------------------------------------
+
+  group('ScoreIntegrator formation scoring', () {
+    // 90×90 all-false mask used for formation tests — formation scorers do not
+    // use the reference mask, so only the dimensions matter.
+    final ref90 = _mask(90, 90);
+    const bounds90 = Rect.fromLTWH(0, 0, 90, 90);
+
+    test('no letter → all four formation fields are null', () {
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [],
+      );
+
+      expect(result.strokeStart, isNull);
+      expect(result.strokeDirection, isNull);
+      expect(result.compoundStroke, isNull);
+      expect(result.strokeBreak, isNull);
+    });
+
+    test('unknown letter → all four formation fields are null (defensive)', () {
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [],
+        letter: '0', // digit — not in letterFormationRegistry
+      );
+
+      expect(result.strokeStart, isNull);
+      expect(result.strokeDirection, isNull);
+      expect(result.compoundStroke, isNull);
+      expect(result.strokeBreak, isNull);
+    });
+
+    test('correct n → all four formation scores attached; start, compound and '
+        'break scores are 1.0', () {
+      // n has a single compound stroke with waypoints:
+      //   topLeft → bottomLeft → top → bottomRight
+      // In a 90×90 grid (3×3 cells of 30px each), the cell centres are:
+      //   topLeft    = (15, 15)
+      //   bottomLeft = (15, 75)
+      //   top        = (45, 15)
+      //   bottomRight= (75, 75)
+      // The stroke visits each centroid exactly, so all 4 waypoints are hit.
+      final stroke = Stroke(const [
+        Offset(15, 15), // topLeft centroid
+        Offset(15, 75), // bottomLeft centroid
+        Offset(45, 15), // top centroid
+        Offset(75, 75), // bottomRight centroid
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'n',
+      );
+
+      // All four formation score objects must be attached.
+      expect(result.strokeStart, isNotNull);
+      expect(result.strokeDirection, isNotNull);
+      expect(result.compoundStroke, isNotNull);
+      expect(result.strokeBreak, isNotNull);
+
+      // Stroke started in the top region → 1.0.
+      expect(result.strokeStart!.overallScore, 1.0);
+
+      // n has only compound strokes; StrokeDirectionScorer excludes compound
+      // strokes from its mean → overallScore is 0.0 (no direction-scored
+      // strokes found).
+      expect(result.strokeDirection!.overallScore, 0.0);
+
+      // All 4 waypoints hit in order → 1.0.
+      expect(result.compoundStroke!.overallScore, 1.0);
+
+      // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
+      expect(result.strokeBreak!.overallScore, 1.0);
+    });
+
+    test('clockwise o → strokeDirection score is 0.0', () {
+      // o expects an anticlockwise stroke.  Drawing it clockwise (positive
+      // shoelace signed area in screen coordinates) should score 0.0.
+      // Points form a clockwise oval: top → right → bottom → left.
+      final stroke = Stroke(const [
+        Offset(45, 5),  // top
+        Offset(85, 45), // right
+        Offset(45, 85), // bottom
+        Offset(5, 45),  // left
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'o',
+      );
+
+      // All four formation score objects must be attached.
+      expect(result.strokeStart, isNotNull);
+      expect(result.strokeDirection, isNotNull);
+      expect(result.compoundStroke, isNotNull);
+      expect(result.strokeBreak, isNotNull);
+
+      // Clockwise vs expected anticlockwise → opposite pair → 0.0.
+      expect(result.strokeDirection!.overallScore, 0.0);
+
+      // o has no compound strokes → vacuously correct → 1.0.
+      expect(result.compoundStroke!.overallScore, 1.0);
+
+      // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
+      expect(result.strokeBreak!.overallScore, 1.0);
     });
   });
 }

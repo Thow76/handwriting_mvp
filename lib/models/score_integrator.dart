@@ -1,18 +1,30 @@
 import 'dart:ui' show Offset, Rect;
 
+import 'compound_stroke_scorer.dart';
 import 'coverage_scorer.dart';
 import 'efficiency_scorer.dart';
+import 'formation_score.dart';
+import 'letter_formation_registry.dart';
 import 'precision_scorer.dart';
 import 'score_result.dart';
 import 'skeletonizer.dart';
 import 'stroke.dart';
+import 'stroke_break_counter.dart';
+import 'stroke_direction_scorer.dart';
 import 'stroke_rasterizer.dart';
+import 'stroke_start_scorer.dart';
 
 /// Rasterizes user strokes and scores them against a reference mask.
 class ScoreIntegrator {
   /// Rasterizes [strokes] into the coordinate space defined by [bounds],
   /// then compares against [referenceMask] to produce normalised coverage
   /// and precision scores.
+  ///
+  /// If [letter] is provided, also scores the strokes against the expected
+  /// formation for that letter using the four formation scorers.  If no
+  /// formation data exists for [letter] (defensive — should not happen after
+  /// stage 2), the four formation fields in the returned [ScoreResult] are
+  /// left null.
   ///
   /// Coverage is normalised: the raw coverage is divided by the maximum
   /// achievable coverage for a perfect centre-line trace at the given
@@ -26,6 +38,7 @@ class ScoreIntegrator {
     required Rect bounds,
     required List<Stroke> strokes,
     double strokeWidth = 3.0,
+    String? letter,
   }) {
     final expectedRows = bounds.height.ceil();
     final expectedCols = bounds.width.ceil();
@@ -76,6 +89,41 @@ class ScoreIntegrator {
       actualPathLength: actualLength,
     );
 
+    // Formation scoring — only when a target letter is supplied and has
+    // authored formation data.
+    FormationScore? strokeStart;
+    FormationScore? strokeDirection;
+    FormationScore? compoundStroke;
+    FormationScore? strokeBreak;
+
+    if (letter != null) {
+      final data = letterFormationRegistry[letter];
+      if (data != null) {
+        strokeStart = StrokeStartScorer(
+          letter: letter,
+          data: data,
+          bounds: bounds,
+        ).score(strokes);
+
+        strokeDirection = StrokeDirectionScorer(
+          letter: letter,
+          data: data,
+          bounds: bounds,
+        ).score(strokes);
+
+        compoundStroke = CompoundStrokeScorer(
+          letter: letter,
+          data: data,
+          bounds: bounds,
+        ).score(strokes);
+
+        strokeBreak = StrokeBreakCounter(
+          letter: letter,
+          data: data,
+        ).score(strokes);
+      }
+    }
+
     return ScoreResult(
       coverage: normalisedCoverage,
       precision: PrecisionScorer.calculate(
@@ -84,6 +132,10 @@ class ScoreIntegrator {
       ),
       placement: 0.0,
       efficiency: efficiency,
+      strokeStart: strokeStart,
+      strokeDirection: strokeDirection,
+      compoundStroke: compoundStroke,
+      strokeBreak: strokeBreak,
     );
   }
 
