@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/letter_formation_registry.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_break_counter.dart';
+import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 
 /// Helper: creates [count] minimal single-point strokes.
 List<Stroke> strokes(int count) =>
@@ -133,11 +135,6 @@ void main() {
   // ---------------------------------------------------------------------------
 
   group('revised test list — scoring formula', () {
-    // Use a synthetic LetterFormationData so tests are self-contained.
-    // 't' = minRequired 2; 'o' = minRequired 1 (registry used above already).
-    // For actualCount == 1, min = 3 we need a letter with min = 3; use a
-    // synthetic data object (not from registry) just for that case.
-
     test('actualCount == minRequiredStrokes → 1.0', () {
       final counter = StrokeBreakCounter(
         letter: 't',
@@ -168,6 +165,31 @@ void main() {
         data: letterFormationRegistry['t']!,
       );
       expect(counter.score(strokes(1)).overallScore, 0.5);
+    });
+
+    test('actualCount == 1, min = 3 → 0.333…', () {
+      // No letter in the registry has minRequiredStrokes = 3, so build a
+      // synthetic LetterFormationData. StrokeBreakCounter only reads
+      // minRequiredStrokes; the strokes list is unused here.
+      final syntheticData = LetterFormationData(
+        minRequiredStrokes: 3,
+        strokes: [
+          ExpectedStroke(
+            primaryDirection: StrokeDirection.topToBottom,
+            startRegion: StrokeStartRegion.top,
+          ),
+          ExpectedStroke(
+            primaryDirection: StrokeDirection.topToBottom,
+            startRegion: StrokeStartRegion.top,
+          ),
+          ExpectedStroke(
+            primaryDirection: StrokeDirection.topToBottom,
+            startRegion: StrokeStartRegion.top,
+          ),
+        ],
+      );
+      final counter = StrokeBreakCounter(letter: 'X', data: syntheticData);
+      expect(counter.score(strokes(1)).overallScore, closeTo(1 / 3, 1e-9));
     });
 
     test('actualCount == 0 → 0.0', () {
@@ -204,6 +226,35 @@ void main() {
         expect(score, inInclusiveRange(0.0, 1.0));
       }
     });
+
+    test(
+      'result is monotonic up to the minimum and flat at 1.0 thereafter',
+      () {
+        final counter = StrokeBreakCounter(
+          letter: 't',
+          data: letterFormationRegistry['t']!,
+        );
+        const minRequired = 2; // 't'
+
+        final scores = [
+          for (var n = 0; n <= 10; n++) counter.score(strokes(n)).overallScore,
+        ];
+
+        // Non-decreasing across the full range.
+        for (var n = 1; n < scores.length; n++) {
+          expect(
+            scores[n],
+            greaterThanOrEqualTo(scores[n - 1]),
+            reason: 'score should not decrease from n=${n - 1} to n=$n',
+          );
+        }
+
+        // Flat at 1.0 once at or above the minimum.
+        for (var n = minRequired; n < scores.length; n++) {
+          expect(scores[n], 1.0, reason: 'score(n=$n) should be 1.0');
+        }
+      },
+    );
   });
 
   // ---------------------------------------------------------------------------
