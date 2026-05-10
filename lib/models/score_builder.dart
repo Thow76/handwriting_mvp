@@ -7,10 +7,10 @@ import 'template_rasterizer.dart';
 /// Combines bitmap scoring (via [ScoreIntegrator]) and placement scoring (via
 /// [PlacementScorer]) for a completed handwriting attempt.
 ///
-/// This pure function encapsulates the computation that [_runScoring] in
-/// [DrawingCanvas] performs, allowing the integration between
-/// [ScoreIntegrator.score] and the [ScoreResult] handed to [ScoreDisplay] to
-/// be exercised by unit tests without touching [setState].
+/// This pure function encapsulates the computation that `_runScoring` in
+/// `DrawingCanvas` performs, allowing the integration between
+/// [ScoreIntegrator.score] and the [ScoreResult] handed to `ScoreDisplay` to
+/// be exercised by unit tests without touching `setState`.
 ///
 /// [templateResult] is the pre-rasterized reference template for [letter].
 /// [strokes] are the user's observed strokes in canvas coordinates.
