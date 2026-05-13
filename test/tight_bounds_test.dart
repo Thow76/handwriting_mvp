@@ -127,5 +127,43 @@ void main() {
       expect(tb!.top, ib!.top);
       expect(tb.bottom, ib.bottom);
     });
+
+    // ── Regression guard: inkBounds vs tightBounds axis contracts ────────────
+    //
+    // inkBounds must be tight on the y-axis only (full mask width preserved).
+    // tightBounds must be tight on BOTH axes.
+    //
+    // This test would catch any regression where tightBounds loses its
+    // horizontal tightness (reverting to the full-width inkBounds behaviour)
+    // or where inkBounds inadvertently becomes column-tight.
+    test('inkBounds is y-axis-tight with full width; tightBounds is tight on both axes', () {
+      // 10×10 mask: ink occupies rows 3–7, cols 2–6 (all indices 0-based).
+      // bounds origin is (0, 0) so canvas coords equal mask indices directly.
+      final mask = List.generate(10, (row) {
+        return List.generate(10, (col) => row >= 3 && row <= 7 && col >= 2 && col <= 6);
+      });
+      final result = TemplateRasterResult(
+        mask: mask,
+        bounds: const Rect.fromLTWH(0, 0, 10, 10),
+      );
+
+      final ib = result.inkBounds;
+      final tb = result.tightBounds;
+      expect(ib, isNotNull, reason: 'mask has ink so inkBounds must be non-null');
+      expect(tb, isNotNull, reason: 'mask has ink so tightBounds must be non-null');
+
+      // inkBounds: row-tight on y-axis (firstInkRow=3, lastInkRow=7 → bottom=8),
+      // but inherits the full mask width on the x-axis.
+      expect(ib!.top, 3.0, reason: 'inkBounds.top must equal the first ink row');
+      expect(ib.bottom, 8.0, reason: 'inkBounds.bottom must equal lastInkRow + 1');
+      expect(ib.left, 0.0, reason: 'inkBounds.left must equal bounds.left (full width)');
+      expect(ib.right, 10.0, reason: 'inkBounds.right must equal bounds.right (full width)');
+
+      // tightBounds: tight on both axes (col 2 → left=2, col 6 → right=7).
+      expect(tb!.top, 3.0, reason: 'tightBounds.top must equal the first ink row');
+      expect(tb.bottom, 8.0, reason: 'tightBounds.bottom must equal lastInkRow + 1');
+      expect(tb.left, 2.0, reason: 'tightBounds.left must equal the first ink column');
+      expect(tb.right, 7.0, reason: 'tightBounds.right must equal lastInkCol + 1');
+    });
   });
 }
