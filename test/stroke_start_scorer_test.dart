@@ -342,6 +342,79 @@ void main() {
       });
     });
 
+    // ── Tight-rect band contract ─────────────────────────────────────────────
+    //
+    // The scorer divides the rect it is given into vertical thirds.  These
+    // tests pass a tight rect (height = 60, thirdH = 20) and verify that:
+    //
+    //   • A first point 5 px below the tight rect's top falls in the TOP band.
+    //   • A first point 25 px below the tight rect's top falls in the MIDDLE band.
+    //
+    // The corresponding loose rect would have height = 120 with its top 20 px
+    // above the tight rect's top (thirdH = 40).  Because the scorer derives
+    // thresholds solely from the rect it receives, handing it the tight rect
+    // produces the correct classification.  Any regression that accidentally
+    // passed a taller rect would change the thresholds and could cause the
+    // 25 px point to be classified as top instead of middle.
+
+    group('tight-rect band contract', () {
+      // Single-stroke formation data: one anticlockwise stroke starting at top.
+      final tightData = LetterFormationData(
+        minRequiredStrokes: 1,
+        strokes: [
+          ExpectedStroke(
+            primaryDirection: StrokeDirection.anticlockwise,
+            startRegion: StrokeStartRegion.top,
+          ),
+        ],
+      );
+
+      // Tight rect: height = 60 → thirdH = 20.
+      // Loose rect would be: top = tightBounds.top − 20, height = 120 → thirdH = 40.
+      const tightBounds = Rect.fromLTWH(0, 0, 100, 60);
+
+      // Expected centroid for the single top-region stroke:
+      //   cx = 50, cy = 0 + 20 * 0.5 = 10.
+      // Both strokes below keep their bounding-box centroid at (50, 10) so
+      // the matcher always assigns the observed stroke to expected stroke 0.
+
+      test('first point 5 px below tight top → classified as top', () {
+        // Centroid: min_y = 5, max_y = 15 → mid = 10.  Centroid = (50, 10) ✓
+        final stroke = Stroke([const Offset(50, 5), const Offset(50, 15)]);
+        final scorer = StrokeStartScorer(
+          letter: 'a',
+          data: tightData,
+          bounds: tightBounds,
+        );
+        final result = scorer.score([stroke]);
+        expect(result.observations.length, 1);
+        expect(
+          result.observations[0].observed,
+          'top',
+          reason: 'dy = 5, thirdH = 20: 5 < 20 → top band',
+        );
+        expect(result.overallScore, 1.0);
+      });
+
+      test('first point 25 px below tight top → classified as middle', () {
+        // Centroid: min_y = -5, max_y = 25 → mid = 10.  Centroid = (50, 10) ✓
+        final stroke = Stroke([const Offset(50, 25), const Offset(50, -5)]);
+        final scorer = StrokeStartScorer(
+          letter: 'a',
+          data: tightData,
+          bounds: tightBounds,
+        );
+        final result = scorer.score([stroke]);
+        expect(result.observations.length, 1);
+        expect(
+          result.observations[0].observed,
+          'middle',
+          reason: 'dy = 25, thirdH = 20: 20 ≤ 25 < 40 → middle band',
+        );
+        expect(result.overallScore, 0.5);
+      });
+    });
+
     // ── Scoring table edge cases ─────────────────────────────────────────────
 
     group('scoring table', () {
