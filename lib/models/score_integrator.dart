@@ -33,13 +33,19 @@ class ScoreIntegrator {
   ///
   /// [referenceMask] must have dimensions matching
   /// `bounds.height.ceil()` × `bounds.width.ceil()`.
+  ///
+  /// [formationBounds] is the bounding rect passed to the formation scorers
+  /// ([StrokeStartScorer], [StrokeDirectionScorer], [CompoundStrokeScorer]).
+  /// If not supplied, it defaults to [bounds].
   static ScoreResult score({
     required List<List<bool>> referenceMask,
     required Rect bounds,
     required List<Stroke> strokes,
     double strokeWidth = 3.0,
     String? letter,
+    Rect? formationBounds,
   }) {
+    formationBounds ??= bounds;
     final expectedRows = bounds.height.ceil();
     final expectedCols = bounds.width.ceil();
 
@@ -102,19 +108,19 @@ class ScoreIntegrator {
         strokeStart = StrokeStartScorer(
           letter: letter,
           data: data,
-          bounds: bounds,
+          bounds: formationBounds,
         ).score(strokes);
 
         strokeDirection = StrokeDirectionScorer(
           letter: letter,
           data: data,
-          bounds: bounds,
+          bounds: formationBounds,
         ).score(strokes);
 
         compoundStroke = CompoundStrokeScorer(
           letter: letter,
           data: data,
-          bounds: bounds,
+          bounds: formationBounds,
         ).score(strokes);
 
         strokeBreak = StrokeBreakCounter(
