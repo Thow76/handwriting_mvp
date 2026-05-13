@@ -27,7 +27,7 @@ ScoreResult buildScoreResult({
     strokes: strokes,
     strokeWidth: 3.0,
     letter: letter,
-    formationBounds: templateResult.bounds,
+    formationBounds: templateResult.tightBounds ?? templateResult.bounds,
   );
 
   var placement = 0.0;
