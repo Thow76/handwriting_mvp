@@ -635,28 +635,30 @@ void main() {
           const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.25));
     });
 
-    // ── Unlisted second strokes (b[1], g[1], p[1], q[1]) ────────────────────
-    // These strokes are not in the agreed groups/overrides table; values are
-    // assigned based on the letter's geometry:
-    //   b[1], p[1] — bowl re-traced from same top-left origin as stem
-    //   g[1], q[1] — descender/stem starting upper-right of the oval
+    // ── Confirmed second strokes (b[1], p[1], g[1], q[1]) ───────────────────
+    // Design-review-confirmed rectangles (see issue #87). These replaced the
+    // PR #86 placeholders (stem-first / upper-right defaults) once the
+    // pedagogical start zones for the bowl/link/tail second strokes were
+    // agreed.
 
-    test('b[1]: top-left bowl origin (0.00–0.25, 0.00–0.15)', () {
-      expect(rect('b', 1), stemRect);
+    test('b[1]: mid-left bowl at x-height (0.00–0.20, 0.40–0.60)', () {
+      expect(rect('b', 1),
+          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60));
     });
 
-    test('p[1]: top-left bowl origin (0.00–0.25, 0.00–0.15)', () {
-      expect(rect('p', 1), stemRect);
+    test('p[1]: left bowl just below x-height (0.00–0.20, 0.35–0.50)', () {
+      expect(rect('p', 1),
+          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.35, maxY: 0.50));
     });
 
-    test('g[1]: upper-right tail origin (0.75–1.00, 0.00–0.15)', () {
+    test('g[1]: mid-right link/tail at x-height (0.70–1.00, 0.35–0.55)', () {
       expect(rect('g', 1),
-          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
+          const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.35, maxY: 0.55));
     });
 
-    test('q[1]: upper-right stem origin (0.75–1.00, 0.00–0.15)', () {
+    test('q[1]: right descender above baseline (0.75–1.00, 0.45–0.65)', () {
       expect(rect('q', 1),
-          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
+          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.45, maxY: 0.65));
     });
   });
 }
