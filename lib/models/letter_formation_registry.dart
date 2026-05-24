@@ -35,6 +35,10 @@ import 'stroke_start_rect.dart';
 /// | i      | 1      | 0.15–0.85  | 0.00–0.36  | Generous dot zone         |
 /// | j      | 0      | 0.25–0.75  | 0.00–0.15  | Centred stem              |
 /// | j      | 1      | 0.15–0.85  | 0.00–0.25  | Generous dot zone         |
+/// | b      | 1      | 0.00–0.20  | 0.40–0.60  | Mid-left bowl at x-height |
+/// | p      | 1      | 0.00–0.20  | 0.35–0.50  | Left bowl just below x-height (descender bounds) |
+/// | g      | 1      | 0.70–1.00  | 0.35–0.55  | Mid-right link/tail at x-height |
+/// | q      | 1      | 0.75–1.00  | 0.45–0.65  | Right descender above baseline (descender bounds) |
 ///
 /// ## Single-stroke letters — `c, e, l, o, s, v, w, z`
 ///
@@ -242,7 +246,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60),
       ),
     ],
   ),
@@ -272,7 +276,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.35, maxY: 0.55),
       ),
     ],
   ),
@@ -287,7 +291,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.35, maxY: 0.50),
       ),
     ],
   ),
@@ -302,7 +306,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.45, maxY: 0.65),
       ),
     ],
   ),
