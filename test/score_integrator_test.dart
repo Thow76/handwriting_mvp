@@ -209,8 +209,13 @@ void main() {
       //   top        = (45, 15)
       //   bottomRight= (75, 75)
       // The stroke visits each centroid exactly, so all 4 waypoints are hit.
+      //
+      // n's startRect is minX=0, maxX=0.25, minY=0, maxY=0.15.
+      // In 90×90 bounds this corresponds to x ∈ [0, 22.5) and y ∈ [0, 13.5).
+      // The first point (10, 10) is inside the startRect AND in the topLeft
+      // waypoint cell (x < 30, y < 30), so both scorers report 1.0.
       final stroke = Stroke(const [
-        Offset(15, 15), // topLeft centroid
+        Offset(10, 10), // inside n's startRect and in topLeft cell
         Offset(15, 75), // bottomLeft centroid
         Offset(45, 15), // top centroid
         Offset(75, 75), // bottomRight centroid
@@ -229,7 +234,7 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.strokeBreak, isNotNull);
 
-      // Stroke started in the top region → 1.0.
+      // Stroke first point (10, 10) is inside n's startRect → 1.0.
       expect(result.strokeStart!.overallScore, 1.0);
 
       // n has only compound strokes; StrokeDirectionScorer excludes compound

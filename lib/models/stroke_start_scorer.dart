@@ -1,27 +1,25 @@
-import 'dart:ui' show Rect;
+import 'dart:ui' show Offset, Rect;
 
 import 'formation_score.dart';
 import 'letter_formation_data.dart';
 import 'stroke.dart';
-import 'stroke_formation_enums.dart';
 import 'stroke_matcher.dart';
+import 'stroke_start_rect.dart';
 
 /// Scores how closely the observed strokes' first points match the expected
-/// start regions defined by [LetterFormationData].
+/// start rectangles defined by [LetterFormationData].
 ///
-/// Each observed stroke's first point is classified into a vertical third of
-/// the template's tight bounding box ([StrokeStartRegion.top],
-/// [StrokeStartRegion.middle], or [StrokeStartRegion.bottom]) and compared
-/// against the expected start region for the matched [ExpectedStroke].
+/// Each observed stroke's first point is tested against the matched
+/// [ExpectedStroke.startRect] using [StrokeStartRect.contains]. The scoring
+/// is a hard cliff: inside the rectangle → 1.0, outside → 0.0. No partial
+/// credit or adjacency taper is applied.
 ///
-/// Scoring per stroke: exact match → 1.0; adjacent mismatch
-/// (top↔middle, middle↔bottom) → 0.5; opposite mismatch (top↔bottom) → 0.0.
-/// The [FormationScore.overallScore] is the mean across all scored strokes.
+/// Edge convention: [StrokeStartRect.contains] is inclusive on the minimum
+/// edges (`minX`, `minY`) and exclusive on the maximum edges (`maxX`, `maxY`),
+/// matching the convention documented in [StrokeStartRect].
 ///
-/// [StrokeStartRegion.bottom] must never appear as an expected value — it is
-/// an observed-error-only value per the scope document. The constructor throws
-/// an [ArgumentError] if any [ExpectedStroke.startRegion] is
-/// [StrokeStartRegion.bottom].
+/// The [FormationScore.overallScore] is the mean across all matched,
+/// non-empty observed strokes.
 class StrokeStartScorer {
   /// The letter being scored. Used in error messages.
   final String letter;
@@ -31,30 +29,18 @@ class StrokeStartScorer {
 
   /// The tight bounding box of the letter template.
   ///
-  /// Used to divide the vertical extent into thirds for region classification
-  /// and for spatial stroke matching.
+  /// Used for spatial stroke matching and to convert absolute coordinates
+  /// into bounds-relative fractions for [StrokeStartRect.contains].
   final Rect bounds;
 
   /// Creates a [StrokeStartScorer].
-  ///
-  /// Throws an [ArgumentError] if any [ExpectedStroke.startRegion] in [data]
-  /// is [StrokeStartRegion.bottom].
   StrokeStartScorer({
     required this.letter,
     required this.data,
     required this.bounds,
-  }) {
-    for (var i = 0; i < data.strokes.length; i++) {
-      if (data.strokes[i].startRegion == StrokeStartRegion.bottom) {
-        throw ArgumentError(
-          'Letter "$letter", stroke $i: ExpectedStroke.startRegion must not be '
-          'StrokeStartRegion.bottom — bottom is an observed-error-only value.',
-        );
-      }
-    }
-  }
+  });
 
-  /// Scores [observed] strokes against the expected start regions.
+  /// Scores [observed] strokes against the expected start rectangles.
   ///
   /// Returns a [FormationScore] containing:
   /// - [FormationScore.overallScore]: mean of per-stroke scores.
@@ -69,18 +55,19 @@ class StrokeStartScorer {
       final expectedIndex = matchIndices[i];
       if (expectedIndex == -1) continue;
 
-      final observedRegion = _classifyFirstPoint(observed[i]);
-      if (observedRegion == null) continue;
+      final stroke = observed[i];
+      if (stroke.points.isEmpty) continue;
 
-      final expectedRegion = data.strokes[expectedIndex].startRegion;
-      final strokeScore = _scoreRegions(expectedRegion, observedRegion);
+      final firstPoint = stroke.points.first;
+      final startRect = data.strokes[expectedIndex].startRect;
+      final strokeScore = startRect.contains(firstPoint, bounds) ? 1.0 : 0.0;
 
       observations.add(StrokeObservation(
         strokeIndex: i,
-        expected: expectedRegion.name,
-        observed: observedRegion.name,
+        expected: _rectLabel(startRect),
+        observed: _pointLabel(firstPoint, bounds),
         score: strokeScore,
-        note: _buildNote(expectedRegion, observedRegion),
+        note: _buildNote(startRect, firstPoint, bounds),
       ));
     }
 
@@ -96,40 +83,68 @@ class StrokeStartScorer {
     );
   }
 
-  /// Classifies the first point of [stroke] into a [StrokeStartRegion] based
-  /// on the vertical thirds of [bounds].
+  /// Formats a [StrokeStartRect] as a compact percentage range string.
   ///
-  /// Returns `null` if the stroke has no points.
-  StrokeStartRegion? _classifyFirstPoint(Stroke stroke) {
-    if (stroke.points.isEmpty) return null;
-    final dy = stroke.points.first.dy - bounds.top;
-    final thirdH = bounds.height / 3;
-    if (dy < thirdH) return StrokeStartRegion.top;
-    if (dy < thirdH * 2) return StrokeStartRegion.middle;
-    return StrokeStartRegion.bottom;
+  /// Example: `StrokeStartRect(minX: 0.5, maxX: 1.0, minY: 0.0, maxY: 0.25)`
+  /// → `"x 50–100%, y 0–25%"`.
+  static String _rectLabel(StrokeStartRect rect) {
+    final x0 = (rect.minX * 100).round();
+    final x1 = (rect.maxX * 100).round();
+    final y0 = (rect.minY * 100).round();
+    final y1 = (rect.maxY * 100).round();
+    return 'x $x0–$x1%, y $y0–$y1%';
   }
 
-  /// Returns a score for [observed] relative to [expected].
+  /// Formats a first-point as bounds-relative percentage coordinates.
   ///
-  /// Exact match → 1.0; adjacent mismatch (top↔middle, middle↔bottom) → 0.5;
-  /// opposite mismatch (top↔bottom) → 0.0.
-  double _scoreRegions(StrokeStartRegion expected, StrokeStartRegion observed) {
-    if (expected == observed) return 1.0;
-    if ((expected == StrokeStartRegion.top &&
-            observed == StrokeStartRegion.bottom) ||
-        (expected == StrokeStartRegion.bottom &&
-            observed == StrokeStartRegion.top)) {
-      return 0.0;
-    }
-    return 0.5;
+  /// Example: `Offset(186, 114)` in a 300×300 bounds → `"(62%, 38%)"`.
+  static String _pointLabel(Offset point, Rect bounds) {
+    final rx = ((point.dx - bounds.left) / bounds.width * 100).round();
+    final ry = ((point.dy - bounds.top) / bounds.height * 100).round();
+    return '($rx%, $ry%)';
   }
 
-  /// Builds a learner-readable note describing the result for one stroke.
-  String _buildNote(StrokeStartRegion expected, StrokeStartRegion observed) {
-    if (expected == observed) {
-      return 'Started in the ${expected.name} region — correct.';
+  /// Returns a learner-readable note for one stroke.
+  ///
+  /// On success: `"Started in the right place."`
+  /// On failure: a directional hint such as
+  /// `"Started bottom-right; should start in the top-left area."`.
+  static String _buildNote(
+      StrokeStartRect rect, Offset firstPoint, Rect bounds) {
+    if (rect.contains(firstPoint, bounds)) {
+      return 'Started in the right place.';
     }
-    return 'Started at the ${observed.name}; should start at the ${expected.name}.';
+
+    final rx = (firstPoint.dx - bounds.left) / bounds.width;
+    final ry = (firstPoint.dy - bounds.top) / bounds.height;
+
+    // Direction of where the user started, relative to the expected rect centre.
+    final cx = (rect.minX + rect.maxX) / 2.0;
+    final cy = (rect.minY + rect.maxY) / 2.0;
+    final startedDir = _directionLabel(rx - cx, ry - cy);
+
+    // Direction of the expected rect centre within the template.
+    final expectedDir = _directionLabel(cx - 0.5, cy - 0.5);
+
+    final startedPart =
+        startedDir.isEmpty ? 'Started near the centre' : 'Started $startedDir';
+    final expectedPart =
+        expectedDir.isEmpty ? 'the centre' : 'the $expectedDir area';
+
+    return '$startedPart; should start in $expectedPart.';
+  }
+
+  /// Returns a directional label such as `"top-left"`, `"bottom"`, or `""`.
+  ///
+  /// An empty string means the offset is near zero in both axes.
+  static String _directionLabel(double dx, double dy) {
+    const threshold = 0.05;
+    final v = dy < -threshold ? 'top' : (dy > threshold ? 'bottom' : '');
+    final h = dx < -threshold ? 'left' : (dx > threshold ? 'right' : '');
+    if (v.isEmpty && h.isEmpty) return '';
+    if (v.isEmpty) return h;
+    if (h.isEmpty) return v;
+    return '$v-$h';
   }
 
   /// Builds a learner-facing summary from all [observations].
@@ -141,6 +156,6 @@ class StrokeStartScorer {
       return 'All strokes started in the right place.';
     }
     final wrong = observations.firstWhere((o) => o.score < 1.0);
-    return 'The stroke started in the wrong place — try starting at the ${wrong.expected}.';
+    return 'A stroke started in the wrong place — should start in ${wrong.expected}.';
   }
 }
