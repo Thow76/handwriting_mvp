@@ -197,17 +197,21 @@ void main() {
   // 'h' — multi-stroke letter; the topToBottom stem is silently skipped
   //
   // 'h' has two expected strokes:
-  //   stroke 0: topToBottom, startRegion = top    → expected centroid (150, 50)
-  //   stroke 1: compound (left → top → bottomRight) → expected centroid (150, 150)
+  //   stroke 0: topToBottom, startRect (0.00–0.25, 0.00–0.15)
+  //             → expected centroid (37.5, 22.5) in 300×300 box
+  //   stroke 1: compound (left → top → bottomRight)
+  //             → expected centroid (150, 150) via waypoint average
   //
   // Observed strokes need centroids near those expected centroids so that
   // matchStrokes assigns them correctly:
-  //   stem     → Stroke([(150,10) → (150,90)])              centroid (150,  50)
-  //   compound → Stroke([(50,150) → (150,50) → (250,250)])  centroid (150, 150)
+  //   stem     → Stroke([(10,10) → (65,35)])               centroid (37.5, 22.5)
+  //   compound → Stroke([(50,150) → (150,50) → (250,250)]) centroid (150, 150)
   // ---------------------------------------------------------------------------
 
   group("'h' with correct stem and compound second stroke", () {
-    final hStem = Stroke(const [Offset(150, 10), Offset(150, 90)]);
+    // Bounding box: x=[10,65], y=[10,35] → centroid (37.5, 22.5) near
+    // the stem startRect centroid for 'h' stroke 0.
+    final hStem = Stroke(const [Offset(10, 10), Offset(65, 35)]);
     final hCompound = Stroke(const [
       Offset(50, 150),
       Offset(150, 50),
@@ -262,7 +266,6 @@ void main() {
       strokes: [
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
-          startRegion: StrokeStartRegion.top,
           startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           waypoints: const [
             WaypointRegion.topLeft,
@@ -272,7 +275,6 @@ void main() {
         ),
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
-          startRegion: StrokeStartRegion.bottom,
           startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 2.0 / 3.0, maxY: 1.0),
           waypoints: const [
             WaypointRegion.bottomLeft,
@@ -528,7 +530,6 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.compound,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
             waypoints: const [],
           ),

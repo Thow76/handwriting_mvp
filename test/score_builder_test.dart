@@ -183,7 +183,7 @@ void main() {
         inkLastRow: 119,
       );
 
-      // Expected centroid for 'a' (startRegion=top) with tightBounds:
+      // Expected centroid for 'a' (startRect top-group) with tightBounds:
       //   cx = 50, cy = 60 + 20 * 0.5 = 70.
       // Stroke centroid: min_y=60, max_y=80 → mid=70.  Centroid = (50, 70) ✓
       final stroke = Stroke(const [Offset(50, 60), Offset(50, 80)]);
@@ -213,7 +213,7 @@ void main() {
     //
     // Stroke: first point at y=90 (bottom third of tightBounds).
     //   dy = 90, thirdH = 40; 90 ≥ 80 → BOTTOM.
-    //   Expected startRegion for 'b' stroke 0 is top; observed is bottom
+    //   Expected startRect for 'b' stroke 0 is top-group; observed is bottom
     //   → opposite mismatch → score 0.0 < 1.0.
     //
     // Stroke centroid is kept at (50, 20) (≈ expected top-region centroid) so
@@ -229,7 +229,7 @@ void main() {
 
       // First point at y=90 → bottom third.
       // Centroid: min_y = -50, max_y = 90 → mid = 20.  Centroid = (50, 20).
-      // Expected centroid for 'b' stroke 0 (startRegion=top, tightBounds):
+      // Expected centroid for 'b' stroke 0 (startRect top-group, tightBounds):
       //   cy = 0 + 40 * 0.5 = 20.  Distance = 0 → certain match. ✓
       final stroke = Stroke(const [Offset(50, 90), Offset(50, -50)]);
 

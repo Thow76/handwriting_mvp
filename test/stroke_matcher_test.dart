@@ -5,8 +5,7 @@ import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_matcher.dart';
-
-import 'helpers/start_rect_for_region.dart';
+import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 void main() {
   // A 300×300 bounding box centred at the origin for easy mental arithmetic.
@@ -14,11 +13,18 @@ void main() {
   // y=150), bottom y=200–300 (centroid y=250).  Horizontal centre x=150.
   const bounds = Rect.fromLTWH(0, 0, 300, 300);
 
-  // Helper: a non-compound expected stroke at the given start region.
-  ExpectedStroke expectedAt(StrokeStartRegion region) => ExpectedStroke(
+  // Predefined start rects matching the old vertical-thirds regions.
+  const topRect =
+      StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0);
+  const middleRect = StrokeStartRect(
+      minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0);
+  const bottomRect =
+      StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 2.0 / 3.0, maxY: 1.0);
+
+  // Helper: a non-compound expected stroke with the given start rect.
+  ExpectedStroke expectedAt(StrokeStartRect rect) => ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRegion: region,
-        startRect: startRectForRegion(region),
+        startRect: rect,
       );
 
   // Helper: a stroke whose bounding-box centroid is at (cx, cy).
@@ -31,8 +37,8 @@ void main() {
     test('equal-length: each observed stroke maps to the correct expected', () {
       // Two expected strokes: top (centroid y=50) and bottom (centroid y=250).
       final expected = [
-        expectedAt(StrokeStartRegion.top),
-        expectedAt(StrokeStartRegion.bottom),
+        expectedAt(topRect),
+        expectedAt(bottomRect),
       ];
 
       // Two observed strokes placed at the matching positions.
@@ -50,8 +56,8 @@ void main() {
 
     test('more observed than expected: surplus observed strokes map to -1', () {
       final expected = [
-        expectedAt(StrokeStartRegion.top),
-        expectedAt(StrokeStartRegion.bottom),
+        expectedAt(topRect),
+        expectedAt(bottomRect),
       ];
 
       // Three observed strokes but only two expected.
@@ -73,9 +79,9 @@ void main() {
         'unclaimed', () {
       // Three expected strokes: top, middle, bottom.
       final expected = [
-        expectedAt(StrokeStartRegion.top),
-        expectedAt(StrokeStartRegion.middle),
-        expectedAt(StrokeStartRegion.bottom),
+        expectedAt(topRect),
+        expectedAt(middleRect),
+        expectedAt(bottomRect),
       ];
 
       // Only two observed strokes: one near top, one near bottom.
@@ -98,8 +104,8 @@ void main() {
         'correct expected indices', () {
       // Template has stroke 0 at top and stroke 1 at bottom.
       final expected = [
-        expectedAt(StrokeStartRegion.top),    // expected index 0 (centroid y=50)
-        expectedAt(StrokeStartRegion.bottom), // expected index 1 (centroid y=250)
+        expectedAt(topRect),    // expected index 0 (centroid y=50)
+        expectedAt(bottomRect), // expected index 1 (centroid y=250)
       ];
 
       // Learner drew the strokes in reverse order:
@@ -118,7 +124,7 @@ void main() {
     // ── Edge cases ───────────────────────────────────────────────────────────
 
     test('empty observed list returns an empty result', () {
-      final expected = [expectedAt(StrokeStartRegion.top)];
+      final expected = [expectedAt(topRect)];
       final result = matchStrokes([], expected, bounds);
       expect(result, isEmpty);
     });
@@ -130,7 +136,7 @@ void main() {
     });
 
     test('observed stroke with no points maps to -1', () {
-      final expected = [expectedAt(StrokeStartRegion.top)];
+      final expected = [expectedAt(topRect)];
       final observed = [Stroke([])]; // no points
       final result = matchStrokes(observed, expected, bounds);
       expect(result, [-1]);
@@ -146,14 +152,12 @@ void main() {
       final expected = [
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
-          startRegion: StrokeStartRegion.top,
-          startRect: startRectForRegion(StrokeStartRegion.top),
+          startRect: topRect,
           waypoints: [WaypointRegion.topLeft],
         ),
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
-          startRegion: StrokeStartRegion.bottom,
-          startRect: startRectForRegion(StrokeStartRegion.bottom),
+          startRect: bottomRect,
           waypoints: [WaypointRegion.bottomRight],
         ),
       ];

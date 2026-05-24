@@ -24,8 +24,8 @@ void main() {
       Stroke([first, Offset(300 - first.dx, 100 - first.dy)]);
 
   // Creates a single-stroke [LetterFormationData] whose expected first point
-  // must fall inside [rect].  [startRegion] defaults to top so that
-  // [matchStrokes] places the expected centroid at (150, 50) in 300×300 bounds.
+  // must fall inside [rect].  The startRect centroid determines where
+  // [matchStrokes] places the expected centroid.
   LetterFormationData singleStrokeData(StrokeStartRect rect) =>
       LetterFormationData(
         minRequiredStrokes: 1,

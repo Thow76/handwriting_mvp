@@ -4,10 +4,6 @@ import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 void main() {
-  // ---------------------------------------------------------------------------
-  // Serialisation round-trips — all 18 values across the three enums
-  // ---------------------------------------------------------------------------
-
   group('StrokeDirection serialisation', () {
     const cases = {
       'topToBottom': StrokeDirection.topToBottom,
@@ -28,28 +24,6 @@ void main() {
     test('byName() throws ArgumentError for unknown string', () {
       expect(
         () => StrokeDirection.values.byName('unknown'),
-        throwsA(isA<ArgumentError>()),
-      );
-    });
-  });
-
-  group('StrokeStartRegion serialisation', () {
-    const cases = {
-      'top': StrokeStartRegion.top,
-      'middle': StrokeStartRegion.middle,
-      'bottom': StrokeStartRegion.bottom,
-    };
-
-    for (final entry in cases.entries) {
-      test('${entry.key} round-trips through .name / byName()', () {
-        expect(entry.value.name, entry.key);
-        expect(StrokeStartRegion.values.byName(entry.key), entry.value);
-      });
-    }
-
-    test('byName() throws ArgumentError for unknown string', () {
-      expect(
-        () => StrokeStartRegion.values.byName('unknown'),
         throwsA(isA<ArgumentError>()),
       );
     });
@@ -91,12 +65,10 @@ void main() {
     test('can be created with compound direction and non-empty waypoints', () {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
-        startRegion: StrokeStartRegion.top,
         startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
         waypoints: [WaypointRegion.top, WaypointRegion.bottomLeft, WaypointRegion.top],
       );
       expect(stroke.primaryDirection, StrokeDirection.compound);
-      expect(stroke.startRegion, StrokeStartRegion.top);
       expect(stroke.waypoints, [
         WaypointRegion.top,
         WaypointRegion.bottomLeft,
@@ -107,7 +79,6 @@ void main() {
     test('defaults waypoints to empty list', () {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRegion: StrokeStartRegion.top,
         startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
       );
       expect(stroke.waypoints, isEmpty);
@@ -116,7 +87,6 @@ void main() {
     test('allows empty waypoints for non-compound direction', () {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
-        startRegion: StrokeStartRegion.middle,
         startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
         waypoints: [],
       );
@@ -127,7 +97,6 @@ void main() {
       expect(
         () => ExpectedStroke(
           primaryDirection: StrokeDirection.topToBottom,
-          startRegion: StrokeStartRegion.top,
           startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           waypoints: [WaypointRegion.top],
         ),
@@ -139,7 +108,6 @@ void main() {
       expect(
         () => ExpectedStroke(
           primaryDirection: StrokeDirection.leftToRight,
-          startRegion: StrokeStartRegion.middle,
           startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
           waypoints: [WaypointRegion.left],
         ),
@@ -151,7 +119,6 @@ void main() {
       expect(
         () => ExpectedStroke(
           primaryDirection: StrokeDirection.dot,
-          startRegion: StrokeStartRegion.top,
           startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           waypoints: [WaypointRegion.top],
         ),
@@ -170,12 +137,10 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.leftToRight,
-            startRegion: StrokeStartRegion.middle,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
           ),
         ],
@@ -190,7 +155,6 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.anticlockwise,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
         ],
@@ -204,12 +168,10 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.dot,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
         ],
@@ -224,7 +186,6 @@ void main() {
           strokes: [
             ExpectedStroke(
               primaryDirection: StrokeDirection.topToBottom,
-              startRegion: StrokeStartRegion.top,
               startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
             ),
           ],

@@ -72,7 +72,6 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: dir,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
         ],
@@ -257,8 +256,8 @@ void main() {
   // Multi-stroke 't' — stem topToBottom + crossbar leftToRight
   //
   // 't' has two expected strokes:
-  //   stroke 0: topToBottom, startRegion = top    → expected centroid (150, 50)
-  //   stroke 1: leftToRight, startRegion = middle → expected centroid (150, 150)
+  //   stroke 0: topToBottom → expected centroid (150, 50)
+  //   stroke 1: leftToRight → expected centroid (150, 150)
   //
   // Observed strokes must have bounding-box centroids in matching regions
   // so that spatial matching assigns them correctly:
