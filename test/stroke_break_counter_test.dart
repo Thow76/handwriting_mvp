@@ -177,17 +177,14 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
-            startRegion: StrokeStartRegion.top,
             startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
         ],

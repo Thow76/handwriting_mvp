@@ -12,7 +12,6 @@ void main() {
   //   2. minRequiredStrokes == 1.
   //   3. Exactly one ExpectedStroke is present.
   //   4. The stroke's primaryDirection matches the Universal Core table.
-  //   5. The stroke's startRegion is top.
   // ---------------------------------------------------------------------------
 
   const cases = {
@@ -50,11 +49,6 @@ void main() {
       test('$letter: primaryDirection is $expectedDirection', () {
         final data = letterFormationRegistry[letter]!;
         expect(data.strokes.first.primaryDirection, expectedDirection);
-      });
-
-      test('$letter: startRegion is top', () {
-        final data = letterFormationRegistry[letter]!;
-        expect(data.strokes.first.startRegion, StrokeStartRegion.top);
       });
     }
   });
@@ -110,72 +104,61 @@ void main() {
     test('a: stroke is anticlockwise starting at top', () {
       final data = letterFormationRegistry['a']!;
       expect(data.strokes[0].primaryDirection, StrokeDirection.anticlockwise);
-      expect(data.strokes[0].startRegion, StrokeStartRegion.top);
     });
 
     // b: stem (topToBottom) + right-opening bowl (clockwise).
     test('b: stroke 1 is topToBottom starting at top', () {
       final data = letterFormationRegistry['b']!;
       expect(data.strokes[0].primaryDirection, StrokeDirection.topToBottom);
-      expect(data.strokes[0].startRegion, StrokeStartRegion.top);
     });
 
     test('b: stroke 2 is clockwise starting at top', () {
       final data = letterFormationRegistry['b']!;
       expect(data.strokes[1].primaryDirection, StrokeDirection.clockwise);
-      expect(data.strokes[1].startRegion, StrokeStartRegion.top);
     });
 
     // d: left-opening oval (anticlockwise) + vertical stem (topToBottom).
     test('d: stroke 1 is anticlockwise starting at top', () {
       final data = letterFormationRegistry['d']!;
       expect(data.strokes[0].primaryDirection, StrokeDirection.anticlockwise);
-      expect(data.strokes[0].startRegion, StrokeStartRegion.top);
     });
 
     test('d: stroke 2 is topToBottom starting at top', () {
       final data = letterFormationRegistry['d']!;
       expect(data.strokes[1].primaryDirection, StrokeDirection.topToBottom);
-      expect(data.strokes[1].startRegion, StrokeStartRegion.top);
     });
 
     // g: left-opening oval (anticlockwise) + descending tail (topToBottom).
     test('g: stroke 1 is anticlockwise starting at top', () {
       final data = letterFormationRegistry['g']!;
       expect(data.strokes[0].primaryDirection, StrokeDirection.anticlockwise);
-      expect(data.strokes[0].startRegion, StrokeStartRegion.top);
     });
 
     test('g: stroke 2 is topToBottom starting at top', () {
       final data = letterFormationRegistry['g']!;
       expect(data.strokes[1].primaryDirection, StrokeDirection.topToBottom);
-      expect(data.strokes[1].startRegion, StrokeStartRegion.top);
     });
 
     // p: stem (topToBottom) + right-opening bowl (clockwise).
     test('p: stroke 1 is topToBottom starting at top', () {
       final data = letterFormationRegistry['p']!;
       expect(data.strokes[0].primaryDirection, StrokeDirection.topToBottom);
-      expect(data.strokes[0].startRegion, StrokeStartRegion.top);
     });
 
     test('p: stroke 2 is clockwise starting at top', () {
       final data = letterFormationRegistry['p']!;
       expect(data.strokes[1].primaryDirection, StrokeDirection.clockwise);
-      expect(data.strokes[1].startRegion, StrokeStartRegion.top);
     });
 
     // q: left-opening oval (anticlockwise) + vertical stem (topToBottom).
     test('q: stroke 1 is anticlockwise starting at top', () {
       final data = letterFormationRegistry['q']!;
       expect(data.strokes[0].primaryDirection, StrokeDirection.anticlockwise);
-      expect(data.strokes[0].startRegion, StrokeStartRegion.top);
     });
 
     test('q: stroke 2 is topToBottom starting at top', () {
       final data = letterFormationRegistry['q']!;
       expect(data.strokes[1].primaryDirection, StrokeDirection.topToBottom);
-      expect(data.strokes[1].startRegion, StrokeStartRegion.top);
     });
 
     // r: single entry/stem stroke (topToBottom).
@@ -186,7 +169,6 @@ void main() {
     test('r: stroke is topToBottom starting at top', () {
       final data = letterFormationRegistry['r']!;
       expect(data.strokes[0].primaryDirection, StrokeDirection.topToBottom);
-      expect(data.strokes[0].startRegion, StrokeStartRegion.top);
     });
 
     // y: stem-plus-tail; both strokes are topToBottom (diagonal class).
@@ -198,7 +180,6 @@ void main() {
       final data = letterFormationRegistry['y']!;
       for (final stroke in data.strokes) {
         expect(stroke.primaryDirection, StrokeDirection.topToBottom);
-        expect(stroke.startRegion, StrokeStartRegion.top);
       }
     });
   });
@@ -238,7 +219,6 @@ void main() {
       test('$letter: stroke 1 is topToBottom starting at top', () {
         final data = letterFormationRegistry[letter]!;
         expect(data.strokes[0].primaryDirection, StrokeDirection.topToBottom);
-        expect(data.strokes[0].startRegion, StrokeStartRegion.top);
       });
 
       test('$letter: stroke 2 is dot', () {
@@ -252,13 +232,11 @@ void main() {
       test('$letter: stroke 1 is topToBottom starting at top', () {
         final data = letterFormationRegistry[letter]!;
         expect(data.strokes[0].primaryDirection, StrokeDirection.topToBottom);
-        expect(data.strokes[0].startRegion, StrokeStartRegion.top);
       });
 
       test('$letter: stroke 2 is leftToRight starting at middle', () {
         final data = letterFormationRegistry[letter]!;
         expect(data.strokes[1].primaryDirection, StrokeDirection.leftToRight);
-        expect(data.strokes[1].startRegion, StrokeStartRegion.middle);
       });
     }
 
@@ -267,7 +245,6 @@ void main() {
       final data = letterFormationRegistry['x']!;
       for (final stroke in data.strokes) {
         expect(stroke.primaryDirection, StrokeDirection.topToBottom);
-        expect(stroke.startRegion, StrokeStartRegion.top);
       }
     });
   });
@@ -303,7 +280,6 @@ void main() {
     test('n: stroke is compound starting at top', () {
       final stroke = letterFormationRegistry['n']!.strokes[0];
       expect(stroke.primaryDirection, StrokeDirection.compound);
-      expect(stroke.startRegion, StrokeStartRegion.top);
     });
 
     test('n: compound stroke has non-empty waypoints', () {
@@ -338,7 +314,6 @@ void main() {
     test('m: stroke is compound starting at top', () {
       final stroke = letterFormationRegistry['m']!.strokes[0];
       expect(stroke.primaryDirection, StrokeDirection.compound);
-      expect(stroke.startRegion, StrokeStartRegion.top);
     });
 
     test('m: compound stroke has non-empty waypoints', () {
@@ -375,7 +350,6 @@ void main() {
     test('u: stroke is compound starting at top', () {
       final stroke = letterFormationRegistry['u']!.strokes[0];
       expect(stroke.primaryDirection, StrokeDirection.compound);
-      expect(stroke.startRegion, StrokeStartRegion.top);
     });
 
     test('u: compound stroke has non-empty waypoints', () {
@@ -411,13 +385,11 @@ void main() {
     test('h: stroke 1 is topToBottom starting at top', () {
       final stroke = letterFormationRegistry['h']!.strokes[0];
       expect(stroke.primaryDirection, StrokeDirection.topToBottom);
-      expect(stroke.startRegion, StrokeStartRegion.top);
     });
 
     test('h: stroke 2 is compound starting at middle', () {
       final stroke = letterFormationRegistry['h']!.strokes[1];
       expect(stroke.primaryDirection, StrokeDirection.compound);
-      expect(stroke.startRegion, StrokeStartRegion.middle);
     });
 
     test('h: stroke 2 has non-empty waypoints', () {
@@ -451,13 +423,11 @@ void main() {
     test('k: stroke 1 is topToBottom starting at top', () {
       final stroke = letterFormationRegistry['k']!.strokes[0];
       expect(stroke.primaryDirection, StrokeDirection.topToBottom);
-      expect(stroke.startRegion, StrokeStartRegion.top);
     });
 
     test('k: stroke 2 is compound starting at top', () {
       final stroke = letterFormationRegistry['k']!.strokes[1];
       expect(stroke.primaryDirection, StrokeDirection.compound);
-      expect(stroke.startRegion, StrokeStartRegion.top);
     });
 
     test('k: stroke 2 has non-empty waypoints', () {

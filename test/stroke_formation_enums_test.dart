@@ -22,16 +22,6 @@ void main() {
     });
   });
 
-  group('StrokeStartRegion', () {
-    test('has the expected values in declaration order', () {
-      expect(StrokeStartRegion.values, const [
-        StrokeStartRegion.top,
-        StrokeStartRegion.middle,
-        StrokeStartRegion.bottom,
-      ]);
-    });
-  });
-
   group('WaypointRegion', () {
     test('has the expected values in declaration order', () {
       expect(WaypointRegion.values, const [

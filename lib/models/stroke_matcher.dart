@@ -78,8 +78,8 @@ Offset? _strokeBoundsCentroid(Stroke stroke) {
 ///
 /// For compound strokes the centroid is the average of each waypoint's
 /// cell centre in the 3×3 grid.  For all other strokes the centroid is
-/// the centre of the [StrokeStartRegion] band (horizontal thirds of
-/// [bounds] height; horizontal position is the centre of [bounds]).
+/// the centre of the [StrokeStartRect] rectangle expressed as fractions
+/// of [bounds].
 Offset _expectedRegionCentroid(ExpectedStroke stroke, Rect bounds) {
   if (stroke.primaryDirection == StrokeDirection.compound &&
       stroke.waypoints.isNotEmpty) {
@@ -93,13 +93,10 @@ Offset _expectedRegionCentroid(ExpectedStroke stroke, Rect bounds) {
     return Offset(sumX / stroke.waypoints.length, sumY / stroke.waypoints.length);
   }
 
-  final thirdH = bounds.height / 3;
-  final cx = bounds.left + bounds.width / 2;
-  final cy = switch (stroke.startRegion) {
-    StrokeStartRegion.top => bounds.top + thirdH * 0.5,
-    StrokeStartRegion.middle => bounds.top + thirdH * 1.5,
-    StrokeStartRegion.bottom => bounds.top + thirdH * 2.5,
-  };
+  final cx = bounds.left +
+      (stroke.startRect.minX + stroke.startRect.maxX) / 2 * bounds.width;
+  final cy = bounds.top +
+      (stroke.startRect.minY + stroke.startRect.maxY) / 2 * bounds.height;
   return Offset(cx, cy);
 }
 
