@@ -89,7 +89,7 @@ void main() {
   });
 
   group('DebugScoreView — formation scorer panels', () {
-    testWidgets('renders StrokeStartScorer panel with both columns',
+    testWidgets('renders StrokeStartScorer panel — inside-rect stroke',
         (tester) async {
       final result = ScoreResult(
         coverage: 1.0,
@@ -101,10 +101,10 @@ void main() {
           observations: [
             StrokeObservation(
               strokeIndex: 0,
-              expected: 'top',
-              observed: 'top',
+              expected: 'x 0–25%, y 0–15%',
+              observed: '(10%, 10%)',
               score: 1.0,
-              note: 'Started in the top region — correct.',
+              note: 'Started in the right place.',
             ),
           ],
           summary: 'All strokes started in the right place.',
@@ -117,15 +117,58 @@ void main() {
       // Technical column labels
       expect(find.text('Technical'), findsOneWidget);
       expect(find.text('Plain English'), findsOneWidget);
-      // Technical column content
-      expect(find.textContaining('expected=top'), findsOneWidget);
-      expect(find.textContaining('observed=top'), findsOneWidget);
+      // Technical column content shows rect label and point label
+      expect(find.textContaining('expected=x 0–25%, y 0–15%'), findsOneWidget);
+      expect(find.textContaining('observed=(10%, 10%)'), findsOneWidget);
       expect(find.textContaining('score=1.00'), findsOneWidget);
       // Plain-English column content
-      expect(find.textContaining('Started in the top region — correct.'), findsOneWidget);
+      expect(find.textContaining('Started in the right place.'), findsOneWidget);
       // Summary
       expect(
         find.textContaining('All strokes started in the right place.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('renders StrokeStartScorer panel — outside-rect stroke',
+        (tester) async {
+      final result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+        strokeStart: const FormationScore(
+          overallScore: 0.0,
+          observations: [
+            StrokeObservation(
+              strokeIndex: 0,
+              expected: 'x 0–25%, y 0–15%',
+              observed: '(75%, 80%)',
+              score: 0.0,
+              note: 'Started bottom-right; should start in the top-left area.',
+            ),
+          ],
+          summary: 'A stroke started in the wrong place — should start in x 0–25%, y 0–15%.',
+        ),
+      );
+      await tester.pumpWidget(_app(DebugScoreView(result: result)));
+
+      // Header line
+      expect(find.textContaining('StrokeStartScorer — 0%'), findsOneWidget);
+      // Technical column content shows rect label and point label
+      expect(find.textContaining('expected=x 0–25%, y 0–15%'), findsOneWidget);
+      expect(find.textContaining('observed=(75%, 80%)'), findsOneWidget);
+      expect(find.textContaining('score=0.00'), findsOneWidget);
+      // Plain-English directional hint
+      expect(
+        find.textContaining(
+            'Started bottom-right; should start in the top-left area.'),
+        findsOneWidget,
+      );
+      // Summary references the rect label
+      expect(
+        find.textContaining(
+            'A stroke started in the wrong place — should start in x 0–25%, y 0–15%.'),
         findsOneWidget,
       );
     });
