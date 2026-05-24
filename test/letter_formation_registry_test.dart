@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_registry.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
+import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 void main() {
   // ---------------------------------------------------------------------------
@@ -470,6 +471,192 @@ void main() {
         WaypointRegion.middle,
         WaypointRegion.bottomRight,
       ]);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // startRect values — table-driven assertions
+  //
+  // Asserts that every ExpectedStroke in the registry has the exact startRect
+  // agreed in the StrokeStart issue.  Coordinates are fractions of the letter's
+  // tight ink bounding box (x: left→right, y: top→bottom).
+  //
+  // Groups (authoring convenience only — not exposed at runtime):
+  //   Anticlockwise oval : x 0.50–1.00, y 0.00–0.25
+  //   Stem-first         : x 0.00–0.25, y 0.00–0.15
+  //   Compound stroke    : x 0.00–0.25, y 0.00–0.15
+  //   Top-left           : x 0.00–0.25, y 0.00–0.15
+  // ---------------------------------------------------------------------------
+
+  group('letterFormationRegistry — startRect values', () {
+    // Helper to get a stroke's startRect.
+    StrokeStartRect rect(String letter, int strokeIndex) =>
+        letterFormationRegistry[letter]!.strokes[strokeIndex].startRect;
+
+    // ── Anticlockwise oval group ─────────────────────────────────────────────
+    // a, c, o, s, d[0], g[0], q[0] → x 0.50–1.00, y 0.00–0.25
+    const ovalRect = StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25);
+
+    for (final letter in ['a', 'c', 'o', 's']) {
+      test('$letter[0]: anticlockwise oval startRect', () {
+        expect(rect(letter, 0), ovalRect);
+      });
+    }
+
+    test('d[0]: anticlockwise oval startRect', () {
+      expect(rect('d', 0), ovalRect);
+    });
+
+    test('g[0]: anticlockwise oval startRect', () {
+      expect(rect('g', 0), ovalRect);
+    });
+
+    test('q[0]: anticlockwise oval startRect', () {
+      expect(rect('q', 0), ovalRect);
+    });
+
+    // ── Stem-first group ─────────────────────────────────────────────────────
+    // b[0], h[0], k[0], l[0], p[0] → x 0.00–0.25, y 0.00–0.15
+    const stemRect = StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15);
+
+    for (final letter in ['b', 'l', 'p']) {
+      test('$letter[0]: stem-first startRect', () {
+        expect(rect(letter, 0), stemRect);
+      });
+    }
+
+    test('h[0]: stem-first startRect', () {
+      expect(rect('h', 0), stemRect);
+    });
+
+    test('k[0]: stem-first startRect', () {
+      expect(rect('k', 0), stemRect);
+    });
+
+    // ── Compound stroke group ────────────────────────────────────────────────
+    // n[0], m[0], u[0], r[0] → x 0.00–0.25, y 0.00–0.15
+    // (same rect as stem-first)
+
+    for (final letter in ['m', 'n', 'r', 'u']) {
+      test('$letter[0]: compound stroke startRect', () {
+        expect(rect(letter, 0), stemRect);
+      });
+    }
+
+    // ── Top-left group ───────────────────────────────────────────────────────
+    // v[0], z[0] → x 0.00–0.25, y 0.00–0.15  (same rect as stem-first)
+
+    for (final letter in ['v', 'z']) {
+      test('$letter[0]: top-left startRect', () {
+        expect(rect(letter, 0), stemRect);
+      });
+    }
+
+    // ── Per-letter overrides ─────────────────────────────────────────────────
+
+    test('e[0]: mid-right start (0.50–1.00, 0.25–0.60)', () {
+      expect(rect('e', 0),
+          const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.25, maxY: 0.60));
+    });
+
+    test('d[1]: upper-right stem (0.75–1.00, 0.00–0.15)', () {
+      expect(rect('d', 1),
+          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
+    });
+
+    test('f[0]: stem-first (0.00–0.25, 0.00–0.15)', () {
+      expect(rect('f', 0), stemRect);
+    });
+
+    test('f[1]: crossbar left at x-height (0.00–0.20, 0.44–0.56)', () {
+      expect(rect('f', 1),
+          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.44, maxY: 0.56));
+    });
+
+    test('t[0]: stem-first (0.00–0.25, 0.00–0.15)', () {
+      expect(rect('t', 0), stemRect);
+    });
+
+    test('t[1]: crossbar just above x-height (0.00–0.20, 0.26–0.38)', () {
+      expect(rect('t', 1),
+          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.26, maxY: 0.38));
+    });
+
+    test('h[1]: arch mid-left at x-height (0.00–0.20, 0.40–0.60)', () {
+      expect(rect('h', 1),
+          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60));
+    });
+
+    test('k[1]: kick mid-right above 2/3 junction (0.60–0.90, 0.35–0.55)', () {
+      expect(rect('k', 1),
+          const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.35, maxY: 0.55));
+    });
+
+    test('w[0]: tighter x bound (0.00–0.15, 0.00–0.15)', () {
+      expect(rect('w', 0),
+          const StrokeStartRect(minX: 0.00, maxX: 0.15, minY: 0.00, maxY: 0.15));
+    });
+
+    test('x[0]: top-left (0.00–0.25, 0.00–0.15)', () {
+      expect(rect('x', 0), stemRect);
+    });
+
+    test('x[1]: top-right mirror (0.75–1.00, 0.00–0.15)', () {
+      expect(rect('x', 1),
+          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
+    });
+
+    test('y[0]: top-left (0.00–0.25, 0.00–0.15)', () {
+      expect(rect('y', 0), stemRect);
+    });
+
+    test('y[1]: top-right mirror (0.75–1.00, 0.00–0.15)', () {
+      expect(rect('y', 1),
+          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
+    });
+
+    test('i[0]: centred stem (0.25–0.75, 0.00–0.15)', () {
+      expect(rect('i', 0),
+          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.00, maxY: 0.15));
+    });
+
+    test('i[1]: generous dot zone (0.15–0.85, 0.00–0.36)', () {
+      expect(rect('i', 1),
+          const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.36));
+    });
+
+    test('j[0]: centred stem (0.25–0.75, 0.00–0.15)', () {
+      expect(rect('j', 0),
+          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.00, maxY: 0.15));
+    });
+
+    test('j[1]: generous dot zone (0.15–0.85, 0.00–0.25)', () {
+      expect(rect('j', 1),
+          const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.25));
+    });
+
+    // ── Unlisted second strokes (b[1], g[1], p[1], q[1]) ────────────────────
+    // These strokes are not in the agreed groups/overrides table; values are
+    // assigned based on the letter's geometry:
+    //   b[1], p[1] — bowl re-traced from same top-left origin as stem
+    //   g[1], q[1] — descender/stem starting upper-right of the oval
+
+    test('b[1]: top-left bowl origin (0.00–0.25, 0.00–0.15)', () {
+      expect(rect('b', 1), stemRect);
+    });
+
+    test('p[1]: top-left bowl origin (0.00–0.25, 0.00–0.15)', () {
+      expect(rect('p', 1), stemRect);
+    });
+
+    test('g[1]: upper-right tail origin (0.75–1.00, 0.00–0.15)', () {
+      expect(rect('g', 1),
+          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
+    });
+
+    test('q[1]: upper-right stem origin (0.75–1.00, 0.00–0.15)', () {
+      expect(rect('q', 1),
+          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
     });
   });
 }
