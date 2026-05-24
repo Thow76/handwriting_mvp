@@ -6,6 +6,7 @@ import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/letter_formation_registry.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
+import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 void main() {
   // 300×300 bounding box used throughout. Cells are 100×100; tolerance with
@@ -262,6 +263,7 @@ void main() {
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
           startRegion: StrokeStartRegion.top,
+          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           waypoints: const [
             WaypointRegion.topLeft,
             WaypointRegion.top,
@@ -271,6 +273,7 @@ void main() {
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
           startRegion: StrokeStartRegion.bottom,
+          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 2.0 / 3.0, maxY: 1.0),
           waypoints: const [
             WaypointRegion.bottomLeft,
             WaypointRegion.bottom,
@@ -526,6 +529,7 @@ void main() {
           ExpectedStroke(
             primaryDirection: StrokeDirection.compound,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
             waypoints: const [],
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
+import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 void main() {
   // ---------------------------------------------------------------------------
@@ -91,6 +92,7 @@ void main() {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
         startRegion: StrokeStartRegion.top,
+        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
         waypoints: [WaypointRegion.top, WaypointRegion.bottomLeft, WaypointRegion.top],
       );
       expect(stroke.primaryDirection, StrokeDirection.compound);
@@ -106,6 +108,7 @@ void main() {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
+        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
       );
       expect(stroke.waypoints, isEmpty);
     });
@@ -114,6 +117,7 @@ void main() {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
         startRegion: StrokeStartRegion.middle,
+        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
         waypoints: [],
       );
       expect(stroke.waypoints, isEmpty);
@@ -124,6 +128,7 @@ void main() {
         () => ExpectedStroke(
           primaryDirection: StrokeDirection.topToBottom,
           startRegion: StrokeStartRegion.top,
+          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           waypoints: [WaypointRegion.top],
         ),
         throwsA(isA<AssertionError>()),
@@ -135,6 +140,7 @@ void main() {
         () => ExpectedStroke(
           primaryDirection: StrokeDirection.leftToRight,
           startRegion: StrokeStartRegion.middle,
+          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
           waypoints: [WaypointRegion.left],
         ),
         throwsA(isA<AssertionError>()),
@@ -146,6 +152,7 @@ void main() {
         () => ExpectedStroke(
           primaryDirection: StrokeDirection.dot,
           startRegion: StrokeStartRegion.top,
+          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           waypoints: [WaypointRegion.top],
         ),
         throwsA(isA<AssertionError>()),
@@ -164,10 +171,12 @@ void main() {
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.leftToRight,
             startRegion: StrokeStartRegion.middle,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
           ),
         ],
         minRequiredStrokes: 1,
@@ -182,6 +191,7 @@ void main() {
           ExpectedStroke(
             primaryDirection: StrokeDirection.anticlockwise,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
         ],
         minRequiredStrokes: 1,
@@ -195,10 +205,12 @@ void main() {
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.dot,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
         ],
         minRequiredStrokes: 2,
@@ -213,6 +225,7 @@ void main() {
             ExpectedStroke(
               primaryDirection: StrokeDirection.topToBottom,
               startRegion: StrokeStartRegion.top,
+              startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
             ),
           ],
           minRequiredStrokes: 0,

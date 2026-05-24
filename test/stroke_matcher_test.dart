@@ -6,6 +6,8 @@ import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_matcher.dart';
 
+import 'helpers/start_rect_for_region.dart';
+
 void main() {
   // A 300×300 bounding box centred at the origin for easy mental arithmetic.
   // Thirds: top band y=0–100 (centroid y=50), middle y=100–200 (centroid
@@ -16,6 +18,7 @@ void main() {
   ExpectedStroke expectedAt(StrokeStartRegion region) => ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: region,
+        startRect: startRectForRegion(region),
       );
 
   // Helper: a stroke whose bounding-box centroid is at (cx, cy).
@@ -144,11 +147,13 @@ void main() {
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
           startRegion: StrokeStartRegion.top,
+          startRect: startRectForRegion(StrokeStartRegion.top),
           waypoints: [WaypointRegion.topLeft],
         ),
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
           startRegion: StrokeStartRegion.bottom,
+          startRect: startRectForRegion(StrokeStartRegion.bottom),
           waypoints: [WaypointRegion.bottomRight],
         ),
       ];

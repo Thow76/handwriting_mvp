@@ -4,6 +4,7 @@ import 'package:handwriting_mvp/models/letter_formation_registry.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_break_counter.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
+import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 /// Helper: creates [count] minimal single-point strokes.
 List<Stroke> strokes(int count) =>
@@ -177,14 +178,17 @@ void main() {
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
             startRegion: StrokeStartRegion.top,
+            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           ),
         ],
       );

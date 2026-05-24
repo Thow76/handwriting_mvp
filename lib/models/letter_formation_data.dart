@@ -1,12 +1,23 @@
 import 'stroke_formation_enums.dart';
+import 'stroke_start_rect.dart';
 
 /// The expected behaviour of a single stroke within a letter.
 ///
 /// [primaryDirection] drives direction scoring for non-compound, non-dot
-/// strokes. [startRegion] is checked for every stroke. [waypoints] is the
-/// ordered list of [WaypointRegion] cells the stroke must pass through, and
-/// must be non-empty only when [primaryDirection] is
-/// [StrokeDirection.compound].
+/// strokes. [startRect] (new) and [startRegion] (deprecated) are both checked
+/// for every stroke. [waypoints] is the ordered list of [WaypointRegion] cells
+/// the stroke must pass through, and must be non-empty only when
+/// [primaryDirection] is [StrokeDirection.compound].
+///
+/// ## Migration note
+///
+/// [startRegion] is **deprecated** in favour of [startRect]. Both fields are
+/// carried in parallel during migration:
+///
+/// - [startRect] is the new per-(letter, stroke index) target rectangle used
+///   by the rewritten [StrokeStartScorer] (landing in a follow-up PR).
+/// - [startRegion] remains for now and will be removed once the scorer rewrite
+///   and registry encoding are complete.
 ///
 /// All fields are immutable. The constructor asserts the waypoints invariant
 /// at runtime.
@@ -15,7 +26,18 @@ class ExpectedStroke {
   final StrokeDirection primaryDirection;
 
   /// The expected start region, used for start-region scoring.
+  ///
+  /// **Deprecated** — use [startRect] instead. This field will be removed
+  /// once the scorer rewrite and registry encoding are complete.
   final StrokeStartRegion startRegion;
+
+  /// The expected start rectangle, expressed as bounds-relative fractions.
+  ///
+  /// Replaces [startRegion] as the target zone for start-position scoring.
+  /// The registry will be updated with per-letter values in a follow-up PR;
+  /// until then, entries use placeholder rectangles derived from the
+  /// corresponding [startRegion] vertical band.
+  final StrokeStartRect startRect;
 
   /// Ordered waypoints for compound strokes; empty for all other strokes.
   ///
@@ -29,6 +51,7 @@ class ExpectedStroke {
   ExpectedStroke({
     required this.primaryDirection,
     required this.startRegion,
+    required this.startRect,
     this.waypoints = const [],
   }) : assert(
          primaryDirection == StrokeDirection.compound || waypoints.isEmpty,
