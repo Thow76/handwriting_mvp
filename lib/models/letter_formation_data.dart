@@ -48,9 +48,13 @@ class ExpectedStroke {
   ///
   /// Asserts that [waypoints] is empty whenever [primaryDirection] is not
   /// [StrokeDirection.compound].
+  ///
+  /// [startRegion] is optional and defaults to [StrokeStartRegion.top]; it
+  /// is only used by [matchStrokes] for spatial matching and will be removed
+  /// once the scorer rewrite is complete.
   ExpectedStroke({
     required this.primaryDirection,
-    required this.startRegion,
+    this.startRegion = StrokeStartRegion.top,
     required this.startRect,
     this.waypoints = const [],
   }) : assert(
