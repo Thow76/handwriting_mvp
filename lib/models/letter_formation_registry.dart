@@ -4,6 +4,38 @@ import 'stroke_start_rect.dart';
 
 /// Formation data for authored lowercase letters.
 ///
+/// ## Start-rectangle groups
+///
+/// Every [ExpectedStroke.startRect] is expressed as fractions of the letter's
+/// tight ink bounding box (x: left→right 0–1, y: top→bottom 0–1).  The groups
+/// below are an authoring convenience; the runtime lookup is per
+/// **(letter, stroke index) → rectangle** and does not use these group names.
+///
+/// | Group              | Letters / strokes                              | x          | y          |
+/// |--------------------|------------------------------------------------|------------|------------|
+/// | Anticlockwise oval | a, c, o, s, d[0], g[0], q[0]                  | 0.50–1.00  | 0.00–0.25  |
+/// | Stem-first         | b[0], h[0], k[0], l[0], p[0]                  | 0.00–0.25  | 0.00–0.15  |
+/// | Compound stroke    | n[0], m[0], u[0], r[0]                         | 0.00–0.25  | 0.00–0.15  |
+/// | Top-left           | v[0], z[0], x[0], y[0]                         | 0.00–0.25  | 0.00–0.15  |
+///
+/// Per-letter overrides (take precedence over group defaults):
+///
+/// | Letter | Stroke | x          | y          | Notes                     |
+/// |--------|--------|------------|------------|---------------------------|
+/// | e      | 0      | 0.50–1.00  | 0.25–0.60  | Mid-right start           |
+/// | d      | 1      | 0.75–1.00  | 0.00–0.15  | Upper-right stem          |
+/// | f      | 1      | 0.00–0.20  | 0.44–0.56  | Left at x-height crossbar |
+/// | t      | 1      | 0.00–0.20  | 0.26–0.38  | Left just above x-height  |
+/// | h      | 1      | 0.00–0.20  | 0.40–0.60  | Mid-left arch start       |
+/// | k      | 1      | 0.60–0.90  | 0.35–0.55  | Mid-right kick start      |
+/// | w      | 0      | 0.00–0.15  | 0.00–0.15  | Tighter x bound           |
+/// | x      | 1      | 0.75–1.00  | 0.00–0.15  | Top-right mirror          |
+/// | y      | 1      | 0.75–1.00  | 0.00–0.15  | Top-right mirror          |
+/// | i      | 0      | 0.25–0.75  | 0.00–0.15  | Centred stem              |
+/// | i      | 1      | 0.15–0.85  | 0.00–0.36  | Generous dot zone         |
+/// | j      | 0      | 0.25–0.75  | 0.00–0.15  | Centred stem              |
+/// | j      | 1      | 0.15–0.85  | 0.00–0.25  | Generous dot zone         |
+///
 /// ## Single-stroke letters — `c, e, l, o, s, v, w, z`
 ///
 /// Every entry has `minRequiredStrokes = 1` and exactly one [ExpectedStroke].
@@ -100,7 +132,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25),
       ),
     ],
   ),
@@ -110,7 +142,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.25, maxY: 0.60),
       ),
     ],
   ),
@@ -120,7 +152,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -130,7 +162,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25),
       ),
     ],
   ),
@@ -145,7 +177,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25),
       ),
     ],
   ),
@@ -155,7 +187,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -165,7 +197,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.15, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -175,7 +207,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -195,7 +227,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25),
       ),
     ],
   ),
@@ -205,12 +237,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -220,12 +252,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -235,12 +267,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -250,12 +282,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -265,12 +297,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -280,7 +312,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -290,12 +322,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -309,12 +341,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
         startRegion: StrokeStartRegion.middle,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.44, maxY: 0.56),
       ),
     ],
   ),
@@ -324,12 +356,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.dot,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.36),
       ),
     ],
   ),
@@ -339,12 +371,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.dot,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.25),
       ),
     ],
   ),
@@ -354,12 +386,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
         startRegion: StrokeStartRegion.middle,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.26, maxY: 0.38),
       ),
     ],
   ),
@@ -369,12 +401,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -403,12 +435,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
         startRegion: StrokeStartRegion.middle,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60),
         waypoints: [
           WaypointRegion.left,
           WaypointRegion.top,
@@ -423,12 +455,12 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.35, maxY: 0.55),
         waypoints: [
           WaypointRegion.topRight,
           WaypointRegion.middle,
@@ -443,7 +475,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
         waypoints: [
           WaypointRegion.topLeft,
           WaypointRegion.bottomLeft,
@@ -461,7 +493,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
         waypoints: [
           WaypointRegion.topLeft,
           WaypointRegion.bottomLeft,
@@ -477,7 +509,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
         startRegion: StrokeStartRegion.top,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
         waypoints: [
           WaypointRegion.topLeft,
           WaypointRegion.bottomLeft,
