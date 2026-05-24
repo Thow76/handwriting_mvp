@@ -8,6 +8,8 @@ import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 import 'package:handwriting_mvp/models/stroke_start_scorer.dart';
 
+import 'helpers/start_rect_for_region.dart';
+
 void main() {
   // 300×300 bounding box.  Vertical thirds:
   //   top    y =   0 – 100  (first-point centroid  y =  50)
@@ -432,14 +434,7 @@ void main() {
               ExpectedStroke(
                 primaryDirection: StrokeDirection.topToBottom,
                 startRegion: region,
-                startRect: switch (region) {
-                  StrokeStartRegion.top =>
-                    const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
-                  StrokeStartRegion.middle =>
-                    const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
-                  StrokeStartRegion.bottom =>
-                    const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 2.0 / 3.0, maxY: 1.0),
-                },
+                startRect: startRectForRegion(region),
               ),
             ],
           );
