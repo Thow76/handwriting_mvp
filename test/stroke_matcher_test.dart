@@ -5,6 +5,7 @@ import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_matcher.dart';
+import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 void main() {
   // A 300×300 bounding box centred at the origin for easy mental arithmetic.
@@ -16,6 +17,14 @@ void main() {
   ExpectedStroke expectedAt(StrokeStartRegion region) => ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRegion: region,
+        startRect: switch (region) {
+          StrokeStartRegion.top =>
+            const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+          StrokeStartRegion.middle =>
+            const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
+          StrokeStartRegion.bottom =>
+            const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 2.0 / 3.0, maxY: 1.0),
+        },
       );
 
   // Helper: a stroke whose bounding-box centroid is at (cx, cy).
@@ -144,11 +153,13 @@ void main() {
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
           startRegion: StrokeStartRegion.top,
+          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
           waypoints: [WaypointRegion.topLeft],
         ),
         ExpectedStroke(
           primaryDirection: StrokeDirection.compound,
           startRegion: StrokeStartRegion.bottom,
+          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 2.0 / 3.0, maxY: 1.0),
           waypoints: [WaypointRegion.bottomRight],
         ),
       ];
