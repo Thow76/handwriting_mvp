@@ -117,15 +117,16 @@ void main() {
       expect(data.strokes[1].primaryDirection, StrokeDirection.clockwise);
     });
 
-    // d: left-opening oval (anticlockwise) + vertical stem (topToBottom).
-    test('d: stroke 1 is anticlockwise starting at top', () {
+    // d: vertical stem (topToBottom) first, then left-opening oval (anticlockwise).
+    // Stroke order corrected per design doc: stem[0] before bowl[1].
+    test('d: stroke 1 is topToBottom starting at top', () {
       final data = letterFormationRegistry['d']!;
-      expect(data.strokes[0].primaryDirection, StrokeDirection.anticlockwise);
+      expect(data.strokes[0].primaryDirection, StrokeDirection.topToBottom);
     });
 
-    test('d: stroke 2 is topToBottom starting at top', () {
+    test('d: stroke 2 is anticlockwise starting at top', () {
       final data = letterFormationRegistry['d']!;
-      expect(data.strokes[1].primaryDirection, StrokeDirection.topToBottom);
+      expect(data.strokes[1].primaryDirection, StrokeDirection.anticlockwise);
     });
 
     // g: left-opening oval (anticlockwise) + descending tail (topToBottom).
@@ -452,7 +453,7 @@ void main() {
   // tight ink bounding box (x: left→right, y: top→bottom).
   //
   // Groups (authoring convenience only — not exposed at runtime):
-  //   Anticlockwise oval : x 0.50–1.00, y 0.00–0.25
+  //   Anticlockwise oval : x 0.55–0.95, y 0.00–0.25
   //   Stem-first         : x 0.00–0.25, y 0.00–0.15
   //   Compound stroke    : x 0.00–0.25, y 0.00–0.15
   //   Top-left           : x 0.00–0.25, y 0.00–0.15
@@ -464,8 +465,8 @@ void main() {
         letterFormationRegistry[letter]!.strokes[strokeIndex].startRect;
 
     // ── Anticlockwise oval group ─────────────────────────────────────────────
-    // a, c, o, s, d[0], g[0], q[0] → x 0.50–1.00, y 0.00–0.25
-    const ovalRect = StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.00, maxY: 0.25);
+    // a, c, o, s, g[0], q[0] → x 0.55–0.95, y 0.00–0.25
+    const ovalRect = StrokeStartRect(minX: 0.55, maxX: 0.95, minY: 0.00, maxY: 0.25);
 
     for (final letter in ['a', 'c', 'o', 's']) {
       test('$letter[0]: anticlockwise oval startRect', () {
@@ -473,8 +474,9 @@ void main() {
       });
     }
 
-    test('d[0]: anticlockwise oval startRect', () {
-      expect(rect('d', 0), ovalRect);
+    test('d[0]: upper-right stem startRect (0.75–1.00, 0.00–0.15)', () {
+      expect(rect('d', 0),
+          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
     });
 
     test('g[0]: anticlockwise oval startRect', () {
@@ -524,18 +526,19 @@ void main() {
 
     // ── Per-letter overrides ─────────────────────────────────────────────────
 
-    test('e[0]: mid-right start (0.50–1.00, 0.25–0.60)', () {
+    test('e[0]: mid-left tongue start (0.00–0.25, 0.40–0.60)', () {
       expect(rect('e', 0),
-          const StrokeStartRect(minX: 0.50, maxX: 1.00, minY: 0.25, maxY: 0.60));
+          const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.40, maxY: 0.60));
     });
 
-    test('d[1]: upper-right stem (0.75–1.00, 0.00–0.15)', () {
+    test('d[1]: mid-right bowl (0.80–1.00, 0.40–0.60)', () {
       expect(rect('d', 1),
-          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
+          const StrokeStartRect(minX: 0.80, maxX: 1.00, minY: 0.40, maxY: 0.60));
     });
 
-    test('f[0]: stem-first (0.00–0.25, 0.00–0.15)', () {
-      expect(rect('f', 0), stemRect);
+    test('f[0]: upper-right stem (0.60–0.90, 0.00–0.30)', () {
+      expect(rect('f', 0),
+          const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.00, maxY: 0.30));
     });
 
     test('f[1]: crossbar left at x-height (0.00–0.20, 0.44–0.56)', () {
@@ -543,8 +546,9 @@ void main() {
           const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.44, maxY: 0.56));
     });
 
-    test('t[0]: stem-first (0.00–0.25, 0.00–0.15)', () {
-      expect(rect('t', 0), stemRect);
+    test('t[0]: mid-upper stem (0.30–0.55, 0.00–0.15)', () {
+      expect(rect('t', 0),
+          const StrokeStartRect(minX: 0.30, maxX: 0.55, minY: 0.00, maxY: 0.15));
     });
 
     test('t[1]: crossbar just above x-height (0.00–0.20, 0.26–0.38)', () {
@@ -585,9 +589,9 @@ void main() {
           const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
     });
 
-    test('i[0]: centred stem (0.25–0.75, 0.00–0.15)', () {
+    test('i[0]: centred stem below dot zone (0.25–0.75, 0.33–0.48)', () {
       expect(rect('i', 0),
-          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.00, maxY: 0.15));
+          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.33, maxY: 0.48));
     });
 
     test('i[1]: generous dot zone (0.15–0.85, 0.00–0.36)', () {
@@ -595,9 +599,9 @@ void main() {
           const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.36));
     });
 
-    test('j[0]: centred stem (0.25–0.75, 0.00–0.15)', () {
+    test('j[0]: centred stem below dot (0.25–0.75, 0.22–0.33)', () {
       expect(rect('j', 0),
-          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.00, maxY: 0.15));
+          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.22, maxY: 0.33));
     });
 
     test('j[1]: generous dot zone (0.15–0.85, 0.00–0.25)', () {
