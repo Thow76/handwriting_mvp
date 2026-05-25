@@ -183,11 +183,11 @@ void main() {
     // ── 't' with both strokes starting correctly ─────────────────────────────
     //
     // 't' has two expected strokes:
-    //   stroke 0: stem,    startRect minX=0, maxX=0.25, minY=0,    maxY=0.15
-    //   stroke 1: crossbar startRect minX=0, maxX=0.20, minY=0.26, maxY=0.38
+    //   stroke 0: stem,    startRect minX=0.30, maxX=0.55, minY=0,    maxY=0.15
+    //   stroke 1: crossbar startRect minX=0,    maxX=0.20, minY=0.26, maxY=0.38
     //
     // Correct strokes:
-    //   observed[0]: first (20, 20)  → rx=7%,  ry=7%  → inside stem rect
+    //   observed[0]: first (100, 20) → rx=33%, ry=7%  → inside stem rect
     //   observed[1]: first (20, 90)  → rx=7%,  ry=30% → inside crossbar rect
 
     group("'t' both strokes starting correctly", () {
@@ -203,8 +203,8 @@ void main() {
 
       test('overallScore is 1.0', () {
         final observed = [
-          // Stem: centroid (150, 50), first point inside stem rect.
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          // Stem: centroid (190, 50), first point inside stem rect.
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           // Crossbar: centroid (150, 150), first point inside crossbar rect.
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
@@ -214,7 +214,7 @@ void main() {
 
       test('two observations are produced', () {
         final observed = [
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
@@ -223,18 +223,18 @@ void main() {
 
       test('stroke 0 observation: correct stem rect and point', () {
         final observed = [
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
-        expect(result.observations[0].expected, 'x 0–25%, y 0–15%');
-        expect(result.observations[0].observed, '(7%, 7%)');
+        expect(result.observations[0].expected, 'x 30–55%, y 0–15%');
+        expect(result.observations[0].observed, '(33%, 7%)');
         expect(result.observations[0].score, 1.0);
       });
 
       test('stroke 1 observation: correct crossbar rect and point', () {
         final observed = [
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
@@ -245,7 +245,7 @@ void main() {
 
       test('summary is the all-correct sentence', () {
         final observed = [
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
@@ -271,8 +271,8 @@ void main() {
 
       test('overallScore is 0.5', () {
         final observed = [
-          // Stem: centroid (150, 50), first point inside stem rect.
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          // Stem: centroid (190, 50), first point inside stem rect.
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           // Crossbar: centroid (150, 150), first point above crossbar rect.
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ];
@@ -282,7 +282,7 @@ void main() {
 
       test('crossbar observation: outside rect → score = 0.0', () {
         final observed = [
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ];
         final result = scorer.score(observed);
@@ -292,7 +292,7 @@ void main() {
 
       test('summary mentions the wrong place', () {
         final observed = [
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ];
         final result = scorer.score(observed);
@@ -385,7 +385,7 @@ void main() {
     // ── Mean across strokes ───────────────────────────────────────────────────
     //
     // Uses 't' (two expected strokes):
-    //   stem    startRect: x ∈ [0,  75), y ∈ [0,  45)
+    //   stem    startRect: x ∈ [90, 165), y ∈ [0,  45)
     //   crossbar startRect: x ∈ [0,  60), y ∈ [78, 114)
     //
     // overallScore is the mean of per-stroke scores.
@@ -398,8 +398,8 @@ void main() {
           bounds: bounds,
         );
         final result = scorer.score([
-          // Stem: centroid (150, 50), first inside stem rect.
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          // Stem: centroid (190, 50), first inside stem rect.
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           // Crossbar: centroid (150, 150), first inside crossbar rect.
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ]);
@@ -428,8 +428,8 @@ void main() {
           bounds: bounds,
         );
         final result = scorer.score([
-          // Stem: inside.
-          Stroke([const Offset(20, 20), const Offset(280, 80)]),
+          // Stem: inside new stem rect (first at (100, 20) → rx=33%, ry=7%).
+          Stroke([const Offset(100, 20), const Offset(280, 80)]),
           // Crossbar: first point above crossbar rect → outside.
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ]);

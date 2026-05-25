@@ -183,10 +183,12 @@ void main() {
         inkLastRow: 119,
       );
 
-      // Expected centroid for 'a' (startRect top-group) with tightBounds:
-      //   cx = 50, cy = 60 + 20 * 0.5 = 70.
-      // Stroke centroid: min_y=60, max_y=80 → mid=70.  Centroid = (50, 70) ✓
-      final stroke = Stroke(const [Offset(50, 60), Offset(50, 80)]);
+      // Expected centroid for 'a' (new oval startRect x 0.55–0.95, y 0.00–0.25)
+      // with tightBounds width=100, height=60:
+      //   expectedCx = 75, expectedCy = 60 + 7.5 = 67.5.
+      // Stroke centroid: min_x=55, max_x=60, mid=57.5; min_y=60, max_y=80, mid=70.
+      // First point (60, 60) → rx=60%, ry=0% → inside oval rect (0.55–0.95, 0.00–0.25).
+      final stroke = Stroke(const [Offset(60, 60), Offset(50, 80)]);
 
       final result = buildScoreResult(
         templateResult: template,
