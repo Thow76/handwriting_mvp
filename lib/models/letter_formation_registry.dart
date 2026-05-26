@@ -14,8 +14,7 @@ import 'stroke_start_rect.dart';
 /// | Group              | Letters / strokes                              | x          | y          |
 /// |--------------------|------------------------------------------------|------------|------------|
 /// | Anticlockwise oval | a, c, o, s, g[0]                               | 0.55–0.95  | 0.00–0.25  |
-/// | Stem-first         | b[0], h[0], k[0], l[0], p[0]                  | 0.00–0.25  | 0.00–0.15  |
-/// | Compound stroke    | r[0]                                           | 0.00–0.25  | 0.00–0.15  |
+/// | Stem-first         | b[0], h[0], k[0], l[0], p[0], r[0]            | 0.00–0.25  | 0.00–0.15  |
 /// | Top-left           | v[0], z[0], x[0], y[0]                         | 0.00–0.25  | 0.00–0.15  |
 ///
 /// Per-letter overrides (take precedence over group defaults):
@@ -43,6 +42,7 @@ import 'stroke_start_rect.dart';
 /// | g      | 1      | 0.65–0.95  | 0.00–0.25  | Upper-right link/tail start                      |
 /// | q      | 0      | 0.68–0.95  | 0.00–0.15  | Oval start — tighter than standard oval group    |
 /// | q      | 1      | 0.87–1.00  | 0.00–0.15  | Far-right descender at top of bounds             |
+/// | r      | 1      | 0.00–0.30  | 0.40–0.60  | Arch mid-left at x-height (same zone as h[1])    |
 /// | m      | 0      | 0.00–0.30  | 0.00–0.20  | Widened compound start                           |
 /// | n      | 0      | 0.00–0.30  | 0.00–0.20  | Widened compound start                           |
 /// | u      | 0      | 0.00–0.30  | 0.00–0.15  | Widened compound start                           |
@@ -66,7 +66,7 @@ import 'stroke_start_rect.dart';
 /// | w      | topToBottom     | Diagonal (two v-shapes joined) |
 /// | z      | topToBottom     | Diagonal class (top bar → diagonal → base bar) |
 ///
-/// ## Optional-lift oval-and-bowl letters — `a, b, d, g, p, q, r, y`
+/// ## Optional-lift oval-and-bowl letters — `a, b, d, g, p, q, y`
 ///
 /// All entries have `minRequiredStrokes = 1`. Connected (one-stroke) and
 /// separated (multi-stroke) formations are both pedagogically correct; the
@@ -91,7 +91,6 @@ import 'stroke_start_rect.dart';
 /// | p      | 2      | clockwise       | Right-opening bowl |
 /// | q      | 1      | anticlockwise   | Left-opening oval |
 /// | q      | 2      | topToBottom     | Vertical stem |
-/// | r      | 1      | topToBottom     | Stem/entry stroke |
 /// | y      | 1      | topToBottom     | Diagonal stem (down-left) |
 /// | y      | 2      | topToBottom     | Diagonal tail (down-right) |
 ///
@@ -113,7 +112,7 @@ import 'stroke_start_rect.dart';
 /// | x      | 1      | topToBottom     | Diagonal stroke (top-left to bottom-right) |
 /// | x      | 2      | topToBottom     | Diagonal stroke (top-right to bottom-left) |
 ///
-/// ## Compound-stroke letters — `h, k, m, n, u`
+/// ## Compound-stroke letters — `h, k, m, n, r, u`
 ///
 /// Letters whose pen never lifts but travels through multiple directional
 /// phases. Compound [ExpectedStroke]s have `primaryDirection = compound` and
@@ -128,10 +127,12 @@ import 'stroke_start_rect.dart';
 /// | k      | 2      | compound        | topRight → middle → bottomRight                        |
 /// | m      | 1      | compound        | topLeft → bottomLeft → top → bottom → top → bottomRight |
 /// | n      | 1      | compound        | topLeft → bottomLeft → top → bottomRight               |
+/// | r      | 1      | topToBottom     | — (stem)                                                |
+/// | r      | 2      | compound        | left → topRight                                        |
 /// | u      | 1      | compound        | topLeft → bottomLeft → bottom → bottomRight → topRight |
 ///
-/// `h` and `k` have `minRequiredStrokes = 2` — the pen-lift between stem and
-/// compound stroke is mandatory. `m`, `n`, and `u` have
+/// `h`, `k`, and `r` have `minRequiredStrokes = 2` — the pen-lift between
+/// stem and compound stroke is mandatory. `m`, `n`, and `u` have
 /// `minRequiredStrokes = 1` — they are drawn in a single continuous compound
 /// stroke.
 ///
@@ -299,11 +300,19 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     ],
   ),
   'r': LetterFormationData(
-    minRequiredStrokes: 1,
+    minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
+      ),
+      ExpectedStroke(
+        primaryDirection: StrokeDirection.compound,
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60),
+        waypoints: [
+          WaypointRegion.left,
+          WaypointRegion.topRight,
+        ],
       ),
     ],
   ),
@@ -390,14 +399,14 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     ],
   ),
   // -------------------------------------------------------------------------
-  // Compound-stroke letters — h, k, m, n, u
+  // Compound-stroke letters — h, k, m, n, r, u
   //
   // Letters whose pen never lifts but travels through multiple directional
   // phases. Compound strokes have primaryDirection = compound and a non-empty
   // waypoints list specifying the ordered 3×3 WaypointRegion grid cells the
   // stroke must pass through.
   //
-  // h and k: stem (topToBottom) + compound second stroke.
+  // h, k, r: stem (topToBottom) + compound second stroke.
   //   minRequiredStrokes = 2 — the pen-lift between stem and arch/kick is
   //   mandatory.
   //
