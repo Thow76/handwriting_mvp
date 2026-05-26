@@ -41,7 +41,7 @@ import 'stroke_start_rect.dart';
 /// | b      | 1      | 0.00–0.30  | 0.40–0.60  | Mid-left bowl at x-height                        |
 /// | p      | 1      | 0.00–0.30  | 0.00–0.15  | Bowl starts at top of bounds (descender bounds)  |
 /// | g      | 1      | 0.65–0.95  | 0.00–0.25  | Upper-right link/tail start                      |
-/// | q      | 0      | 0.68–0.95  | 0.00–0.125 | Oval start — tighter than standard oval group    |
+/// | q      | 0      | 0.68–0.95  | 0.00–0.15  | Oval start — tighter than standard oval group    |
 /// | q      | 1      | 0.87–1.00  | 0.00–0.15  | Far-right descender at top of bounds             |
 /// | m      | 0      | 0.00–0.30  | 0.00–0.20  | Widened compound start                           |
 /// | n      | 0      | 0.00–0.30  | 0.00–0.20  | Widened compound start                           |
@@ -290,7 +290,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
-        startRect: const StrokeStartRect(minX: 0.68, maxX: 0.95, minY: 0.00, maxY: 0.125),
+        startRect: const StrokeStartRect(minX: 0.68, maxX: 0.95, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,

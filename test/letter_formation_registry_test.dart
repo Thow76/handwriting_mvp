@@ -483,9 +483,9 @@ void main() {
       expect(rect('g', 0), ovalRect);
     });
 
-    test('q[0]: oval start — tighter than standard (0.68–0.95, 0.00–0.125)', () {
+    test('q[0]: oval start — tighter than standard (0.68–0.95, 0.00–0.15)', () {
       expect(rect('q', 0),
-          const StrokeStartRect(minX: 0.68, maxX: 0.95, minY: 0.00, maxY: 0.125));
+          const StrokeStartRect(minX: 0.68, maxX: 0.95, minY: 0.00, maxY: 0.15));
     });
 
     // ── Stem-first group ─────────────────────────────────────────────────────
