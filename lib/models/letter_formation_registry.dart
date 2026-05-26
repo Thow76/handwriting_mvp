@@ -24,8 +24,8 @@ import 'stroke_start_rect.dart';
 /// | d      | 0      | 0.75–1.00  | 0.00–0.15  | Upper-right stem (stroke 0 = stem, before bowl)  |
 /// | d      | 1      | 0.70–1.00  | 0.40–0.60  | Mid-right bowl (stroke 1, after stem)            |
 /// | e      | 0      | 0.00–0.25  | 0.40–0.60  | Mid-left tongue start                            |
-/// | f      | 0      | 0.60–0.90  | 0.00–0.30  | Upper-right stem; wider y to absorb hook depth   |
-/// | f      | 1      | 0.00–0.20  | 0.44–0.56  | Left at x-height crossbar                        |
+/// | f      | 0      | 0.35–0.75  | 0.00–0.20  | Upper-centre hook start; recentred from right-biased legacy |
+/// | f      | 1      | 0.00–0.30  | 0.35–0.55  | Left at x-height crossbar; y raised for ascender-inclusive bounds |
 /// | t      | 0      | 0.35–0.65  | 0.00–0.15  | Mid-upper stem; recentred and widened             |
 /// | t      | 1      | 0.00–0.24  | 0.26–0.38  | Left just above x-height                         |
 /// | h      | 1      | 0.00–0.30  | 0.40–0.60  | Mid-left arch start                              |
@@ -338,11 +338,11 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.00, maxY: 0.30),
+        startRect: const StrokeStartRect(minX: 0.35, maxX: 0.75, minY: 0.00, maxY: 0.20),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.44, maxY: 0.56),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.35, maxY: 0.55),
       ),
     ],
   ),
