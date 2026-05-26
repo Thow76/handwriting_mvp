@@ -63,8 +63,8 @@ void main() {
     // ── Correct 'n' ─────────────────────────────────────────────────────────
     //
     // 'n' is a single compound stroke.
-    // startRect: minX=0, maxX=0.25, minY=0, maxY=0.15
-    //   → in 300×300 bounds: x ∈ [0, 75), y ∈ [0, 45)
+    // startRect: minX=0, maxX=0.30, minY=0, maxY=0.20
+    //   → in 300×300 bounds: x ∈ [0, 90), y ∈ [0, 60)
     //
     // Correct first point: (30, 30) → rx=10%, ry=10% → inside rect → 1.0
 
@@ -101,7 +101,7 @@ void main() {
           Stroke([const Offset(30, 30), const Offset(250, 250)]),
         ];
         final result = scorer.score(observed);
-        expect(result.observations[0].expected, 'x 0–25%, y 0–15%');
+        expect(result.observations[0].expected, 'x 0–30%, y 0–20%');
         expect(result.observations[0].observed, '(10%, 10%)');
         expect(result.observations[0].score, 1.0);
       });
@@ -153,7 +153,7 @@ void main() {
           Stroke([const Offset(280, 280), const Offset(50, 50)]),
         ];
         final result = scorer.score(observed);
-        expect(result.observations[0].expected, 'x 0–25%, y 0–15%');
+        expect(result.observations[0].expected, 'x 0–30%, y 0–20%');
         expect(result.observations[0].observed, '(93%, 93%)');
         expect(result.observations[0].score, 0.0);
       });
@@ -183,11 +183,11 @@ void main() {
     // ── 't' with both strokes starting correctly ─────────────────────────────
     //
     // 't' has two expected strokes:
-    //   stroke 0: stem,    startRect minX=0.30, maxX=0.55, minY=0,    maxY=0.15
-    //   stroke 1: crossbar startRect minX=0,    maxX=0.20, minY=0.26, maxY=0.38
+    //   stroke 0: stem,    startRect minX=0.35, maxX=0.65, minY=0,    maxY=0.15
+    //   stroke 1: crossbar startRect minX=0,    maxX=0.24, minY=0.26, maxY=0.38
     //
     // Correct strokes:
-    //   observed[0]: first (100, 20) → rx=33%, ry=7%  → inside stem rect
+    //   observed[0]: first (120, 20) → rx=40%, ry=7%  → inside stem rect
     //   observed[1]: first (20, 90)  → rx=7%,  ry=30% → inside crossbar rect
 
     group("'t' both strokes starting correctly", () {
@@ -203,8 +203,8 @@ void main() {
 
       test('overallScore is 1.0', () {
         final observed = [
-          // Stem: centroid (190, 50), first point inside stem rect.
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          // Stem: centroid (200, 50), first point inside stem rect.
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           // Crossbar: centroid (150, 150), first point inside crossbar rect.
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
@@ -214,7 +214,7 @@ void main() {
 
       test('two observations are produced', () {
         final observed = [
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
@@ -223,29 +223,29 @@ void main() {
 
       test('stroke 0 observation: correct stem rect and point', () {
         final observed = [
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
-        expect(result.observations[0].expected, 'x 30–55%, y 0–15%');
-        expect(result.observations[0].observed, '(33%, 7%)');
+        expect(result.observations[0].expected, 'x 35–65%, y 0–15%');
+        expect(result.observations[0].observed, '(40%, 7%)');
         expect(result.observations[0].score, 1.0);
       });
 
       test('stroke 1 observation: correct crossbar rect and point', () {
         final observed = [
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
-        expect(result.observations[1].expected, 'x 0–20%, y 26–38%');
+        expect(result.observations[1].expected, 'x 0–24%, y 26–38%');
         expect(result.observations[1].observed, '(7%, 30%)');
         expect(result.observations[1].score, 1.0);
       });
 
       test('summary is the all-correct sentence', () {
         final observed = [
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ];
         final result = scorer.score(observed);
@@ -271,8 +271,8 @@ void main() {
 
       test('overallScore is 0.5', () {
         final observed = [
-          // Stem: centroid (190, 50), first point inside stem rect.
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          // Stem: centroid (200, 50), first point inside stem rect.
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           // Crossbar: centroid (150, 150), first point above crossbar rect.
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ];
@@ -282,17 +282,17 @@ void main() {
 
       test('crossbar observation: outside rect → score = 0.0', () {
         final observed = [
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ];
         final result = scorer.score(observed);
-        expect(result.observations[1].expected, 'x 0–20%, y 26–38%');
+        expect(result.observations[1].expected, 'x 0–24%, y 26–38%');
         expect(result.observations[1].score, 0.0);
       });
 
       test('summary mentions the wrong place', () {
         final observed = [
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ];
         final result = scorer.score(observed);
@@ -302,8 +302,8 @@ void main() {
 
     // ── Inside-rect → 1.0 ────────────────────────────────────────────────────
     //
-    // Uses 'n' startRect: minX=0, maxX=0.25, minY=0, maxY=0.15.
-    // → in 300×300: x ∈ [0, 75), y ∈ [0, 45).
+    // Uses 'n' startRect: minX=0, maxX=0.30, minY=0, maxY=0.20.
+    // → in 300×300: x ∈ [0, 90), y ∈ [0, 60).
 
     group('inside-rect → 1.0', () {
       late StrokeStartScorer scorer;
@@ -347,8 +347,8 @@ void main() {
 
     // ── Outside-rect → 0.0 ───────────────────────────────────────────────────
     //
-    // Uses 'n' startRect: minX=0, maxX=0.25, minY=0, maxY=0.15.
-    // → in 300×300: x ∈ [0, 75), y ∈ [0, 45).
+    // Uses 'n' startRect: minX=0, maxX=0.30, minY=0, maxY=0.20.
+    // → in 300×300: x ∈ [0, 90), y ∈ [0, 60).
 
     group('outside-rect → 0.0', () {
       late StrokeStartScorer scorer;
@@ -361,15 +361,15 @@ void main() {
         );
       });
 
-      test('first point just outside right edge (x=75, rx=25%) → 0.0', () {
-        // rx = 75 / 300 = 0.25 = maxX → outside (exclusive upper bound).
-        final result = scorer.score([strokeWithFirst(const Offset(75, 22))]);
+      test('first point just outside right edge (x=90, rx=30%) → 0.0', () {
+        // rx = 90 / 300 = 0.30 = maxX → outside (exclusive upper bound).
+        final result = scorer.score([strokeWithFirst(const Offset(90, 22))]);
         expect(result.overallScore, 0.0);
       });
 
-      test('first point just outside bottom edge (y=45, ry=15%) → 0.0', () {
-        // ry = 45 / 300 = 0.15 = maxY → outside (exclusive upper bound).
-        final result = scorer.score([strokeWithFirst(const Offset(37, 45))]);
+      test('first point just outside bottom edge (y=60, ry=20%) → 0.0', () {
+        // ry = 60 / 300 = 0.20 = maxY → outside (exclusive upper bound).
+        final result = scorer.score([strokeWithFirst(const Offset(37, 60))]);
         expect(result.overallScore, 0.0);
       });
 
@@ -385,8 +385,8 @@ void main() {
     // ── Mean across strokes ───────────────────────────────────────────────────
     //
     // Uses 't' (two expected strokes):
-    //   stem    startRect: x ∈ [90, 165), y ∈ [0,  45)
-    //   crossbar startRect: x ∈ [0,  60), y ∈ [78, 114)
+    //   stem    startRect: x ∈ [105, 195), y ∈ [0,  45)
+    //   crossbar startRect: x ∈ [0,   72), y ∈ [78, 114)
     //
     // overallScore is the mean of per-stroke scores.
 
@@ -398,8 +398,8 @@ void main() {
           bounds: bounds,
         );
         final result = scorer.score([
-          // Stem: centroid (190, 50), first inside stem rect.
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          // Stem: centroid (200, 50), first inside stem rect.
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           // Crossbar: centroid (150, 150), first inside crossbar rect.
           Stroke([const Offset(20, 90), const Offset(280, 210)]),
         ]);
@@ -428,8 +428,8 @@ void main() {
           bounds: bounds,
         );
         final result = scorer.score([
-          // Stem: inside new stem rect (first at (100, 20) → rx=33%, ry=7%).
-          Stroke([const Offset(100, 20), const Offset(280, 80)]),
+          // Stem: inside stem rect (first at (120, 20) → rx=40%, ry=7%).
+          Stroke([const Offset(120, 20), const Offset(280, 80)]),
           // Crossbar: first point above crossbar rect → outside.
           Stroke([const Offset(10, 50), const Offset(290, 250)]),
         ]);
@@ -442,8 +442,8 @@ void main() {
     // Mirrors StrokeStartRect.contains: inclusive on the minimum edges
     // (minX, minY) and exclusive on the maximum edges (maxX, maxY).
     //
-    // Uses 'n' startRect: minX=0.0, maxX=0.25, minY=0.0, maxY=0.15.
-    // → in 300×300: x ∈ [0, 75), y ∈ [0, 45).
+    // Uses 'n' startRect: minX=0.0, maxX=0.30, minY=0.0, maxY=0.20.
+    // → in 300×300: x ∈ [0, 90), y ∈ [0, 60).
 
     group('edge convention', () {
       late StrokeStartScorer scorer;
@@ -466,15 +466,15 @@ void main() {
         expect(result.overallScore, 1.0);
       });
 
-      test('point at maxX (x=75, rx=0.25, exclusive right edge) → 0.0', () {
-        // rx = 75 / 300 = 0.25 = maxX → NOT inside (exclusive).
-        final result = scorer.score([strokeWithFirst(const Offset(75, 22))]);
+      test('point at maxX (x=90, rx=0.30, exclusive right edge) → 0.0', () {
+        // rx = 90 / 300 = 0.30 = maxX → NOT inside (exclusive).
+        final result = scorer.score([strokeWithFirst(const Offset(90, 22))]);
         expect(result.overallScore, 0.0);
       });
 
-      test('point at maxY (y=45, ry=0.15, exclusive bottom edge) → 0.0', () {
-        // ry = 45 / 300 = 0.15 = maxY → NOT inside (exclusive).
-        final result = scorer.score([strokeWithFirst(const Offset(37, 45))]);
+      test('point at maxY (y=60, ry=0.20, exclusive bottom edge) → 0.0', () {
+        // ry = 60 / 300 = 0.20 = maxY → NOT inside (exclusive).
+        final result = scorer.score([strokeWithFirst(const Offset(37, 60))]);
         expect(result.overallScore, 0.0);
       });
     });
@@ -524,7 +524,7 @@ void main() {
     // ── Observation payload ───────────────────────────────────────────────────
     //
     // Verifies the structure of each StrokeObservation.
-    // Uses 'n' startRect: minX=0, maxX=0.25, minY=0, maxY=0.15.
+    // Uses 'n' startRect: minX=0, maxX=0.30, minY=0, maxY=0.20.
 
     group('observation payload', () {
       late StrokeStartScorer scorer;
@@ -538,9 +538,9 @@ void main() {
       });
 
       test('expected describes the rect bounds as a percentage range', () {
-        // n's startRect: x 0–25%, y 0–15%.
+        // n's startRect: x 0–30%, y 0–20%.
         final result = scorer.score([strokeWithFirst(const Offset(30, 30))]);
-        expect(result.observations[0].expected, 'x 0–25%, y 0–15%');
+        expect(result.observations[0].expected, 'x 0–30%, y 0–20%');
       });
 
       test('observed describes the first point in relative percentage coords',
