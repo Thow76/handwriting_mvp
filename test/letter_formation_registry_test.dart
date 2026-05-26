@@ -67,7 +67,7 @@ void main() {
   // stroke-count treatment.
   // ---------------------------------------------------------------------------
 
-  const optionalLiftLetters = ['a', 'b', 'd', 'g', 'p', 'q', 'r', 'y'];
+  const optionalLiftLetters = ['a', 'b', 'd', 'g', 'p', 'q', 'y'];
 
   group('letterFormationRegistry — optional-lift letters', () {
     // Regression guard: minRequiredStrokes == 1 for every optional-lift letter.
@@ -162,15 +162,7 @@ void main() {
       expect(data.strokes[1].primaryDirection, StrokeDirection.topToBottom);
     });
 
-    // r: single entry/stem stroke (topToBottom).
-    test('r: has exactly one stroke', () {
-      expect(letterFormationRegistry['r']!.strokes, hasLength(1));
-    });
-
-    test('r: stroke is topToBottom starting at top', () {
-      final data = letterFormationRegistry['r']!;
-      expect(data.strokes[0].primaryDirection, StrokeDirection.topToBottom);
-    });
+    // r: redesigned as two-stroke (stem + arch) — moved to compound-stroke group.
 
     // y: stem-plus-tail; both strokes are topToBottom (diagonal class).
     test('y: has exactly two strokes', () {
@@ -443,6 +435,43 @@ void main() {
         WaypointRegion.bottomRight,
       ]);
     });
+
+    // -------------------------------------------------------------------------
+    // r — stem (topToBottom) + compound arch stroke
+    // -------------------------------------------------------------------------
+    test('r: entry is non-null', () {
+      expect(letterFormationRegistry['r'], isNotNull);
+    });
+
+    test('r: minRequiredStrokes == 2', () {
+      expect(letterFormationRegistry['r']!.minRequiredStrokes, 2);
+    });
+
+    test('r: has exactly two strokes', () {
+      expect(letterFormationRegistry['r']!.strokes, hasLength(2));
+    });
+
+    test('r: stroke 1 is topToBottom (stem)', () {
+      final stroke = letterFormationRegistry['r']!.strokes[0];
+      expect(stroke.primaryDirection, StrokeDirection.topToBottom);
+    });
+
+    test('r: stroke 2 is compound (arch)', () {
+      final stroke = letterFormationRegistry['r']!.strokes[1];
+      expect(stroke.primaryDirection, StrokeDirection.compound);
+    });
+
+    test('r: stroke 2 has non-empty waypoints', () {
+      expect(letterFormationRegistry['r']!.strokes[1].waypoints, isNotEmpty);
+    });
+
+    test('r: stroke 2 waypoints are left → topRight', () {
+      final waypoints = letterFormationRegistry['r']!.strokes[1].waypoints;
+      expect(waypoints, [
+        WaypointRegion.left,
+        WaypointRegion.topRight,
+      ]);
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -510,7 +539,7 @@ void main() {
     // r[0] → x 0.00–0.25, y 0.00–0.15 (same rect as stem-first)
     // m[0], n[0], u[0] have widened startRects — tested individually below.
 
-    test('r[0]: compound stroke startRect', () {
+    test('r[0]: stem-first startRect', () {
       expect(rect('r', 0), stemRect);
     });
 
@@ -563,6 +592,11 @@ void main() {
     test('k[1]: kick mid-right above 2/3 junction (0.60–0.90, 0.35–0.55)', () {
       expect(rect('k', 1),
           const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.35, maxY: 0.55));
+    });
+
+    test('r[1]: arch mid-left at x-height (0.00–0.30, 0.40–0.60)', () {
+      expect(rect('r', 1),
+          const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60));
     });
 
     test('w[0]: wider x bound (0.00–0.25, 0.00–0.15)', () {
