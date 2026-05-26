@@ -479,6 +479,189 @@ void main() {
       });
     });
 
+    // ── 'v' regression: top-left startRect check fires ───────────────────────
+    //
+    // 'v' startRect: minX=0.00, maxX=0.25, minY=0.00, maxY=0.15
+    //   → in 300×300 bounds: x ∈ [0, 75), y ∈ [0, 45)
+    //
+    // Regression for: StrokeStart rectangle check not firing for v (and
+    // possibly other top-left letters).
+    // Root cause: v/z/x/y previously lacked explicit startRect values in the
+    // registry; any stroke start would appear "inside" the rect, returning 1.0.
+    // The registry fix (explicit rects) was applied; these tests guard against
+    // regression.
+
+    group("'v' top-left startRect check fires", () {
+      late StrokeStartScorer scorer;
+
+      setUp(() {
+        scorer = StrokeStartScorer(
+          letter: 'v',
+          data: letterFormationRegistry['v']!,
+          bounds: bounds,
+        );
+      });
+
+      test('stroke starting inside top-left rect → overallScore 1.0', () {
+        // First point (37, 22): rx≈12%, ry≈7% — inside x [0,25%), y [0,15%).
+        final result = scorer.score([strokeWithFirst(const Offset(37, 22))]);
+        expect(result.overallScore, 1.0);
+      });
+
+      test('stroke starting outside rect to the right → overallScore 0.0', () {
+        // First point (200, 10): rx≈67% — outside x [0,25%).
+        final result = scorer.score([strokeWithFirst(const Offset(200, 10))]);
+        expect(result.overallScore, 0.0);
+      });
+
+      test('stroke starting below rect → overallScore 0.0', () {
+        // First point (37, 60): ry=20% — outside y [0,15%).
+        final result = scorer.score([strokeWithFirst(const Offset(37, 60))]);
+        expect(result.overallScore, 0.0);
+      });
+
+      test('observation reports correct rect label', () {
+        final result = scorer.score([strokeWithFirst(const Offset(37, 22))]);
+        expect(result.observations[0].expected, 'x 0–25%, y 0–15%');
+      });
+    });
+
+    // ── 'z' regression: same top-left rect as 'v' ────────────────────────────
+    //
+    // 'z' startRect: minX=0.00, maxX=0.25, minY=0.00, maxY=0.15 (same as 'v').
+
+    group("'z' top-left startRect check fires", () {
+      late StrokeStartScorer scorer;
+
+      setUp(() {
+        scorer = StrokeStartScorer(
+          letter: 'z',
+          data: letterFormationRegistry['z']!,
+          bounds: bounds,
+        );
+      });
+
+      test('stroke starting inside top-left rect → overallScore 1.0', () {
+        final result = scorer.score([strokeWithFirst(const Offset(37, 22))]);
+        expect(result.overallScore, 1.0);
+      });
+
+      test('stroke starting outside rect to the right → overallScore 0.0', () {
+        // First point (200, 10): rx≈67% — outside x [0,25%).
+        final result = scorer.score([strokeWithFirst(const Offset(200, 10))]);
+        expect(result.overallScore, 0.0);
+      });
+    });
+
+    // ── 'x' regression: two top-corner startRects both fire ──────────────────
+    //
+    // 'x' has two expected strokes:
+    //   stroke 0: startRect x [0,25%),  y [0,15%) — top-left
+    //   stroke 1: startRect x [75,100%), y [0,15%) — top-right
+    //
+    // Stroke-to-expected matching notes:
+    //   strokeWithFirst centroid = (150, 50) — equidistant from expected
+    //   centroids (37.5, 22.5) and (262.5, 22.5) → tiebreaks to expected 0.
+    //
+    //   Stroke([Offset(250,5), Offset(275,95)]) centroid = (262.5, 50)
+    //     → assigned to expected 1 (closer).
+    //   Stroke([Offset(100,5), Offset(425,95)]) centroid = (262.5, 50)
+    //     → assigned to expected 1 (closer), first point outside right rect.
+
+    group("'x' both top-corner startRects fire", () {
+      late StrokeStartScorer scorer;
+
+      setUp(() {
+        scorer = StrokeStartScorer(
+          letter: 'x',
+          data: letterFormationRegistry['x']!,
+          bounds: bounds,
+        );
+      });
+
+      test('both strokes starting in correct rects → overallScore 1.0', () {
+        final result = scorer.score([
+          strokeWithFirst(const Offset(37, 22)), // expected 0, inside top-left
+          Stroke([const Offset(250, 5), const Offset(275, 95)]), // expected 1, inside top-right
+        ]);
+        expect(result.overallScore, 1.0);
+      });
+
+      test('stroke 0 starts outside its rect → overallScore 0.5', () {
+        // Centroid (150,50) → expected 0; first (200,10): rx≈67%, outside.
+        final result = scorer.score([
+          strokeWithFirst(const Offset(200, 10)), // expected 0, outside
+          Stroke([const Offset(250, 5), const Offset(275, 95)]), // expected 1, inside
+        ]);
+        expect(result.overallScore, closeTo(0.5, 1e-9));
+      });
+
+      test('stroke 1 starts outside its rect → overallScore 0.5', () {
+        // Centroid (262.5,50) → expected 1; first (100,5): rx≈33%, outside.
+        final result = scorer.score([
+          strokeWithFirst(const Offset(37, 22)), // expected 0, inside
+          Stroke([const Offset(100, 5), const Offset(425, 95)]), // expected 1, outside
+        ]);
+        expect(result.overallScore, closeTo(0.5, 1e-9));
+      });
+
+      test('both strokes starting outside their rects → overallScore 0.0', () {
+        final result = scorer.score([
+          strokeWithFirst(const Offset(200, 10)), // expected 0, outside
+          Stroke([const Offset(100, 5), const Offset(425, 95)]), // expected 1, outside
+        ]);
+        expect(result.overallScore, 0.0);
+      });
+    });
+
+    // ── 'y' regression: two top-corner startRects both fire ──────────────────
+    //
+    // 'y' has the same expected startRects as 'x' but minRequiredStrokes=1.
+
+    group("'y' both top-corner startRects fire", () {
+      late StrokeStartScorer scorer;
+
+      setUp(() {
+        scorer = StrokeStartScorer(
+          letter: 'y',
+          data: letterFormationRegistry['y']!,
+          bounds: bounds,
+        );
+      });
+
+      test('both strokes starting in correct rects → overallScore 1.0', () {
+        final result = scorer.score([
+          strokeWithFirst(const Offset(37, 22)),
+          Stroke([const Offset(250, 5), const Offset(275, 95)]),
+        ]);
+        expect(result.overallScore, 1.0);
+      });
+
+      test('stroke 0 starts outside its rect → overallScore 0.5', () {
+        final result = scorer.score([
+          strokeWithFirst(const Offset(200, 10)), // expected 0, outside
+          Stroke([const Offset(250, 5), const Offset(275, 95)]), // expected 1, inside
+        ]);
+        expect(result.overallScore, closeTo(0.5, 1e-9));
+      });
+
+      test('stroke 1 starts outside its rect → overallScore 0.5', () {
+        final result = scorer.score([
+          strokeWithFirst(const Offset(37, 22)), // expected 0, inside
+          Stroke([const Offset(100, 5), const Offset(425, 95)]), // expected 1, outside
+        ]);
+        expect(result.overallScore, closeTo(0.5, 1e-9));
+      });
+
+      test('both strokes starting outside their rects → overallScore 0.0', () {
+        final result = scorer.score([
+          strokeWithFirst(const Offset(200, 10)), // expected 0, outside
+          Stroke([const Offset(100, 5), const Offset(425, 95)]), // expected 1, outside
+        ]);
+        expect(result.overallScore, 0.0);
+      });
+    });
+
     // ── Empty / unmatched strokes ─────────────────────────────────────────────
 
     group('empty / unmatched strokes', () {
