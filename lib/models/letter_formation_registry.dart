@@ -13,9 +13,9 @@ import 'stroke_start_rect.dart';
 ///
 /// | Group              | Letters / strokes                              | x          | y          |
 /// |--------------------|------------------------------------------------|------------|------------|
-/// | Anticlockwise oval | a, c, o, s, g[0], q[0]                         | 0.55–0.95  | 0.00–0.25  |
+/// | Anticlockwise oval | a, c, o, s, g[0]                               | 0.55–0.95  | 0.00–0.25  |
 /// | Stem-first         | b[0], h[0], k[0], l[0], p[0]                  | 0.00–0.25  | 0.00–0.15  |
-/// | Compound stroke    | n[0], m[0], u[0], r[0]                         | 0.00–0.25  | 0.00–0.15  |
+/// | Compound stroke    | r[0]                                           | 0.00–0.25  | 0.00–0.15  |
 /// | Top-left           | v[0], z[0], x[0], y[0]                         | 0.00–0.25  | 0.00–0.15  |
 ///
 /// Per-letter overrides (take precedence over group defaults):
@@ -23,25 +23,29 @@ import 'stroke_start_rect.dart';
 /// | Letter | Stroke | x          | y          | Notes                                            |
 /// |--------|--------|------------|------------|--------------------------------------------------|
 /// | d      | 0      | 0.75–1.00  | 0.00–0.15  | Upper-right stem (stroke 0 = stem, before bowl)  |
-/// | d      | 1      | 0.80–1.00  | 0.40–0.60  | Mid-right bowl (stroke 1, after stem)            |
+/// | d      | 1      | 0.70–1.00  | 0.40–0.60  | Mid-right bowl (stroke 1, after stem)            |
 /// | e      | 0      | 0.00–0.25  | 0.40–0.60  | Mid-left tongue start                            |
 /// | f      | 0      | 0.60–0.90  | 0.00–0.30  | Upper-right stem; wider y to absorb hook depth   |
 /// | f      | 1      | 0.00–0.20  | 0.44–0.56  | Left at x-height crossbar                        |
-/// | t      | 0      | 0.30–0.55  | 0.00–0.15  | Mid-upper stem; crossbar pushes stem to centre   |
-/// | t      | 1      | 0.00–0.20  | 0.26–0.38  | Left just above x-height                         |
-/// | h      | 1      | 0.00–0.20  | 0.40–0.60  | Mid-left arch start                              |
+/// | t      | 0      | 0.35–0.65  | 0.00–0.15  | Mid-upper stem; recentred and widened             |
+/// | t      | 1      | 0.00–0.24  | 0.26–0.38  | Left just above x-height                         |
+/// | h      | 1      | 0.00–0.30  | 0.40–0.60  | Mid-left arch start                              |
 /// | k      | 1      | 0.60–0.90  | 0.35–0.55  | Mid-right kick start                             |
-/// | w      | 0      | 0.00–0.15  | 0.00–0.15  | Tighter x bound                                  |
+/// | w      | 0      | 0.00–0.25  | 0.00–0.15  | Wider x bound                                    |
 /// | x      | 1      | 0.75–1.00  | 0.00–0.15  | Top-right mirror                                 |
 /// | y      | 1      | 0.75–1.00  | 0.00–0.15  | Top-right mirror                                 |
-/// | i      | 0      | 0.25–0.75  | 0.33–0.48  | Centred; below dot zone within dot-inclusive bounds |
+/// | i      | 0      | 0.25–0.75  | 0.10–0.25  | Centred; y moved up within dot-inclusive bounds  |
 /// | i      | 1      | 0.15–0.85  | 0.00–0.36  | Generous dot zone                                |
 /// | j      | 0      | 0.25–0.75  | 0.22–0.33  | Centred; below dot; smaller % due to descender   |
 /// | j      | 1      | 0.15–0.85  | 0.00–0.25  | Generous dot zone; smaller % due to descender    |
-/// | b      | 1      | 0.00–0.20  | 0.40–0.60  | Mid-left bowl at x-height                        |
-/// | p      | 1      | 0.00–0.20  | 0.35–0.50  | Left bowl just below x-height (descender bounds) |
-/// | g      | 1      | 0.70–1.00  | 0.35–0.55  | Mid-right link/tail at x-height                  |
-/// | q      | 1      | 0.75–1.00  | 0.45–0.65  | Right descender above baseline (descender bounds) |
+/// | b      | 1      | 0.00–0.30  | 0.40–0.60  | Mid-left bowl at x-height                        |
+/// | p      | 1      | 0.00–0.30  | 0.00–0.15  | Bowl starts at top of bounds (descender bounds)  |
+/// | g      | 1      | 0.65–0.95  | 0.00–0.25  | Upper-right link/tail start                      |
+/// | q      | 0      | 0.68–0.95  | 0.00–0.15  | Oval start — tighter than standard oval group    |
+/// | q      | 1      | 0.87–1.00  | 0.00–0.15  | Far-right descender at top of bounds             |
+/// | m      | 0      | 0.00–0.30  | 0.00–0.20  | Widened compound start                           |
+/// | n      | 0      | 0.00–0.30  | 0.00–0.20  | Widened compound start                           |
+/// | u      | 0      | 0.00–0.30  | 0.00–0.15  | Widened compound start                           |
 ///
 /// ## Single-stroke letters — `c, e, l, o, s, v, w, z`
 ///
@@ -197,7 +201,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.15, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -238,7 +242,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60),
       ),
     ],
   ),
@@ -251,7 +255,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
-        startRect: const StrokeStartRect(minX: 0.80, maxX: 1.00, minY: 0.40, maxY: 0.60),
+        startRect: const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.40, maxY: 0.60),
       ),
     ],
   ),
@@ -264,7 +268,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.35, maxY: 0.55),
+        startRect: const StrokeStartRect(minX: 0.65, maxX: 0.95, minY: 0.00, maxY: 0.25),
       ),
     ],
   ),
@@ -277,7 +281,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.35, maxY: 0.50),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -286,11 +290,11 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
-        startRect: const StrokeStartRect(minX: 0.55, maxX: 0.95, minY: 0.00, maxY: 0.25),
+        startRect: const StrokeStartRect(minX: 0.68, maxX: 0.95, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.45, maxY: 0.65),
+        startRect: const StrokeStartRect(minX: 0.87, maxX: 1.00, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
@@ -338,7 +342,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.33, maxY: 0.48),
+        startRect: const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.10, maxY: 0.25),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.dot,
@@ -364,11 +368,11 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.30, maxX: 0.55, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.35, maxX: 0.65, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.26, maxY: 0.38),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.24, minY: 0.26, maxY: 0.38),
       ),
     ],
   ),
@@ -413,7 +417,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60),
         waypoints: [
           WaypointRegion.left,
           WaypointRegion.top,
@@ -445,7 +449,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.20),
         waypoints: [
           WaypointRegion.topLeft,
           WaypointRegion.bottomLeft,
@@ -462,7 +466,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.20),
         waypoints: [
           WaypointRegion.topLeft,
           WaypointRegion.bottomLeft,
@@ -477,7 +481,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.15),
         waypoints: [
           WaypointRegion.topLeft,
           WaypointRegion.bottomLeft,

@@ -483,8 +483,9 @@ void main() {
       expect(rect('g', 0), ovalRect);
     });
 
-    test('q[0]: anticlockwise oval startRect', () {
-      expect(rect('q', 0), ovalRect);
+    test('q[0]: oval start — tighter than standard (0.68–0.95, 0.00–0.15)', () {
+      expect(rect('q', 0),
+          const StrokeStartRect(minX: 0.68, maxX: 0.95, minY: 0.00, maxY: 0.15));
     });
 
     // ── Stem-first group ─────────────────────────────────────────────────────
@@ -506,14 +507,12 @@ void main() {
     });
 
     // ── Compound stroke group ────────────────────────────────────────────────
-    // n[0], m[0], u[0], r[0] → x 0.00–0.25, y 0.00–0.15
-    // (same rect as stem-first)
+    // r[0] → x 0.00–0.25, y 0.00–0.15 (same rect as stem-first)
+    // m[0], n[0], u[0] have widened startRects — tested individually below.
 
-    for (final letter in ['m', 'n', 'r', 'u']) {
-      test('$letter[0]: compound stroke startRect', () {
-        expect(rect(letter, 0), stemRect);
-      });
-    }
+    test('r[0]: compound stroke startRect', () {
+      expect(rect('r', 0), stemRect);
+    });
 
     // ── Top-left group ───────────────────────────────────────────────────────
     // v[0], z[0] → x 0.00–0.25, y 0.00–0.15  (same rect as stem-first)
@@ -531,9 +530,9 @@ void main() {
           const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.40, maxY: 0.60));
     });
 
-    test('d[1]: mid-right bowl (0.80–1.00, 0.40–0.60)', () {
+    test('d[1]: mid-right bowl (0.70–1.00, 0.40–0.60)', () {
       expect(rect('d', 1),
-          const StrokeStartRect(minX: 0.80, maxX: 1.00, minY: 0.40, maxY: 0.60));
+          const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.40, maxY: 0.60));
     });
 
     test('f[0]: upper-right stem (0.60–0.90, 0.00–0.30)', () {
@@ -546,19 +545,19 @@ void main() {
           const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.44, maxY: 0.56));
     });
 
-    test('t[0]: mid-upper stem (0.30–0.55, 0.00–0.15)', () {
+    test('t[0]: mid-upper stem recentred and widened (0.35–0.65, 0.00–0.15)', () {
       expect(rect('t', 0),
-          const StrokeStartRect(minX: 0.30, maxX: 0.55, minY: 0.00, maxY: 0.15));
+          const StrokeStartRect(minX: 0.35, maxX: 0.65, minY: 0.00, maxY: 0.15));
     });
 
-    test('t[1]: crossbar just above x-height (0.00–0.20, 0.26–0.38)', () {
+    test('t[1]: crossbar just above x-height (0.00–0.24, 0.26–0.38)', () {
       expect(rect('t', 1),
-          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.26, maxY: 0.38));
+          const StrokeStartRect(minX: 0.00, maxX: 0.24, minY: 0.26, maxY: 0.38));
     });
 
-    test('h[1]: arch mid-left at x-height (0.00–0.20, 0.40–0.60)', () {
+    test('h[1]: arch mid-left at x-height (0.00–0.30, 0.40–0.60)', () {
       expect(rect('h', 1),
-          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60));
+          const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60));
     });
 
     test('k[1]: kick mid-right above 2/3 junction (0.60–0.90, 0.35–0.55)', () {
@@ -566,9 +565,9 @@ void main() {
           const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.35, maxY: 0.55));
     });
 
-    test('w[0]: tighter x bound (0.00–0.15, 0.00–0.15)', () {
+    test('w[0]: wider x bound (0.00–0.25, 0.00–0.15)', () {
       expect(rect('w', 0),
-          const StrokeStartRect(minX: 0.00, maxX: 0.15, minY: 0.00, maxY: 0.15));
+          const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15));
     });
 
     test('x[0]: top-left (0.00–0.25, 0.00–0.15)', () {
@@ -589,9 +588,9 @@ void main() {
           const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
     });
 
-    test('i[0]: centred stem below dot zone (0.25–0.75, 0.33–0.48)', () {
+    test('i[0]: centred stem, y moved up (0.25–0.75, 0.10–0.25)', () {
       expect(rect('i', 0),
-          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.33, maxY: 0.48));
+          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.10, maxY: 0.25));
     });
 
     test('i[1]: generous dot zone (0.15–0.85, 0.00–0.36)', () {
@@ -615,24 +614,41 @@ void main() {
     // pedagogical start zones for the bowl/link/tail second strokes were
     // agreed.
 
-    test('b[1]: mid-left bowl at x-height (0.00–0.20, 0.40–0.60)', () {
+    test('b[1]: mid-left bowl at x-height (0.00–0.30, 0.40–0.60)', () {
       expect(rect('b', 1),
-          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.40, maxY: 0.60));
+          const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60));
     });
 
-    test('p[1]: left bowl just below x-height (0.00–0.20, 0.35–0.50)', () {
+    test('p[1]: bowl starts at top of bounds (0.00–0.30, 0.00–0.15)', () {
       expect(rect('p', 1),
-          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.35, maxY: 0.50));
+          const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.15));
     });
 
-    test('g[1]: mid-right link/tail at x-height (0.70–1.00, 0.35–0.55)', () {
+    test('g[1]: upper-right link/tail start (0.65–0.95, 0.00–0.25)', () {
       expect(rect('g', 1),
-          const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.35, maxY: 0.55));
+          const StrokeStartRect(minX: 0.65, maxX: 0.95, minY: 0.00, maxY: 0.25));
     });
 
-    test('q[1]: right descender above baseline (0.75–1.00, 0.45–0.65)', () {
+    test('q[1]: far-right descender at top of bounds (0.87–1.00, 0.00–0.15)', () {
       expect(rect('q', 1),
-          const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.45, maxY: 0.65));
+          const StrokeStartRect(minX: 0.87, maxX: 1.00, minY: 0.00, maxY: 0.15));
+    });
+
+    // ── Widened compound starts (m[0], n[0], u[0]) ───────────────────────────
+
+    test('m[0]: widened compound start (0.00–0.30, 0.00–0.20)', () {
+      expect(rect('m', 0),
+          const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.20));
+    });
+
+    test('n[0]: widened compound start (0.00–0.30, 0.00–0.20)', () {
+      expect(rect('n', 0),
+          const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.20));
+    });
+
+    test('u[0]: widened compound start (0.00–0.30, 0.00–0.15)', () {
+      expect(rect('u', 0),
+          const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.15));
     });
   });
 }
