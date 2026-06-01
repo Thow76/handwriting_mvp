@@ -780,5 +780,76 @@ void main() {
         expect(result.observations[0].note, isNotEmpty);
       });
     });
+
+    // ── f: design-doc cliff + two-stroke mean (100 / 50 / 0) ─────────────────
+    //
+    // Per the design doc the start score is a flat cliff: a stroke's first
+    // point scores 1.0 inside its rectangle and 0.0 outside, with no taper —
+    // the drift tolerance is built into the rectangle size, not a gradient.
+    // The letter's overall start score is the mean of its two strokes, so f
+    // yields exactly 100 / 50 / 0. Uses f's real registry rectangles:
+    //   f[0] stem:     x 0.55–1.00, y 0.00–0.15
+    //   f[1] crossbar: x 0.00–0.25, y 0.25–0.40
+    group('f — flat cliff and two-stroke mean', () {
+      final fData = letterFormationRegistry['f']!;
+      final fScorer =
+          StrokeStartScorer(letter: 'f', data: fData, bounds: bounds);
+
+      // Point at the given bounds-relative fraction within the 300×300 bounds.
+      Offset rel(double rx, double ry) => Offset(rx * 300, ry * 300);
+      // A non-empty stroke beginning at [first]; order-based matching pairs by
+      // index, so only the first point's position matters here.
+      Stroke startingAt(Offset first) =>
+          Stroke([first, first + const Offset(1, 1)]);
+
+      final insideStem = rel(0.75, 0.07); // inside f[0], outside f[1]
+      final insideCrossbar = rel(0.10, 0.32); // inside f[1], outside f[0]
+
+      test('both first points inside → overall 1.0 (100%)', () {
+        final r = fScorer
+            .score([startingAt(insideStem), startingAt(insideCrossbar)]);
+        expect(r.observations.map((o) => o.score).toList(), [1.0, 1.0]);
+        expect(r.overallScore, 1.0);
+      });
+
+      test('stem inside, crossbar outside → overall 0.5 (50%)', () {
+        // Stroke 1's first point (insideStem) lies outside the crossbar rect.
+        final r =
+            fScorer.score([startingAt(insideStem), startingAt(insideStem)]);
+        expect(r.observations.map((o) => o.score).toList(), [1.0, 0.0]);
+        expect(r.overallScore, 0.5);
+      });
+
+      test('both first points outside → overall 0.0 (0%)', () {
+        // Stroke 0 gets the crossbar point (outside the stem rect); stroke 1
+        // gets the stem point (outside the crossbar rect).
+        final r = fScorer
+            .score([startingAt(insideCrossbar), startingAt(insideStem)]);
+        expect(r.observations.map((o) => o.score).toList(), [0.0, 0.0]);
+        expect(r.overallScore, 0.0);
+      });
+
+      test('no taper: deep-inside and edge-inside both score exactly 1.0', () {
+        final deep = fScorer
+            .score([startingAt(insideStem), startingAt(insideCrossbar)]);
+        // Just inside the stem rect's left edge (x 0.551 > minX 0.55) — a very
+        // different distance from centre, yet the same flat 1.0 (no gradient).
+        final edge = fScorer.score(
+            [startingAt(rel(0.551, 0.001)), startingAt(insideCrossbar)]);
+        expect(deep.observations[0].score, 1.0);
+        expect(edge.observations[0].score, 1.0);
+      });
+
+      test('no taper: just-outside and far-outside both score exactly 0.0', () {
+        // Just left of the stem rect (x 0.54 < minX 0.55) and far away — both
+        // score a flat 0.0, never a partial value.
+        final near = fScorer
+            .score([startingAt(rel(0.54, 0.07)), startingAt(insideCrossbar)]);
+        final far = fScorer
+            .score([startingAt(rel(0.02, 0.95)), startingAt(insideCrossbar)]);
+        expect(near.observations[0].score, 0.0);
+        expect(far.observations[0].score, 0.0);
+      });
+    });
   });
 }

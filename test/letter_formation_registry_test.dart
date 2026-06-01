@@ -564,14 +564,14 @@ void main() {
           const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.40, maxY: 0.60));
     });
 
-    test('f[0]: upper-right stem (0.60–0.90, 0.00–0.30)', () {
+    test('f[0]: hook top, right half (0.55–1.00, 0.00–0.15)', () {
       expect(rect('f', 0),
-          const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.00, maxY: 0.30));
+          const StrokeStartRect(minX: 0.55, maxX: 1.00, minY: 0.00, maxY: 0.15));
     });
 
-    test('f[1]: crossbar left at x-height (0.00–0.20, 0.44–0.56)', () {
+    test('f[1]: crossbar at midline, widened x (0.00–0.25, 0.25–0.40)', () {
       expect(rect('f', 1),
-          const StrokeStartRect(minX: 0.00, maxX: 0.20, minY: 0.44, maxY: 0.56));
+          const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.25, maxY: 0.40));
     });
 
     test('t[0]: mid-upper stem recentred and widened (0.35–0.65, 0.00–0.15)', () {

@@ -1,3 +1,4 @@
+import 'dart:developer' show log; // TEMP: remove after f diagnosis
 import 'dart:ui' show Offset, Rect;
 
 import 'formation_score.dart';
@@ -61,8 +62,7 @@ class StrokeStartScorer {
       final firstPoint = stroke.points.first;
       final startRect = data.strokes[expectedIndex].startRect;
       final strokeScore = startRect.contains(firstPoint, bounds) ? 1.0 : 0.0;
-
-      observations.add(StrokeObservation(
+    observations.add(StrokeObservation(
         strokeIndex: i,
         expected: _rectLabel(startRect),
         observed: _pointLabel(firstPoint, bounds),
