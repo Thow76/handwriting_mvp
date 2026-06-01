@@ -788,8 +788,8 @@ void main() {
     // the drift tolerance is built into the rectangle size, not a gradient.
     // The letter's overall start score is the mean of its two strokes, so f
     // yields exactly 100 / 50 / 0. Uses f's real registry rectangles:
-    //   f[0] stem:     x 0.60–0.90, y 0.00–0.30
-    //   f[1] crossbar: x 0.00–0.20, y 0.44–0.56
+    //   f[0] stem:     x 0.55–1.00, y 0.00–0.15
+    //   f[1] crossbar: x 0.00–0.25, y 0.25–0.40
     group('f — flat cliff and two-stroke mean', () {
       final fData = letterFormationRegistry['f']!;
       final fScorer =
@@ -802,8 +802,8 @@ void main() {
       Stroke startingAt(Offset first) =>
           Stroke([first, first + const Offset(1, 1)]);
 
-      final insideStem = rel(0.75, 0.15); // inside f[0], outside f[1]
-      final insideCrossbar = rel(0.10, 0.50); // inside f[1], outside f[0]
+      final insideStem = rel(0.75, 0.07); // inside f[0], outside f[1]
+      final insideCrossbar = rel(0.10, 0.32); // inside f[1], outside f[0]
 
       test('both first points inside → overall 1.0 (100%)', () {
         final r = fScorer
@@ -832,19 +832,19 @@ void main() {
       test('no taper: deep-inside and edge-inside both score exactly 1.0', () {
         final deep = fScorer
             .score([startingAt(insideStem), startingAt(insideCrossbar)]);
-        // Just inside the stem rect's top-left corner — a very different
-        // distance from centre, yet the same flat 1.0 (no gradient).
+        // Just inside the stem rect's left edge (x 0.551 > minX 0.55) — a very
+        // different distance from centre, yet the same flat 1.0 (no gradient).
         final edge = fScorer.score(
-            [startingAt(rel(0.601, 0.001)), startingAt(insideCrossbar)]);
+            [startingAt(rel(0.551, 0.001)), startingAt(insideCrossbar)]);
         expect(deep.observations[0].score, 1.0);
         expect(edge.observations[0].score, 1.0);
       });
 
       test('no taper: just-outside and far-outside both score exactly 0.0', () {
-        // Just left of the stem rect (x 0.59 < 0.60) and far away — both score
-        // a flat 0.0, never a partial value.
+        // Just left of the stem rect (x 0.54 < minX 0.55) and far away — both
+        // score a flat 0.0, never a partial value.
         final near = fScorer
-            .score([startingAt(rel(0.59, 0.15)), startingAt(insideCrossbar)]);
+            .score([startingAt(rel(0.54, 0.07)), startingAt(insideCrossbar)]);
         final far = fScorer
             .score([startingAt(rel(0.02, 0.95)), startingAt(insideCrossbar)]);
         expect(near.observations[0].score, 0.0);
