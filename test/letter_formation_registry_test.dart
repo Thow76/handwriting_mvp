@@ -508,8 +508,9 @@ void main() {
           const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
     });
 
-    test('g[0]: anticlockwise oval startRect', () {
-      expect(rect('g', 0), ovalRect);
+    test('g[0]: oval start at top-right of bowl, top at bounds (0.65–0.85, 0.00–0.15)', () {
+      expect(rect('g', 0),
+          const StrokeStartRect(minX: 0.65, maxX: 0.85, minY: 0.00, maxY: 0.15));
     });
 
     test('q[0]: oval start — tighter than standard (0.68–0.95, 0.00–0.15)', () {
@@ -658,9 +659,9 @@ void main() {
           const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.15));
     });
 
-    test('g[1]: upper-right link/tail start (0.65–0.95, 0.00–0.25)', () {
+    test('g[1]: tail start at top-right shoulder, widened right (0.74–0.99, 0.02–0.17)', () {
       expect(rect('g', 1),
-          const StrokeStartRect(minX: 0.65, maxX: 0.95, minY: 0.00, maxY: 0.25));
+          const StrokeStartRect(minX: 0.74, maxX: 0.99, minY: 0.02, maxY: 0.17));
     });
 
     test('q[1]: far-right descender at top of bounds (0.87–1.00, 0.00–0.15)', () {

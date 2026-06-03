@@ -13,7 +13,7 @@ import 'stroke_start_rect.dart';
 ///
 /// | Group              | Letters / strokes                              | x          | y          |
 /// |--------------------|------------------------------------------------|------------|------------|
-/// | Anticlockwise oval | a, c, o, s, g[0]                               | 0.55–0.95  | 0.00–0.25  |
+/// | Anticlockwise oval | a, c, o, s                                     | 0.55–0.95  | 0.00–0.25  |
 /// | Stem-first         | b[0], h[0], k[0], l[0], p[0], r[0]            | 0.00–0.25  | 0.00–0.15  |
 /// | Top-left           | v[0], z[0], x[0], y[0]                         | 0.00–0.25  | 0.00–0.15  |
 ///
@@ -39,7 +39,8 @@ import 'stroke_start_rect.dart';
 /// | j      | 1      | 0.15–0.85  | 0.00–0.25  | Generous dot zone; smaller % due to descender    |
 /// | b      | 1      | 0.00–0.30  | 0.40–0.60  | Mid-left bowl at x-height                        |
 /// | p      | 1      | 0.00–0.30  | 0.00–0.15  | Bowl starts at top of bounds (descender bounds)  |
-/// | g      | 1      | 0.65–0.95  | 0.00–0.25  | Upper-right link/tail start                      |
+/// | g      | 0      | 0.65–0.85  | 0.00–0.15  | Top-right of bowl, top edge at tight-bounds top  |
+/// | g      | 1      | 0.74–0.99  | 0.02–0.17  | Top-right shoulder, widened toward right edge    |
 /// | q      | 0      | 0.68–0.95  | 0.00–0.15  | Oval start — tighter than standard oval group    |
 /// | q      | 1      | 0.87–1.00  | 0.00–0.15  | Far-right descender at top of bounds             |
 /// | r      | 1      | 0.00–0.30  | 0.40–0.60  | Arch mid-left at x-height (same zone as h[1])    |
@@ -265,11 +266,11 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.anticlockwise,
-        startRect: const StrokeStartRect(minX: 0.55, maxX: 0.95, minY: 0.00, maxY: 0.25),
+        startRect: const StrokeStartRect(minX: 0.65, maxX: 0.85, minY: 0.00, maxY: 0.15),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.65, maxX: 0.95, minY: 0.00, maxY: 0.25),
+        startRect: const StrokeStartRect(minX: 0.74, maxX: 0.99, minY: 0.02, maxY: 0.17),
       ),
     ],
   ),
