@@ -10,7 +10,7 @@ import 'widgets/debug_score_view.dart';
 import 'widgets/score_display.dart';
 
 const _letters = 'abcdefghijklmnopqrstuvwxyz';
-const _fontFamily = 'Comic Neue';
+const _fontFamily = 'Andika';
 const _fontSize = 120.0;
 
 class DrawingCanvas extends StatefulWidget {

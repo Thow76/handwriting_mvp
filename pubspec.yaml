@@ -79,6 +79,6 @@ flutter:
   #         weight: 700
   #
   fonts:
-    - family: Comic Neue
+    - family: Andika
       fonts:
-        - asset: fonts/ComicNeue-Regular.ttf
+        - asset: fonts/Andika-Regular.ttf

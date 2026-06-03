@@ -20,14 +20,14 @@ class Guidelines {
   /// Creates guidelines by measuring the font's actual baseline and applying
   /// known typographic ratios for [fontFamily], centered within [canvasHeight].
   ///
-  /// Comic Neue ratios (proportion of em/fontSize, from per-glyph bounding boxes):
+  /// Andika ratios (proportion of em/fontSize, from per-glyph bounding boxes):
   ///   x-height ≈ 0.493, ascender ≈ 0.685, descender ≈ 0.193
   factory Guidelines.fromFont({
     required double canvasHeight,
     required String fontFamily,
     double fontSize = 120.0,
   }) {
-    // Known Comic Neue metrics as proportions of fontSize.
+    // Andika metrics as proportions of fontSize.
     // These come from per-glyph bounding boxes in the font's glyf table.
     // Short letters (a,c,e,o,s): yMax ≈ 493, tall letters (b,d,h,k,l): yMax ≈ 681,
     // descenders (g,p,q,y): yMin ≈ -193 (average of -188,-198,-186,-200).
