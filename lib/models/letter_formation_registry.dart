@@ -33,8 +33,8 @@ import 'stroke_start_rect.dart';
 /// | w      | 0      | 0.00–0.25  | 0.00–0.15  | Wider x bound                                    |
 /// | x      | 1      | 0.75–1.00  | 0.00–0.15  | Top-right mirror                                 |
 /// | y      | 1      | 0.75–1.00  | 0.00–0.15  | Top-right mirror                                 |
-/// | i      | 0      | 0.25–0.75  | 0.10–0.25  | Centred; y moved up within dot-inclusive bounds  |
-/// | i      | 1      | 0.15–0.85  | 0.00–0.36  | Generous dot zone                                |
+/// | i      | 0      | 0.25–0.75  | 0.30–0.45  | Centred; top edge at top of stem body (Andika)   |
+/// | i      | 1      | 0.15–0.85  | 0.00–0.20  | Dot only; trimmed to dot extent (Andika)         |
 /// | j      | 0      | 0.25–0.75  | 0.22–0.33  | Centred; below dot; smaller % due to descender   |
 /// | j      | 1      | 0.15–0.85  | 0.00–0.25  | Generous dot zone; smaller % due to descender    |
 /// | b      | 1      | 0.00–0.30  | 0.40–0.60  | Mid-left bowl at x-height                        |
@@ -352,11 +352,11 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.10, maxY: 0.25),
+        startRect: const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.30, maxY: 0.45),
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.dot,
-        startRect: const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.36),
+        startRect: const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.20),
       ),
     ],
   ),

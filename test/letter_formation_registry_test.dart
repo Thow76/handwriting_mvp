@@ -623,14 +623,14 @@ void main() {
           const StrokeStartRect(minX: 0.75, maxX: 1.00, minY: 0.00, maxY: 0.15));
     });
 
-    test('i[0]: centred stem, y moved up (0.25–0.75, 0.10–0.25)', () {
+    test('i[0]: centred stem, top at stem body (0.25–0.75, 0.30–0.45)', () {
       expect(rect('i', 0),
-          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.10, maxY: 0.25));
+          const StrokeStartRect(minX: 0.25, maxX: 0.75, minY: 0.30, maxY: 0.45));
     });
 
-    test('i[1]: generous dot zone (0.15–0.85, 0.00–0.36)', () {
+    test('i[1]: dot only, trimmed to dot extent (0.15–0.85, 0.00–0.20)', () {
       expect(rect('i', 1),
-          const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.36));
+          const StrokeStartRect(minX: 0.15, maxX: 0.85, minY: 0.00, maxY: 0.20));
     });
 
     test('j[0]: centred stem below dot (0.25–0.75, 0.22–0.33)', () {
