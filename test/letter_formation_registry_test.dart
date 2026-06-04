@@ -522,11 +522,16 @@ void main() {
     // b[0], h[0], k[0], l[0], p[0] → x 0.00–0.25, y 0.00–0.15
     const stemRect = StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15);
 
-    for (final letter in ['b', 'l', 'p']) {
+    for (final letter in ['b', 'p']) {
       test('$letter[0]: stem-first startRect', () {
         expect(rect(letter, 0), stemRect);
       });
     }
+
+    test('l[0]: full-width stem top (0.00–1.00, 0.00–0.15)', () {
+      expect(rect('l', 0),
+          const StrokeStartRect(minX: 0.00, maxX: 1.00, minY: 0.00, maxY: 0.15));
+    });
 
     test('h[0]: stem-first startRect', () {
       expect(rect('h', 0), stemRect);

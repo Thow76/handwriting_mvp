@@ -14,7 +14,7 @@ import 'stroke_start_rect.dart';
 /// | Group              | Letters / strokes                              | x          | y          |
 /// |--------------------|------------------------------------------------|------------|------------|
 /// | Anticlockwise oval | a, c, o, s                                     | 0.55–0.95  | 0.00–0.25  |
-/// | Stem-first         | b[0], h[0], k[0], l[0], p[0], r[0]            | 0.00–0.25  | 0.00–0.15  |
+/// | Stem-first         | b[0], h[0], k[0], p[0], r[0]                  | 0.00–0.25  | 0.00–0.15  |
 /// | Top-left           | v[0], z[0], x[0], y[0]                         | 0.00–0.25  | 0.00–0.15  |
 ///
 /// Per-letter overrides (take precedence over group defaults):
@@ -24,6 +24,7 @@ import 'stroke_start_rect.dart';
 /// | d      | 0      | 0.75–1.00  | 0.00–0.15  | Upper-right stem (stroke 0 = stem, before bowl)  |
 /// | d      | 1      | 0.70–1.00  | 0.40–0.60  | Mid-right bowl (stroke 1, after stem)            |
 /// | e      | 0      | 0.00–0.25  | 0.40–0.60  | Mid-left tongue start                            |
+/// | l      | 0      | 0.00–1.00  | 0.00–0.15  | Full-width stem top (Andika); only stroke        |
 /// | f      | 0      | 0.55–1.00  | 0.00–0.15  | Hook top; covers right half of hook start         |
 /// | f      | 1      | 0.00–0.25  | 0.25–0.40  | Left at crossbar; y repositioned to midline       |
 /// | t      | 0      | 0.35–0.65  | 0.00–0.15  | Mid-upper stem; recentred and widened             |
@@ -162,7 +163,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     strokes: [
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.00, maxX: 0.25, minY: 0.00, maxY: 0.15),
+        startRect: const StrokeStartRect(minX: 0.00, maxX: 1.00, minY: 0.00, maxY: 0.15),
       ),
     ],
   ),
