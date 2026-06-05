@@ -34,8 +34,11 @@ void main() {
   }
 
   /// A circular stroke drawn anticlockwise in screen coordinates.
-  Stroke anticlockwiseCircle(
-      {double cx = 150, double cy = 150, double r = 100}) {
+  Stroke anticlockwiseCircle({
+    double cx = 150,
+    double cy = 150,
+    double r = 100,
+  }) {
     const steps = 32;
     final pts = <Offset>[];
     for (var k = 0; k <= steps; k++) {
@@ -72,7 +75,12 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: dir,
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
         ],
       );
@@ -277,10 +285,14 @@ void main() {
     });
 
     // Strokes with centroids that match the expected region centroids for 't'.
-    final tStem =
-        Stroke([const Offset(150, 10), const Offset(150, 90)]); // centroid (150,  50)
-    final tCrossbar =
-        Stroke([const Offset(0, 150), const Offset(300, 150)]); // centroid (150, 150)
+    final tStem = Stroke([
+      const Offset(150, 10),
+      const Offset(150, 90),
+    ]); // centroid (150,  50)
+    final tCrossbar = Stroke([
+      const Offset(0, 150),
+      const Offset(300, 150),
+    ]); // centroid (150, 150)
 
     test('overallScore is 1.0', () {
       final result = scorer.score([tStem, tCrossbar]);
@@ -318,12 +330,58 @@ void main() {
       );
     });
 
+    group('non-compound stroke with waypoints — skipped', () {
+      final data = LetterFormationData(
+        minRequiredStrokes: 1,
+        strokes: [
+          ExpectedStroke(
+            primaryDirection: StrokeDirection.topToBottom,
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
+            waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+          ),
+        ],
+      );
+
+      final observed = [
+        Stroke([const Offset(150, 10), const Offset(150, 290)]),
+      ];
+
+      test('stroke is skipped for CompoundStrokeScorer', () {
+        final scorer = StrokeDirectionScorer(
+          letter: 'synthetic',
+          data: data,
+          bounds: bounds,
+        );
+        final result = scorer.score(observed);
+        expect(
+          result.observations.single.note,
+          contains('CompoundStrokeScorer'),
+        );
+      });
+
+      test('overallScore excludes the waypoint-scored stroke', () {
+        final scorer = StrokeDirectionScorer(
+          letter: 'synthetic',
+          data: data,
+          bounds: bounds,
+        );
+        final result = scorer.score(observed);
+        expect(result.overallScore, 0.0);
+        expect(result.summary, contains('No direction-scored strokes'));
+      });
+    });
+
     // A compound stroke for 'n' following roughly its waypoint regions:
     // topLeft → bottomLeft → top → bottomRight within the 300×300 bounds.
     final nStroke = Stroke([
-      const Offset(50, 10),   // topLeft area
-      const Offset(50, 250),  // bottomLeft area
-      const Offset(150, 10),  // top area
+      const Offset(50, 10), // topLeft area
+      const Offset(50, 250), // bottomLeft area
+      const Offset(150, 10), // top area
       const Offset(250, 250), // bottomRight area
     ]);
 
@@ -344,8 +402,7 @@ void main() {
 
     test('observation note references CompoundStrokeScorer', () {
       final result = scorer.score([nStroke]);
-      expect(
-          result.observations.first.note, contains('CompoundStrokeScorer'));
+      expect(result.observations.first.note, contains('CompoundStrokeScorer'));
     });
   });
 
