@@ -70,6 +70,13 @@ void main() {
   const optionalLiftLetters = ['a', 'b', 'd', 'g', 'p', 'q', 'y'];
 
   group('letterFormationRegistry — optional-lift letters', () {
+    const anticlockwiseOvalWaypoints = [
+      WaypointRegion.topRight,
+      WaypointRegion.left,
+      WaypointRegion.bottom,
+      WaypointRegion.right,
+    ];
+
     // Regression guard: minRequiredStrokes == 1 for every optional-lift letter.
     // This assertion exists specifically to prevent accidental reversion to the
     // original plan that set minRequiredStrokes = 2 for b, d, g, p, q.
@@ -161,6 +168,13 @@ void main() {
       final data = letterFormationRegistry['q']!;
       expect(data.strokes[1].primaryDirection, StrokeDirection.topToBottom);
     });
+
+    for (final entry in {'a': 0, 'c': 0, 'e': 0, 'o': 0, 'd': 1, 'g': 0, 'q': 0}.entries) {
+      test('${entry.key}[${entry.value}]: anticlockwise oval waypoints are topRight → left → bottom → right', () {
+        final stroke = letterFormationRegistry[entry.key]!.strokes[entry.value];
+        expect(stroke.waypoints, anticlockwiseOvalWaypoints);
+      });
+    }
 
     // r: redesigned as two-stroke (stem + arch) — moved to compound-stroke group.
 

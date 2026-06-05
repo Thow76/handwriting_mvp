@@ -90,13 +90,13 @@ void main() {
   // ---------------------------------------------------------------------------
 
   group('circular strokes', () {
-    group("clockwise 'o' drawn clockwise against expected anticlockwise", () {
+    group('clockwise stroke against expected anticlockwise', () {
       late StrokeDirectionScorer scorer;
 
       setUp(() {
         scorer = StrokeDirectionScorer(
-          letter: 'o',
-          data: letterFormationRegistry['o']!,
+          letter: 'synthetic',
+          data: singleStrokeData(StrokeDirection.anticlockwise),
           bounds: bounds,
         );
       });
@@ -133,13 +133,13 @@ void main() {
       });
     });
 
-    group("anticlockwise 'o' drawn correctly", () {
+    group('anticlockwise stroke against expected anticlockwise', () {
       late StrokeDirectionScorer scorer;
 
       setUp(() {
         scorer = StrokeDirectionScorer(
-          letter: 'o',
-          data: letterFormationRegistry['o']!,
+          letter: 'synthetic',
+          data: singleStrokeData(StrokeDirection.anticlockwise),
           bounds: bounds,
         );
       });
