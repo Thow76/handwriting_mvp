@@ -65,8 +65,17 @@ void main() {
     test('can be created with compound direction and non-empty waypoints', () {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.compound,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
-        waypoints: [WaypointRegion.top, WaypointRegion.bottomLeft, WaypointRegion.top],
+        startRect: const StrokeStartRect(
+          minX: 0.0,
+          maxX: 1.0,
+          minY: 0.0,
+          maxY: 1.0 / 3.0,
+        ),
+        waypoints: [
+          WaypointRegion.top,
+          WaypointRegion.bottomLeft,
+          WaypointRegion.top,
+        ],
       );
       expect(stroke.primaryDirection, StrokeDirection.compound);
       expect(stroke.waypoints, [
@@ -79,7 +88,12 @@ void main() {
     test('defaults waypoints to empty list', () {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+        startRect: const StrokeStartRect(
+          minX: 0.0,
+          maxX: 1.0,
+          minY: 0.0,
+          maxY: 1.0 / 3.0,
+        ),
       );
       expect(stroke.waypoints, isEmpty);
     });
@@ -87,43 +101,29 @@ void main() {
     test('allows empty waypoints for non-compound direction', () {
       final stroke = ExpectedStroke(
         primaryDirection: StrokeDirection.leftToRight,
-        startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
+        startRect: const StrokeStartRect(
+          minX: 0.0,
+          maxX: 1.0,
+          minY: 1.0 / 3.0,
+          maxY: 2.0 / 3.0,
+        ),
         waypoints: [],
       );
       expect(stroke.waypoints, isEmpty);
     });
 
-    test('asserts that waypoints must be empty for non-compound directions', () {
-      expect(
-        () => ExpectedStroke(
-          primaryDirection: StrokeDirection.topToBottom,
-          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
-          waypoints: [WaypointRegion.top],
+    test('allows non-compound directions to define waypoints', () {
+      final stroke = ExpectedStroke(
+        primaryDirection: StrokeDirection.topToBottom,
+        startRect: const StrokeStartRect(
+          minX: 0.0,
+          maxX: 1.0,
+          minY: 0.0,
+          maxY: 1.0 / 3.0,
         ),
-        throwsA(isA<AssertionError>()),
+        waypoints: [WaypointRegion.top, WaypointRegion.bottom],
       );
-    });
-
-    test('asserts waypoints empty for leftToRight', () {
-      expect(
-        () => ExpectedStroke(
-          primaryDirection: StrokeDirection.leftToRight,
-          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
-          waypoints: [WaypointRegion.left],
-        ),
-        throwsA(isA<AssertionError>()),
-      );
-    });
-
-    test('asserts waypoints empty for dot', () {
-      expect(
-        () => ExpectedStroke(
-          primaryDirection: StrokeDirection.dot,
-          startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
-          waypoints: [WaypointRegion.top],
-        ),
-        throwsA(isA<AssertionError>()),
-      );
+      expect(stroke.waypoints, [WaypointRegion.top, WaypointRegion.bottom]);
     });
   });
 
@@ -137,11 +137,21 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.leftToRight,
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 1.0 / 3.0, maxY: 2.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 1.0 / 3.0,
+              maxY: 2.0 / 3.0,
+            ),
           ),
         ],
         minRequiredStrokes: 1,
@@ -155,7 +165,12 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.anticlockwise,
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
         ],
         minRequiredStrokes: 1,
@@ -168,11 +183,21 @@ void main() {
         strokes: [
           ExpectedStroke(
             primaryDirection: StrokeDirection.topToBottom,
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
           ExpectedStroke(
             primaryDirection: StrokeDirection.dot,
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
         ],
         minRequiredStrokes: 2,
@@ -186,7 +211,12 @@ void main() {
           strokes: [
             ExpectedStroke(
               primaryDirection: StrokeDirection.topToBottom,
-              startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+              startRect: const StrokeStartRect(
+                minX: 0.0,
+                maxX: 1.0,
+                minY: 0.0,
+                maxY: 1.0 / 3.0,
+              ),
             ),
           ],
           minRequiredStrokes: 0,
@@ -197,10 +227,7 @@ void main() {
 
     test('asserts that minRequiredStrokes cannot be negative', () {
       expect(
-        () => LetterFormationData(
-          strokes: [],
-          minRequiredStrokes: -1,
-        ),
+        () => LetterFormationData(strokes: [], minRequiredStrokes: -1),
         throwsA(isA<AssertionError>()),
       );
     });
