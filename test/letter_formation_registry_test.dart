@@ -76,6 +76,12 @@ void main() {
       WaypointRegion.bottom,
       WaypointRegion.right,
     ];
+    const clockwiseBowlWaypoints = [
+      WaypointRegion.topRight,
+      WaypointRegion.right,
+      WaypointRegion.bottom,
+      WaypointRegion.left,
+    ];
 
     // Regression guard: minRequiredStrokes == 1 for every optional-lift letter.
     // This assertion exists specifically to prevent accidental reversion to the
@@ -173,6 +179,13 @@ void main() {
       test('${entry.key}[${entry.value}]: anticlockwise oval waypoints are topRight → left → bottom → right', () {
         final stroke = letterFormationRegistry[entry.key]!.strokes[entry.value];
         expect(stroke.waypoints, anticlockwiseOvalWaypoints);
+      });
+    }
+
+    for (final entry in {'b': 1, 'p': 1}.entries) {
+      test('${entry.key}[${entry.value}]: clockwise bowl waypoints are topRight → right → bottom → left', () {
+        final stroke = letterFormationRegistry[entry.key]!.strokes[entry.value];
+        expect(stroke.waypoints, clockwiseBowlWaypoints);
       });
     }
 

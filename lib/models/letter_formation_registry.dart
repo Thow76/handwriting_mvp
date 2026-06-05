@@ -250,6 +250,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
         startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60),
+        waypoints: const [WaypointRegion.topRight, WaypointRegion.right, WaypointRegion.bottom, WaypointRegion.left],
       ),
     ],
   ),
@@ -291,6 +292,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ExpectedStroke(
         primaryDirection: StrokeDirection.clockwise,
         startRect: const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.15),
+        waypoints: const [WaypointRegion.topRight, WaypointRegion.right, WaypointRegion.bottom, WaypointRegion.left],
       ),
     ],
   ),

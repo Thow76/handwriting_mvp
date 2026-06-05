@@ -318,5 +318,45 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.compoundStroke!.overallScore, lessThanOrEqualTo(0.25));
     });
+
+    final stem = Stroke(const [Offset(5, 5), Offset(5, 85)]);
+    final clockwiseBowl = Stroke(const [
+      Offset(75, 15), // topRight centroid
+      Offset(75, 45), // right centroid
+      Offset(45, 75), // bottom centroid
+      Offset(15, 45), // left centroid
+    ]);
+    final straightBowl = Stroke(const [Offset(15, 5), Offset(15, 85)]);
+    final anticlockwiseBowl = Stroke(const [
+      Offset(15, 45), // left centroid
+      Offset(45, 75), // bottom centroid
+      Offset(75, 45), // right centroid
+      Offset(75, 15), // topRight centroid
+    ]);
+
+    double compoundScoreFor(String letter, Stroke bowl) {
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stem, bowl],
+        letter: letter,
+      );
+      expect(result.compoundStroke, isNotNull);
+      return result.compoundStroke!.overallScore;
+    }
+
+    for (final letter in ['b', 'p']) {
+      test('clockwise $letter bowl path scores 1.0 on compoundStroke', () {
+        expect(compoundScoreFor(letter, clockwiseBowl), 1.0);
+      });
+
+      test('straight $letter bowl stroke scores below 0.5 on compoundStroke', () {
+        expect(compoundScoreFor(letter, straightBowl), lessThan(0.5));
+      });
+
+      test('anticlockwise $letter bowl path scores near 0 on compoundStroke', () {
+        expect(compoundScoreFor(letter, anticlockwiseBowl), lessThanOrEqualTo(0.25));
+      });
+    }
   });
 }
