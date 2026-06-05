@@ -249,15 +249,14 @@ void main() {
       expect(result.strokeBreak!.overallScore, 1.0);
     });
 
-    test('clockwise o → strokeDirection score is 0.0', () {
-      // o expects an anticlockwise stroke.  Drawing it clockwise (positive
-      // shoelace signed area in screen coordinates) should score 0.0.
-      // Points form a clockwise oval: top → right → bottom → left.
+    test('anticlockwise o oval path → compoundStroke score is 1.0', () {
+      // o uses waypoint routing: topRight → left → bottom → right.
+      // This path visits those cells in the authored order.
       final stroke = Stroke(const [
-        Offset(45, 5),  // top
-        Offset(85, 45), // right
-        Offset(45, 85), // bottom
-        Offset(5, 45),  // left
+        Offset(75, 15), // topRight centroid
+        Offset(15, 45), // left centroid
+        Offset(45, 75), // bottom centroid
+        Offset(75, 45), // right centroid
       ]);
 
       final result = ScoreIntegrator.score(
@@ -273,14 +272,51 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.strokeBreak, isNotNull);
 
-      // Clockwise vs expected anticlockwise → opposite pair → 0.0.
+      // o[0] now has waypoints, so StrokeDirectionScorer skips it.
       expect(result.strokeDirection!.overallScore, 0.0);
 
-      // o has no compound strokes → vacuously correct → 1.0.
+      // All 4 waypoints are hit in order.
       expect(result.compoundStroke!.overallScore, 1.0);
 
       // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
       expect(result.strokeBreak!.overallScore, 1.0);
+    });
+
+    test('straight vertical stroke for o scores below 0.5 on compoundStroke', () {
+      final stroke = Stroke(const [
+        Offset(45, 5),
+        Offset(45, 85),
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'o',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, lessThan(0.5));
+    });
+
+    test('clockwise o oval path scores near 0 on compoundStroke', () {
+      // Clockwise loop: top → right → bottom → left.
+      final stroke = Stroke(const [
+        Offset(45, 5),
+        Offset(85, 45),
+        Offset(45, 85),
+        Offset(5, 45),
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'o',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, lessThanOrEqualTo(0.25));
     });
   });
 }
