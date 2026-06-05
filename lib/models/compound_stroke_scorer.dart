@@ -7,18 +7,15 @@ import 'stroke.dart';
 import 'stroke_formation_enums.dart';
 import 'stroke_matcher.dart';
 
-/// Scores whether each compound stroke visits the expected [WaypointRegion]
+/// Scores whether each waypoint-scored stroke visits the expected [WaypointRegion]
 /// cells in the correct order, as defined by [LetterFormationData].
 ///
-/// For each observed stroke that is matched to a compound expected stroke,
+/// For each observed stroke that is matched to an expected stroke with a
+/// non-empty waypoint list,
 /// [matchWaypoints] is called to scan the stroke's point stream and find how
 /// many waypoints were hit in sequence.  The per-stroke score is
 /// `hitCount / waypoints.length`.  The [FormationScore.overallScore] is the
-/// mean of all per-compound-stroke scores.
-///
-/// Non-compound strokes that are matched to compound expected strokes are
-/// treated as a score of 0.0.  Compound expected strokes with no waypoints
-/// defined also score 0.0.
+/// mean of all per-waypoint-stroke scores.
 ///
 /// ## Tolerance
 ///
@@ -59,26 +56,24 @@ class CompoundStrokeScorer {
     this.toleranceFraction = waypointToleranceFraction,
   });
 
-  /// Scores [observed] strokes against the expected compound waypoint
+  /// Scores [observed] strokes against expected waypoint sequences.
   /// sequences.
   ///
   /// Returns a [FormationScore] containing:
-  /// - [FormationScore.overallScore]: mean of per-compound-stroke scores.
-  ///   Returns 1.0 when the letter has no compound expected strokes at all.
+  /// - [FormationScore.overallScore]: mean of per-waypoint-stroke scores.
+  ///   Returns 1.0 when the letter has no waypoint-scored expected strokes.
   /// - [FormationScore.observations]: one [StrokeObservation] per observed
-  ///   stroke that was matched to a compound expected stroke.
+  ///   stroke that was matched to a waypoint-scored expected stroke.
   /// - [FormationScore.summary]: a learner-facing summary sentence.
   FormationScore score(List<Stroke> observed) {
-    // If the letter definition has no compound expected strokes there is
+    // If the letter definition has no waypoint-scored expected strokes there is
     // nothing for this scorer to evaluate — vacuously correct.
-    final hasCompoundStrokes = data.strokes.any(
-      (s) => s.primaryDirection == StrokeDirection.compound,
-    );
-    if (!hasCompoundStrokes) {
+    final hasWaypointStrokes = data.strokes.any((s) => s.waypoints.isNotEmpty);
+    if (!hasWaypointStrokes) {
       return const FormationScore(
         overallScore: 1.0,
         observations: [],
-        summary: 'No compound strokes in this letter.',
+        summary: 'No waypoint-scored strokes in this letter.',
       );
     }
 
@@ -91,21 +86,9 @@ class CompoundStrokeScorer {
       if (expectedIndex == -1) continue;
 
       final expected = data.strokes[expectedIndex];
-      if (expected.primaryDirection != StrokeDirection.compound) continue;
+      if (expected.waypoints.isEmpty) continue;
 
       final waypoints = expected.waypoints;
-      if (waypoints.isEmpty) {
-        observations.add(StrokeObservation(
-          strokeIndex: i,
-          expected: 'compound (no waypoints)',
-          observed: 'compound',
-          score: 0.0,
-          note: 'Compound stroke has no waypoints defined — score is 0.',
-        ));
-        scoredValues.add(0.0);
-        continue;
-      }
-
       final result = matchWaypoints(
         observed[i].points,
         waypoints,
@@ -116,19 +99,20 @@ class CompoundStrokeScorer {
       final strokeScore = result.hitCount / waypoints.length;
       scoredValues.add(strokeScore);
 
-      final expectedStr =
-          waypoints.map((w) => w.name).join(' → ');
+      final expectedStr = waypoints.map((w) => w.name).join(' → ');
       final hitLabels = result.hits
           .map((h) => h.isHit ? h.waypoint.name : '[missed ${h.waypoint.name}]')
           .join(' → ');
 
-      observations.add(StrokeObservation(
-        strokeIndex: i,
-        expected: expectedStr,
-        observed: hitLabels,
-        score: strokeScore,
-        note: _buildNote(result.hitCount, waypoints.length),
-      ));
+      observations.add(
+        StrokeObservation(
+          strokeIndex: i,
+          expected: expectedStr,
+          observed: hitLabels,
+          score: strokeScore,
+          note: _buildNote(result.hitCount, waypoints.length),
+        ),
+      );
     }
 
     final overallScore = scoredValues.isEmpty
@@ -160,11 +144,11 @@ class CompoundStrokeScorer {
       return 'No compound strokes were found to score.';
     }
     if (scoredValues.every((s) => s == 1.0)) {
-      return 'All compound strokes followed the correct path.';
+      return 'All waypoint-scored strokes followed the correct path.';
     }
     if (scoredValues.every((s) => s == 0.0)) {
-      return 'No compound strokes followed the correct path.';
+      return 'No waypoint-scored strokes followed the correct path.';
     }
-    return 'One or more compound strokes did not follow the correct path.';
+    return 'One or more waypoint-scored strokes did not follow the correct path.';
   }
 }

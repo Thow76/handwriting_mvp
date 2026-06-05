@@ -21,9 +21,9 @@ import 'stroke_matcher.dart';
 /// Scoring per stroke: correct → 1.0; opposite direction → 0.0;
 /// any other mismatch → 0.5.
 ///
-/// [StrokeDirection.compound] and [StrokeDirection.dot] strokes are recorded
-/// as observations with [StrokeObservation.score] of 0.0 and a note
-/// directing the reader to the appropriate scorer; they are excluded from
+/// Strokes with non-empty expected waypoints and [StrokeDirection.dot] strokes
+/// are recorded as observations with [StrokeObservation.score] of 0.0 and a
+/// note directing the reader to the appropriate scorer; they are excluded from
 /// the mean that forms [FormationScore.overallScore].
 class StrokeDirectionScorer {
   /// The letter being scored. Used in error messages and summaries.
@@ -64,26 +64,45 @@ class StrokeDirectionScorer {
       final expected = data.strokes[expectedIndex];
       final dir = expected.primaryDirection;
 
-      // Compound and dot strokes are handled by other scorers.
+      // Strokes with authored waypoint sequences are handled by
+      // CompoundStrokeScorer regardless of primaryDirection.
+      if (expected.waypoints.isNotEmpty) {
+        observations.add(
+          StrokeObservation(
+            strokeIndex: i,
+            expected: dir.name,
+            observed: dir.name,
+            score: 0.0,
+            note: 'skipped — handled by CompoundStrokeScorer',
+          ),
+        );
+        continue;
+      }
+
+      // Dot/compound strokes without waypoints are handled by other scorers.
       if (dir == StrokeDirection.compound) {
-        observations.add(StrokeObservation(
-          strokeIndex: i,
-          expected: dir.name,
-          observed: dir.name,
-          score: 0.0,
-          note: 'skipped — handled by CompoundStrokeScorer',
-        ));
+        observations.add(
+          StrokeObservation(
+            strokeIndex: i,
+            expected: dir.name,
+            observed: dir.name,
+            score: 0.0,
+            note: 'skipped — no waypoints defined for CompoundStrokeScorer',
+          ),
+        );
         continue;
       }
 
       if (dir == StrokeDirection.dot) {
-        observations.add(StrokeObservation(
-          strokeIndex: i,
-          expected: dir.name,
-          observed: dir.name,
-          score: 0.0,
-          note: 'skipped — handled by StrokeBreakCounter',
-        ));
+        observations.add(
+          StrokeObservation(
+            strokeIndex: i,
+            expected: dir.name,
+            observed: dir.name,
+            score: 0.0,
+            note: 'skipped — handled by StrokeBreakCounter',
+          ),
+        );
         continue;
       }
 
@@ -99,13 +118,15 @@ class StrokeDirectionScorer {
 
       final strokeScore = _scoreDirections(dir.name, observedDir);
       scoredValues.add(strokeScore);
-      observations.add(StrokeObservation(
-        strokeIndex: i,
-        expected: dir.name,
-        observed: observedDir,
-        score: strokeScore,
-        note: _buildNote(dir, observedDir, strokeScore),
-      ));
+      observations.add(
+        StrokeObservation(
+          strokeIndex: i,
+          expected: dir.name,
+          observed: observedDir,
+          score: strokeScore,
+          note: _buildNote(dir, observedDir, strokeScore),
+        ),
+      );
     }
 
     final overallScore = scoredValues.isEmpty
@@ -192,7 +213,8 @@ class StrokeDirectionScorer {
     String observed,
     double strokeScore,
   ) {
-    final isCircular = expectedDir == StrokeDirection.clockwise ||
+    final isCircular =
+        expectedDir == StrokeDirection.clockwise ||
         expectedDir == StrokeDirection.anticlockwise;
     final subject = isCircular ? 'the circle' : 'the stroke';
     final observedDesc = _describeDirection(observed);

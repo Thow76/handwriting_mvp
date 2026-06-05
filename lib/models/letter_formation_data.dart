@@ -6,11 +6,10 @@ import 'stroke_start_rect.dart';
 /// [primaryDirection] drives direction scoring for non-compound, non-dot
 /// strokes. [startRect] is the target zone for start-position scoring.
 /// [waypoints] is the ordered list of [WaypointRegion] cells the stroke must
-/// pass through, and must be non-empty only when [primaryDirection] is
-/// [StrokeDirection.compound].
+/// pass through. When non-empty, waypoint scoring is used regardless of
+/// [primaryDirection].
 ///
-/// All fields are immutable. The constructor asserts the waypoints invariant
-/// at runtime.
+/// All fields are immutable.
 class ExpectedStroke {
   /// The primary direction of this stroke, used for direction scoring.
   final StrokeDirection primaryDirection;
@@ -21,23 +20,17 @@ class ExpectedStroke {
   /// anchor for stroke matching.
   final StrokeStartRect startRect;
 
-  /// Ordered waypoints for compound strokes; empty for all other strokes.
-  ///
-  /// Must be empty unless [primaryDirection] is [StrokeDirection.compound].
+  /// Ordered waypoints for waypoint-scored strokes; empty for direction-scored
+  /// strokes.
   final List<WaypointRegion> waypoints;
 
   /// Creates an [ExpectedStroke].
   ///
-  /// Asserts that [waypoints] is empty whenever [primaryDirection] is not
-  /// [StrokeDirection.compound].
   ExpectedStroke({
     required this.primaryDirection,
     required this.startRect,
     this.waypoints = const [],
-  }) : assert(
-         primaryDirection == StrokeDirection.compound || waypoints.isEmpty,
-         'waypoints must be empty unless primaryDirection is StrokeDirection.compound',
-       );
+  });
 }
 
 /// The complete formation specification for a single letter.
@@ -61,13 +54,8 @@ class LetterFormationData {
   /// Creates a [LetterFormationData].
   ///
   /// Asserts that [minRequiredStrokes] is at least 1.
-  LetterFormationData({
-    required this.strokes,
-    required this.minRequiredStrokes,
-  }) : assert(
-         minRequiredStrokes >= 1,
-         'minRequiredStrokes must be at least 1',
-       );
+  LetterFormationData({required this.strokes, required this.minRequiredStrokes})
+    : assert(minRequiredStrokes >= 1, 'minRequiredStrokes must be at least 1');
 
   /// The canonical stroke count for this letter, derived as [strokes.length].
   int get canonicalStrokeCount => strokes.length;
