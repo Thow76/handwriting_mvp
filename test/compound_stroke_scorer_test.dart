@@ -191,7 +191,7 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // 'h' — multi-stroke letter; the topToBottom stem is silently skipped
+  // 'h' — multi-stroke letter; stem and compound stroke are both waypoint-scored
   //
   // 'h' has two expected strokes:
   //   stroke 0: topToBottom, startRect (0.00–0.25, 0.00–0.15)
@@ -225,24 +225,31 @@ void main() {
       );
     });
 
-    test('exactly one observation is produced (stem is skipped silently)', () {
+    test('two observations are produced (stem + compound)', () {
       final result = scorer.score([hStem, hCompound]);
-      expect(result.observations.length, 1);
+      expect(result.observations.length, 2);
     });
 
-    test('the observation is for the compound stroke (index 1)', () {
+    test('the first observation is for the stem stroke (index 0)', () {
       final result = scorer.score([hStem, hCompound]);
-      expect(result.observations.first.strokeIndex, 1);
+      expect(result.observations.first.strokeIndex, 0);
+      expect(result.observations.first.expected, 'top → bottom');
     });
 
-    test('overallScore reflects only the compound stroke (1.0)', () {
+    test('the second observation is for the compound stroke (index 1)', () {
       final result = scorer.score([hStem, hCompound]);
-      expect(result.overallScore, 1.0);
+      expect(result.observations[1].strokeIndex, 1);
+      expect(result.observations[1].expected, 'left → top → bottomRight');
     });
 
-    test('expected string lists the compound waypoints', () {
+    test('overallScore is the mean of stem and compound scores', () {
       final result = scorer.score([hStem, hCompound]);
-      expect(result.observations.first.expected, 'left → top → bottomRight');
+      expect(result.overallScore, 0.5);
+    });
+
+    test('compound observation expected string lists compound waypoints', () {
+      final result = scorer.score([hStem, hCompound]);
+      expect(result.observations[1].expected, 'left → top → bottomRight');
     });
   });
 
@@ -533,8 +540,8 @@ void main() {
       expect(result.summary, 'No waypoint-scored strokes were found to score.');
     });
 
-    test('letter with no compound strokes — no observations, summary', () {
-      // 'l' is a single topToBottom stroke; nothing for this scorer to score.
+    test('letter with waypoint-scored stem — one observation, summary', () {
+      // 'l' uses top → bottom waypoints, so this scorer applies.
       final scorer = CompoundStrokeScorer(
         letter: 'l',
         data: letterFormationRegistry['l']!,
@@ -544,8 +551,11 @@ void main() {
         Stroke(const [Offset(150, 10), Offset(150, 290)]),
       ]);
       expect(result.overallScore, 1.0);
-      expect(result.observations, isEmpty);
-      expect(result.summary, 'No waypoint-scored strokes in this letter.');
+      expect(result.observations.length, 1);
+      expect(
+        result.summary,
+        'All waypoint-scored strokes followed the correct path.',
+      );
     });
 
     test(
@@ -652,16 +662,22 @@ void main() {
           );
         });
 
-        test('produces exactly one observation — only the waypoint stroke is scored', () {
-          final result = scorer.score([anyStroke, waypointStroke]);
-          expect(result.observations.length, 1);
-          expect(result.observations.single.expected, 'top → bottom');
-        });
+        test(
+          'produces exactly one observation — only the waypoint stroke is scored',
+          () {
+            final result = scorer.score([anyStroke, waypointStroke]);
+            expect(result.observations.length, 1);
+            expect(result.observations.single.expected, 'top → bottom');
+          },
+        );
 
-        test('overallScore reflects only the waypoint stroke — compound+empty does not count', () {
-          final result = scorer.score([anyStroke, waypointStroke]);
-          expect(result.overallScore, 1.0);
-        });
+        test(
+          'overallScore reflects only the waypoint stroke — compound+empty does not count',
+          () {
+            final result = scorer.score([anyStroke, waypointStroke]);
+            expect(result.overallScore, 1.0);
+          },
+        );
       },
     );
   });
