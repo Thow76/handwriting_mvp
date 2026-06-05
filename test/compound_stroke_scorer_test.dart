@@ -530,7 +530,7 @@ void main() {
       final result = scorer.score([]);
       expect(result.overallScore, 0.0);
       expect(result.observations, isEmpty);
-      expect(result.summary, 'No compound strokes were found to score.');
+      expect(result.summary, 'No waypoint-scored strokes were found to score.');
     });
 
     test('letter with no compound strokes — no observations, summary', () {
@@ -596,5 +596,73 @@ void main() {
       expect(result.observations, isEmpty);
       expect(result.summary, 'No waypoint-scored strokes in this letter.');
     });
+
+    group(
+      'mixed letter: compound+empty is skipped, topToBottom+waypoints is waypoint-scored',
+      () {
+        // Stroke 0: compound direction, no waypoints.
+        //   → skipped in the loop (waypoints.isEmpty) — contributes nothing.
+        // Stroke 1: topToBottom direction, waypoints [top, bottom].
+        //   → routed to CompoundStrokeScorer and scored via waypoint matching.
+        // Observed[i] is paired to expected[i] by order (matchStrokes is
+        // order-based), so observed stroke 1 hits both centroids → 2/2.
+        final data = LetterFormationData(
+          minRequiredStrokes: 2,
+          strokes: [
+            ExpectedStroke(
+              primaryDirection: StrokeDirection.compound,
+              startRect: const StrokeStartRect(
+                minX: 0.0,
+                maxX: 0.5,
+                minY: 0.0,
+                maxY: 1.0 / 3.0,
+              ),
+              waypoints: const [],
+            ),
+            ExpectedStroke(
+              primaryDirection: StrokeDirection.topToBottom,
+              startRect: const StrokeStartRect(
+                minX: 0.5,
+                maxX: 1.0,
+                minY: 0.0,
+                maxY: 1.0 / 3.0,
+              ),
+              waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+            ),
+          ],
+        );
+
+        // Observed stroke 0: matched to compound+empty; content irrelevant as
+        // the scorer skips it.
+        final anyStroke = Stroke(const [Offset(50, 50)]);
+        // Observed stroke 1: matched to topToBottom+waypoints; hits both
+        // top (150,50) and bottom (150,250) centroids exactly.
+        final waypointStroke = Stroke(const [
+          Offset(150, 50),
+          Offset(150, 250),
+        ]);
+
+        late CompoundStrokeScorer scorer;
+
+        setUp(() {
+          scorer = CompoundStrokeScorer(
+            letter: 'synthetic',
+            data: data,
+            bounds: bounds,
+          );
+        });
+
+        test('produces exactly one observation — only the waypoint stroke is scored', () {
+          final result = scorer.score([anyStroke, waypointStroke]);
+          expect(result.observations.length, 1);
+          expect(result.observations.single.expected, 'top → bottom');
+        });
+
+        test('overallScore reflects only the waypoint stroke — compound+empty does not count', () {
+          final result = scorer.score([anyStroke, waypointStroke]);
+          expect(result.overallScore, 1.0);
+        });
+      },
+    );
   });
 }

@@ -141,7 +141,7 @@ class CompoundStrokeScorer {
   /// Builds a learner-facing summary from the per-stroke scored values.
   String _buildSummary(List<double> scoredValues) {
     if (scoredValues.isEmpty) {
-      return 'No compound strokes were found to score.';
+      return 'No waypoint-scored strokes were found to score.';
     }
     if (scoredValues.every((s) => s == 1.0)) {
       return 'All waypoint-scored strokes followed the correct path.';

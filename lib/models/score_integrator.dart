@@ -130,6 +130,11 @@ class ScoreIntegrator {
       }
     }
 
+    // The four formation scores are kept independent in ScoreResult and are
+    // displayed separately in the UI. They are NOT combined into a single
+    // headline formation score, so a StrokeDirectionScorer result of 0.0
+    // (returned when all strokes are waypoint-routed and scoredValues is empty)
+    // does not penalise any aggregate score.
     return ScoreResult(
       coverage: normalisedCoverage,
       precision: PrecisionScorer.calculate(

@@ -87,7 +87,7 @@ class StrokeDirectionScorer {
             expected: dir.name,
             observed: dir.name,
             score: 0.0,
-            note: 'skipped — no waypoints defined for CompoundStrokeScorer',
+            note: 'skipped — compound direction requires non-empty waypoints to be scored',
           ),
         );
         continue;
