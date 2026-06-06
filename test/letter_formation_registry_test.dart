@@ -19,8 +19,7 @@ void main() {
     'e': StrokeDirection.anticlockwise,
     'l': StrokeDirection.topToBottom,
     'o': StrokeDirection.anticlockwise,
-    // s uses topToBottom as an interim placeholder — see registry comment.
-    's': StrokeDirection.topToBottom,
+    's': StrokeDirection.compound,
     'v': StrokeDirection.topToBottom,
     'w': StrokeDirection.topToBottom,
     'z': StrokeDirection.topToBottom,
@@ -69,6 +68,15 @@ void main() {
       expect(data.strokes.first.waypoints, [
         WaypointRegion.left,
         WaypointRegion.right,
+      ]);
+    });
+
+    test('s: waypoints are top → middle → bottom (interim placeholder)', () {
+      final data = letterFormationRegistry['s']!;
+      expect(data.strokes.first.waypoints, [
+        WaypointRegion.top,
+        WaypointRegion.middle,
+        WaypointRegion.bottom,
       ]);
     });
   });

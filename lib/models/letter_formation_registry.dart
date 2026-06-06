@@ -61,9 +61,9 @@ import 'stroke_start_rect.dart';
 /// | e      | anticlockwise   | Closed left-opening oval |
 /// | l      | topToBottom     | Vertical stem |
 /// | o      | anticlockwise   | Closed oval |
-/// | s      | topToBottom     | Interim placeholder — scope does not assign |
-/// |        |                 | a primary direction; flagged for review before |
-/// |        |                 | stage 4 ships (see stroke_formation_scope.md). |
+/// | s      | compound        | Waypoint-scored (top → middle → bottom); interim |
+/// |        |                 | placeholder pending a proper compound S-curve |
+/// |        |                 | sequence (see stroke_formation_scope.md). |
 /// | v      | topToBottom     | Diagonal (down-left then down-right) |
 /// | w      | topToBottom     | Diagonal (two v-shapes joined) |
 /// | z      | topToBottom     | Diagonal class (top bar → diagonal → base bar) |
@@ -215,22 +215,23 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ),
     ],
   ),
-  // s: primaryDirection is topToBottom as an interim placeholder.
-  // The scope's Universal Core table lists s as single-stroke but does not
-  // assign a primary direction (both clockwise and anticlockwise sub-arcs are
-  // present). This value must be confirmed with the scope owner before stage 4
-  // ships; it affects only StrokeDirectionScorer's behaviour on s.
+  // Interim placeholder only: replace with a proper compound S-curve sequence.
   's': LetterFormationData(
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
+        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.55,
           maxX: 0.95,
           minY: 0.00,
           maxY: 0.25,
         ),
+        waypoints: const [
+          WaypointRegion.top,
+          WaypointRegion.middle,
+          WaypointRegion.bottom,
+        ],
       ),
     ],
   ),
