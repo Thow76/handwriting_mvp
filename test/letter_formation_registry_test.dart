@@ -303,6 +303,14 @@ void main() {
         final data = letterFormationRegistry[letter]!;
         expect(data.strokes[1].primaryDirection, StrokeDirection.leftToRight);
       });
+
+      test('$letter: stroke 2 waypoints are left → right', () {
+        final data = letterFormationRegistry[letter]!;
+        expect(data.strokes[1].waypoints, [
+          WaypointRegion.left,
+          WaypointRegion.right,
+        ]);
+      });
     }
 
     // x: both strokes are topToBottom starting at top

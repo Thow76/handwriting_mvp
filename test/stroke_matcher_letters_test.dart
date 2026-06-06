@@ -23,11 +23,11 @@ import 'package:handwriting_mvp/models/template_rasterizer.dart';
 /// correctly by coincidence — all are pinned here so a future pairing
 /// regression is caught.
 void main() {
-  const fontFamily = 'Comic Neue';
+  const fontFamily = 'Andika';
   const fontSize = 120.0;
 
   setUpAll(() async {
-    final bytes = File('fonts/ComicNeue-Regular.ttf').readAsBytesSync();
+    final bytes = File('fonts/Andika-Regular.ttf').readAsBytesSync();
     final loader = FontLoader(fontFamily)
       ..addFont(Future.value(ByteData.view(bytes.buffer)));
     await loader.load();
