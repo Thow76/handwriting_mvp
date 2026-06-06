@@ -304,9 +304,11 @@ void main() {
       expect(result.observations.length, 2);
     });
 
-    test('both observation scores are 1.0', () {
+    test('stem is skipped and crossbar scores 1.0', () {
       final result = scorer.score([tStem, tCrossbar]);
-      expect(result.observations.every((o) => o.score == 1.0), isTrue);
+      expect(result.observations[0].note, contains('CompoundStrokeScorer'));
+      expect(result.observations[0].score, 0.0);
+      expect(result.observations[1].score, 1.0);
     });
 
     test('summary indicates all strokes correct', () {
@@ -438,14 +440,13 @@ void main() {
         bounds: bounds,
       );
 
-      // Stem correct (topToBottom), dot skipped.
+      // Stem and dot are both skipped for this scorer.
       final observed = [
         topToBottomStroke(),
         Stroke([const Offset(150, 10)]),
       ];
       final result = scorer.score(observed);
-      // Only the stem contributes; it is correct so overall = 1.0.
-      expect(result.overallScore, 1.0);
+      expect(result.overallScore, 0.0);
     });
   });
 

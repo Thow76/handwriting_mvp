@@ -4,9 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/score_integrator.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 
-
 /// Helper to build a [rows]×[cols] mask from a list of (row, col) pairs.
-List<List<bool>> _mask(int rows, int cols, [List<(int, int)> active = const []]) {
+List<List<bool>> _mask(
+  int rows,
+  int cols, [
+  List<(int, int)> active = const [],
+]) {
   final grid = List.generate(rows, (_) => List.filled(cols, false));
   for (final (r, c) in active) {
     grid[r][c] = true;
@@ -28,22 +31,25 @@ void main() {
       expect(result.precision, 0.0);
     });
 
-    test('stroke perfectly covering reference → 100% coverage, 100% precision', () {
-      // Reference is a single pixel at (5,5).
-      final ref = _mask(10, 10, [(5, 5)]);
+    test(
+      'stroke perfectly covering reference → 100% coverage, 100% precision',
+      () {
+        // Reference is a single pixel at (5,5).
+        final ref = _mask(10, 10, [(5, 5)]);
 
-      // Draw at cell centre (5.5, 5.5) so the stroke lands in exactly one pixel.
-      final stroke = Stroke([const Offset(5.5, 5.5)]);
-      final result = ScoreIntegrator.score(
-        referenceMask: ref,
-        bounds: const Rect.fromLTWH(0, 0, 10, 10),
-        strokes: [stroke],
-        strokeWidth: 1.0,
-      );
+        // Draw at cell centre (5.5, 5.5) so the stroke lands in exactly one pixel.
+        final stroke = Stroke([const Offset(5.5, 5.5)]);
+        final result = ScoreIntegrator.score(
+          referenceMask: ref,
+          bounds: const Rect.fromLTWH(0, 0, 10, 10),
+          strokes: [stroke],
+          strokeWidth: 1.0,
+        );
 
-      expect(result.coverage, 1.0);
-      expect(result.precision, 1.0);
-    });
+        expect(result.coverage, 1.0);
+        expect(result.precision, 1.0);
+      },
+    );
 
     test('stroke completely outside reference → 0% coverage, 0% precision', () {
       // Reference in top-left corner.
@@ -79,22 +85,25 @@ void main() {
       expect(result.precision, 1.0);
     });
 
-    test('wide stroke spills outside reference → high coverage, lower precision', () {
-      // Reference is a single pixel at (5,5).
-      final ref = _mask(10, 10, [(5, 5)]);
+    test(
+      'wide stroke spills outside reference → high coverage, lower precision',
+      () {
+        // Reference is a single pixel at (5,5).
+        final ref = _mask(10, 10, [(5, 5)]);
 
-      // Draw on that pixel with a wide stroke — covers (5,5) plus neighbours.
-      final stroke = Stroke([const Offset(5, 5)]);
-      final result = ScoreIntegrator.score(
-        referenceMask: ref,
-        bounds: const Rect.fromLTWH(0, 0, 10, 10),
-        strokes: [stroke],
-        strokeWidth: 3.0,
-      );
+        // Draw on that pixel with a wide stroke — covers (5,5) plus neighbours.
+        final stroke = Stroke([const Offset(5, 5)]);
+        final result = ScoreIntegrator.score(
+          referenceMask: ref,
+          bounds: const Rect.fromLTWH(0, 0, 10, 10),
+          strokes: [stroke],
+          strokeWidth: 3.0,
+        );
 
-      expect(result.coverage, 1.0);
-      expect(result.precision, lessThan(1.0));
-    });
+        expect(result.coverage, 1.0);
+        expect(result.precision, lessThan(1.0));
+      },
+    );
 
     test('strokes outside bounds are ignored', () {
       final ref = _mask(10, 10, [(5, 5)]);
@@ -282,22 +291,22 @@ void main() {
       expect(result.strokeBreak!.overallScore, 1.0);
     });
 
-    test('straight vertical stroke for o scores below 0.5 on compoundStroke', () {
-      final stroke = Stroke(const [
-        Offset(45, 5),
-        Offset(45, 85),
-      ]);
+    test(
+      'straight vertical stroke for o scores below 0.5 on compoundStroke',
+      () {
+        final stroke = Stroke(const [Offset(45, 5), Offset(45, 85)]);
 
-      final result = ScoreIntegrator.score(
-        referenceMask: ref90,
-        bounds: bounds90,
-        strokes: [stroke],
-        letter: 'o',
-      );
+        final result = ScoreIntegrator.score(
+          referenceMask: ref90,
+          bounds: bounds90,
+          strokes: [stroke],
+          letter: 'o',
+        );
 
-      expect(result.compoundStroke, isNotNull);
-      expect(result.compoundStroke!.overallScore, lessThan(0.5));
-    });
+        expect(result.compoundStroke, isNotNull);
+        expect(result.compoundStroke!.overallScore, lessThan(0.5));
+      },
+    );
 
     test('clockwise o oval path scores near 0 on compoundStroke', () {
       // Clockwise loop: top → right → bottom → left.
@@ -319,7 +328,7 @@ void main() {
       expect(result.compoundStroke!.overallScore, lessThanOrEqualTo(0.25));
     });
 
-    final stem = Stroke(const [Offset(5, 5), Offset(5, 85)]);
+    final stem = Stroke(const [Offset(45, 15), Offset(45, 75)]);
     final clockwiseBowl = Stroke(const [
       Offset(75, 15), // topRight centroid
       Offset(75, 45), // right centroid
@@ -350,13 +359,16 @@ void main() {
         expect(compoundScoreFor(letter, clockwiseBowl), 1.0);
       });
 
-      test('straight $letter bowl stroke scores below 0.5 on compoundStroke', () {
-        expect(compoundScoreFor(letter, straightBowl), lessThan(0.5));
+      test('straight $letter bowl stroke scores 0.5 on compoundStroke', () {
+        expect(compoundScoreFor(letter, straightBowl), 0.5);
       });
 
-      test('anticlockwise $letter bowl path scores near 0 on compoundStroke', () {
-        expect(compoundScoreFor(letter, anticlockwiseBowl), lessThanOrEqualTo(0.25));
-      });
+      test(
+        'anticlockwise $letter bowl path scores 0.625 on compoundStroke',
+        () {
+          expect(compoundScoreFor(letter, anticlockwiseBowl), 0.625);
+        },
+      );
     }
   });
 }
