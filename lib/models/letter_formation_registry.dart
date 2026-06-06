@@ -215,22 +215,23 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
       ),
     ],
   ),
-  // s: primaryDirection is topToBottom as an interim placeholder.
-  // The scope's Universal Core table lists s as single-stroke but does not
-  // assign a primary direction (both clockwise and anticlockwise sub-arcs are
-  // present). This value must be confirmed with the scope owner before stage 4
-  // ships; it affects only StrokeDirectionScorer's behaviour on s.
+  // Interim placeholder only: replace with a proper compound S-curve sequence.
   's': LetterFormationData(
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
+        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.55,
           maxX: 0.95,
           minY: 0.00,
           maxY: 0.25,
         ),
+        waypoints: const [
+          WaypointRegion.top,
+          WaypointRegion.middle,
+          WaypointRegion.bottom,
+        ],
       ),
     ],
   ),
