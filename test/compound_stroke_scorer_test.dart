@@ -285,6 +285,42 @@ void main() {
     });
   });
 
+  group("'f' crossbar waypoint direction", () {
+    // 'f' has the same stem (topToBottom, [top, bottom]) + crossbar
+    // (leftToRight, [left, right]) structure as 't'. The stem runs vertically
+    // through the middle column; the crossbar runs horizontally through the
+    // middle row, hitting the left and right cell centroids in order.
+    final fStem = Stroke(const [Offset(150, 50), Offset(150, 250)]);
+    final leftToRightCrossbar = Stroke(const [
+      Offset(50, 150),
+      Offset(250, 150),
+    ]);
+    final rightToLeftCrossbar = Stroke(const [
+      Offset(190, 150),
+      Offset(110, 150),
+    ]);
+
+    late CompoundStrokeScorer scorer;
+
+    setUp(() {
+      scorer = CompoundStrokeScorer(
+        letter: 'f',
+        data: letterFormationRegistry['f']!,
+        bounds: bounds,
+      );
+    });
+
+    test('left-to-right crossbar scores 1.0', () {
+      final result = scorer.score([fStem, leftToRightCrossbar]);
+      expect(result.observations[1].score, 1.0);
+    });
+
+    test('right-to-left crossbar scores 0.0', () {
+      final result = scorer.score([fStem, rightToLeftCrossbar]);
+      expect(result.observations[1].score, 0.0);
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // Multiple compound strokes — mean of per-stroke scores
   // ---------------------------------------------------------------------------
