@@ -294,9 +294,9 @@ void main() {
       const Offset(300, 150),
     ]); // centroid (150, 150)
 
-    test('overallScore is 1.0', () {
+    test('overallScore is 0.0', () {
       final result = scorer.score([tStem, tCrossbar]);
-      expect(result.overallScore, 1.0);
+      expect(result.overallScore, 0.0);
     });
 
     test('two observations are produced', () {
@@ -304,16 +304,17 @@ void main() {
       expect(result.observations.length, 2);
     });
 
-    test('stem is skipped and crossbar scores 1.0', () {
+    test('stem and crossbar are both skipped for waypoint scoring', () {
       final result = scorer.score([tStem, tCrossbar]);
       expect(result.observations[0].note, contains('CompoundStrokeScorer'));
+      expect(result.observations[1].note, contains('CompoundStrokeScorer'));
       expect(result.observations[0].score, 0.0);
-      expect(result.observations[1].score, 1.0);
+      expect(result.observations[1].score, 0.0);
     });
 
-    test('summary indicates all strokes correct', () {
+    test('summary indicates no direction-scored strokes', () {
       final result = scorer.score([tStem, tCrossbar]);
-      expect(result.summary, contains('correct'));
+      expect(result.summary, 'No direction-scored strokes were found.');
     });
   });
 

@@ -253,6 +253,38 @@ void main() {
     });
   });
 
+  group("'t' crossbar waypoint direction", () {
+    final tStem = Stroke(const [Offset(150, 50), Offset(150, 250)]);
+    final leftToRightCrossbar = Stroke(const [
+      Offset(50, 150),
+      Offset(250, 150),
+    ]);
+    final rightToLeftCrossbar = Stroke(const [
+      Offset(190, 150),
+      Offset(110, 150),
+    ]);
+
+    late CompoundStrokeScorer scorer;
+
+    setUp(() {
+      scorer = CompoundStrokeScorer(
+        letter: 't',
+        data: letterFormationRegistry['t']!,
+        bounds: bounds,
+      );
+    });
+
+    test('left-to-right crossbar scores 1.0', () {
+      final result = scorer.score([tStem, leftToRightCrossbar]);
+      expect(result.observations[1].score, 1.0);
+    });
+
+    test('right-to-left crossbar scores 0.0', () {
+      final result = scorer.score([tStem, rightToLeftCrossbar]);
+      expect(result.observations[1].score, 0.0);
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // Multiple compound strokes — mean of per-stroke scores
   // ---------------------------------------------------------------------------
