@@ -27,6 +27,12 @@ void main() {
     Offset(250, 250),
   ]);
 
+  Stroke topLeftToBottomRightDiagonal() =>
+      Stroke(const [Offset(50, 50), Offset(250, 250)]);
+
+  Stroke topRightToBottomLeftDiagonal() =>
+      Stroke(const [Offset(250, 50), Offset(50, 250)]);
+
   // ---------------------------------------------------------------------------
   // Constant exposure
   // ---------------------------------------------------------------------------
@@ -318,6 +324,88 @@ void main() {
     test('right-to-left crossbar scores 0.0', () {
       final result = scorer.score([fStem, rightToLeftCrossbar]);
       expect(result.observations[1].score, 0.0);
+    });
+  });
+
+  group("'v' diagonal waypoint direction", () {
+    late CompoundStrokeScorer scorer;
+
+    setUp(() {
+      scorer = CompoundStrokeScorer(
+        letter: 'v',
+        data: letterFormationRegistry['v']!,
+        bounds: bounds,
+      );
+    });
+
+    test('top-left to bottom-right scores 1.0', () {
+      final result = scorer.score([topLeftToBottomRightDiagonal()]);
+      expect(result.observations.single.score, 1.0);
+    });
+
+    test('top-right to bottom-left scores 0.0', () {
+      final result = scorer.score([topRightToBottomLeftDiagonal()]);
+      expect(result.observations.single.score, 0.0);
+    });
+  });
+
+  group("'x' diagonal waypoint direction", () {
+    late CompoundStrokeScorer scorer;
+
+    setUp(() {
+      scorer = CompoundStrokeScorer(
+        letter: 'x',
+        data: letterFormationRegistry['x']!,
+        bounds: bounds,
+      );
+    });
+
+    test('correct diagonals score 1.0 for both strokes', () {
+      final result = scorer.score([
+        topLeftToBottomRightDiagonal(),
+        topRightToBottomLeftDiagonal(),
+      ]);
+      expect(result.overallScore, 1.0);
+      expect(result.observations[0].score, 1.0);
+      expect(result.observations[1].score, 1.0);
+    });
+
+    test('opposite diagonals score 0.0 for both strokes', () {
+      final result = scorer.score([
+        topRightToBottomLeftDiagonal(),
+        topLeftToBottomRightDiagonal(),
+      ]);
+      expect(result.overallScore, 0.0);
+      expect(result.observations[0].score, 0.0);
+      expect(result.observations[1].score, 0.0);
+    });
+  });
+
+  group("'z' horizontal waypoint direction", () {
+    final leftToRightStroke = Stroke(const [Offset(50, 150), Offset(250, 150)]);
+    final rightToLeftStroke = Stroke(const [
+      Offset(190, 150),
+      Offset(110, 150),
+    ]);
+
+    late CompoundStrokeScorer scorer;
+
+    setUp(() {
+      scorer = CompoundStrokeScorer(
+        letter: 'z',
+        data: letterFormationRegistry['z']!,
+        bounds: bounds,
+      );
+    });
+
+    test('left-to-right scores 1.0', () {
+      final result = scorer.score([leftToRightStroke]);
+      expect(result.observations.single.score, 1.0);
+    });
+
+    test('right-to-left scores 0.0', () {
+      final result = scorer.score([rightToLeftStroke]);
+      expect(result.observations.single.score, 0.0);
     });
   });
 

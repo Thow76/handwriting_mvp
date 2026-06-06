@@ -27,6 +27,11 @@ void main() {
   };
 
   group('letterFormationRegistry — single-stroke letters', () {
+    const topLeftToBottomRight = [
+      WaypointRegion.topLeft,
+      WaypointRegion.bottomRight,
+    ];
+
     for (final entry in cases.entries) {
       final letter = entry.key;
       final expectedDirection = entry.value;
@@ -51,6 +56,21 @@ void main() {
         expect(data.strokes.first.primaryDirection, expectedDirection);
       });
     }
+
+    for (final letter in ['v', 'w']) {
+      test('$letter: waypoints are topLeft → bottomRight', () {
+        final data = letterFormationRegistry[letter]!;
+        expect(data.strokes.first.waypoints, topLeftToBottomRight);
+      });
+    }
+
+    test('z: waypoints are left → right', () {
+      final data = letterFormationRegistry['z']!;
+      expect(data.strokes.first.waypoints, [
+        WaypointRegion.left,
+        WaypointRegion.right,
+      ]);
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -210,7 +230,7 @@ void main() {
 
     // r: redesigned as two-stroke (stem + arch) — moved to compound-stroke group.
 
-    // y: stem-plus-tail; both strokes are topToBottom (diagonal class).
+    // y: stem-plus-tail; both strokes are topToBottom with distinct diagonals.
     test('y: has exactly two strokes', () {
       expect(letterFormationRegistry['y']!.strokes, hasLength(2));
     });
@@ -220,6 +240,22 @@ void main() {
       for (final stroke in data.strokes) {
         expect(stroke.primaryDirection, StrokeDirection.topToBottom);
       }
+    });
+
+    test('y: stroke 1 waypoints are topLeft → bottomRight', () {
+      final data = letterFormationRegistry['y']!;
+      expect(data.strokes[0].waypoints, [
+        WaypointRegion.topLeft,
+        WaypointRegion.bottomRight,
+      ]);
+    });
+
+    test('y: stroke 2 waypoints are topRight → bottomLeft', () {
+      final data = letterFormationRegistry['y']!;
+      expect(data.strokes[1].waypoints, [
+        WaypointRegion.topRight,
+        WaypointRegion.bottomLeft,
+      ]);
     });
   });
 
@@ -319,6 +355,22 @@ void main() {
       for (final stroke in data.strokes) {
         expect(stroke.primaryDirection, StrokeDirection.topToBottom);
       }
+    });
+
+    test('x: stroke 1 waypoints are topLeft → bottomRight', () {
+      final data = letterFormationRegistry['x']!;
+      expect(data.strokes[0].waypoints, [
+        WaypointRegion.topLeft,
+        WaypointRegion.bottomRight,
+      ]);
+    });
+
+    test('x: stroke 2 waypoints are topRight → bottomLeft', () {
+      final data = letterFormationRegistry['x']!;
+      expect(data.strokes[1].waypoints, [
+        WaypointRegion.topRight,
+        WaypointRegion.bottomLeft,
+      ]);
     });
   });
 

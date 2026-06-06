@@ -93,8 +93,8 @@ import 'stroke_start_rect.dart';
 /// | p      | 2      | clockwise       | Right-opening bowl |
 /// | q      | 1      | anticlockwise   | Left-opening oval |
 /// | q      | 2      | topToBottom     | Vertical stem |
-/// | y      | 1      | topToBottom     | Diagonal stem (down-left) |
-/// | y      | 2      | topToBottom     | Diagonal tail (down-right) |
+/// | y      | 1      | topToBottom     | Diagonal stem (top-left to bottom-right) |
+/// | y      | 2      | topToBottom     | Diagonal tail (top-right to bottom-left) |
 ///
 /// ## Required-lift letters — `f, i, j, t, x`
 ///
@@ -245,6 +245,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
+        waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
       ),
     ],
   ),
@@ -259,6 +260,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
+        waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
       ),
     ],
   ),
@@ -273,6 +275,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
+        waypoints: const [WaypointRegion.left, WaypointRegion.right],
       ),
     ],
   ),
@@ -492,6 +495,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
+        waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
@@ -501,6 +505,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
+        waypoints: const [WaypointRegion.topRight, WaypointRegion.bottomLeft],
       ),
     ],
   ),
@@ -617,6 +622,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
+        waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
       ),
       ExpectedStroke(
         primaryDirection: StrokeDirection.topToBottom,
@@ -626,6 +632,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
+        waypoints: const [WaypointRegion.topRight, WaypointRegion.bottomLeft],
       ),
     ],
   ),
