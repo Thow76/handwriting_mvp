@@ -61,9 +61,9 @@ import 'stroke_start_rect.dart';
 /// | e      | anticlockwise   | Closed left-opening oval |
 /// | l      | topToBottom     | Vertical stem |
 /// | o      | anticlockwise   | Closed oval |
-/// | s      | topToBottom     | Interim placeholder — scope does not assign |
-/// |        |                 | a primary direction; flagged for review before |
-/// |        |                 | stage 4 ships (see stroke_formation_scope.md). |
+/// | s      | compound        | Waypoint-scored (top → middle → bottom); interim |
+/// |        |                 | placeholder pending a proper compound S-curve |
+/// |        |                 | sequence (see stroke_formation_scope.md). |
 /// | v      | topToBottom     | Diagonal (down-left then down-right) |
 /// | w      | topToBottom     | Diagonal (two v-shapes joined) |
 /// | z      | topToBottom     | Diagonal class (top bar → diagonal → base bar) |
