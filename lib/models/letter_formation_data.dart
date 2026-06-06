@@ -3,31 +3,25 @@ import 'stroke_start_rect.dart';
 
 /// The expected behaviour of a single stroke within a letter.
 ///
-/// [primaryDirection] drives direction scoring for non-compound, non-dot
-/// strokes. [startRect] is the target zone for start-position scoring.
-/// [waypoints] is the ordered list of [WaypointRegion] cells the stroke must
-/// pass through. When non-empty, waypoint scoring is used regardless of
-/// [primaryDirection].
+/// [startRect] is the target zone for start-position scoring. [waypoints] is
+/// the ordered list of [WaypointRegion] cells the stroke must pass through,
+/// used by waypoint (compound) scoring.
 ///
 /// All fields are immutable.
 class ExpectedStroke {
-  /// The primary direction of this stroke, used for direction scoring.
-  final StrokeDirection primaryDirection;
-
   /// The expected start rectangle, expressed as bounds-relative fractions.
   ///
   /// Used as the target zone for start-position scoring and as the spatial
   /// anchor for stroke matching.
   final StrokeStartRect startRect;
 
-  /// Ordered waypoints for waypoint-scored strokes; empty for direction-scored
-  /// strokes.
+  /// Ordered waypoints for waypoint-scored strokes; empty for strokes scored
+  /// only on start position and stroke count.
   final List<WaypointRegion> waypoints;
 
   /// Creates an [ExpectedStroke].
   ///
   ExpectedStroke({
-    required this.primaryDirection,
     required this.startRect,
     this.waypoints = const [],
   });

@@ -4,8 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/letter_formation_registry.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
-import 'package:handwriting_mvp/models/stroke_formation_enums.dart'
-    show StrokeDirection;
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 import 'package:handwriting_mvp/models/stroke_start_scorer.dart';
 
@@ -31,7 +29,6 @@ void main() {
         minRequiredStrokes: 1,
         strokes: [
           ExpectedStroke(
-            primaryDirection: StrokeDirection.topToBottom,
             startRect: rect,
           ),
         ],

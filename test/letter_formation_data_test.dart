@@ -4,31 +4,6 @@ import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
 void main() {
-  group('StrokeDirection serialisation', () {
-    const cases = {
-      'topToBottom': StrokeDirection.topToBottom,
-      'leftToRight': StrokeDirection.leftToRight,
-      'clockwise': StrokeDirection.clockwise,
-      'anticlockwise': StrokeDirection.anticlockwise,
-      'compound': StrokeDirection.compound,
-      'dot': StrokeDirection.dot,
-    };
-
-    for (final entry in cases.entries) {
-      test('${entry.key} round-trips through .name / byName()', () {
-        expect(entry.value.name, entry.key);
-        expect(StrokeDirection.values.byName(entry.key), entry.value);
-      });
-    }
-
-    test('byName() throws ArgumentError for unknown string', () {
-      expect(
-        () => StrokeDirection.values.byName('unknown'),
-        throwsA(isA<ArgumentError>()),
-      );
-    });
-  });
-
   group('WaypointRegion serialisation', () {
     const cases = {
       'topLeft': WaypointRegion.topLeft,
@@ -62,9 +37,8 @@ void main() {
   // ---------------------------------------------------------------------------
 
   group('ExpectedStroke', () {
-    test('can be created with compound direction and non-empty waypoints', () {
+    test('can be created with non-empty waypoints', () {
       final stroke = ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.0,
           maxX: 1.0,
@@ -77,7 +51,6 @@ void main() {
           WaypointRegion.top,
         ],
       );
-      expect(stroke.primaryDirection, StrokeDirection.compound);
       expect(stroke.waypoints, [
         WaypointRegion.top,
         WaypointRegion.bottomLeft,
@@ -87,7 +60,6 @@ void main() {
 
     test('defaults waypoints to empty list', () {
       final stroke = ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.0,
           maxX: 1.0,
@@ -98,9 +70,8 @@ void main() {
       expect(stroke.waypoints, isEmpty);
     });
 
-    test('allows empty waypoints for non-compound direction', () {
+    test('allows explicitly empty waypoints', () {
       final stroke = ExpectedStroke(
-        primaryDirection: StrokeDirection.leftToRight,
         startRect: const StrokeStartRect(
           minX: 0.0,
           maxX: 1.0,
@@ -110,20 +81,6 @@ void main() {
         waypoints: [],
       );
       expect(stroke.waypoints, isEmpty);
-    });
-
-    test('allows non-compound directions to define waypoints', () {
-      final stroke = ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 0.0,
-          maxY: 1.0 / 3.0,
-        ),
-        waypoints: [WaypointRegion.top, WaypointRegion.bottom],
-      );
-      expect(stroke.waypoints, [WaypointRegion.top, WaypointRegion.bottom]);
     });
   });
 
@@ -136,7 +93,6 @@ void main() {
       final data = LetterFormationData(
         strokes: [
           ExpectedStroke(
-            primaryDirection: StrokeDirection.topToBottom,
             startRect: const StrokeStartRect(
               minX: 0.0,
               maxX: 1.0,
@@ -145,7 +101,6 @@ void main() {
             ),
           ),
           ExpectedStroke(
-            primaryDirection: StrokeDirection.leftToRight,
             startRect: const StrokeStartRect(
               minX: 0.0,
               maxX: 1.0,
@@ -164,7 +119,6 @@ void main() {
       final data = LetterFormationData(
         strokes: [
           ExpectedStroke(
-            primaryDirection: StrokeDirection.anticlockwise,
             startRect: const StrokeStartRect(
               minX: 0.0,
               maxX: 1.0,
@@ -182,7 +136,6 @@ void main() {
       final data = LetterFormationData(
         strokes: [
           ExpectedStroke(
-            primaryDirection: StrokeDirection.topToBottom,
             startRect: const StrokeStartRect(
               minX: 0.0,
               maxX: 1.0,
@@ -191,7 +144,6 @@ void main() {
             ),
           ),
           ExpectedStroke(
-            primaryDirection: StrokeDirection.dot,
             startRect: const StrokeStartRect(
               minX: 0.0,
               maxX: 1.0,
@@ -210,7 +162,6 @@ void main() {
         () => LetterFormationData(
           strokes: [
             ExpectedStroke(
-              primaryDirection: StrokeDirection.topToBottom,
               startRect: const StrokeStartRect(
                 minX: 0.0,
                 maxX: 1.0,

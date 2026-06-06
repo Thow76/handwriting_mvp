@@ -75,15 +75,13 @@ void main() {
 
       expect(result.strokeStart, isNotNull,
           reason: 'strokeStart must be propagated from ScoreIntegrator');
-      expect(result.strokeDirection, isNotNull,
-          reason: 'strokeDirection must be propagated from ScoreIntegrator');
       expect(result.compoundStroke, isNotNull,
           reason: 'compoundStroke must be propagated from ScoreIntegrator');
       expect(result.strokeBreak, isNotNull,
           reason: 'strokeBreak must be propagated from ScoreIntegrator');
     });
 
-    test('all four formation fields are non-null for letter o (has formation data)', () {
+    test('all three formation fields are non-null for letter o (has formation data)', () {
       // o expects an anticlockwise stroke.
       final stroke = Stroke(const [
         Offset(45, 5),  // top
@@ -100,8 +98,6 @@ void main() {
 
       expect(result.strokeStart, isNotNull,
           reason: 'strokeStart must be propagated from ScoreIntegrator');
-      expect(result.strokeDirection, isNotNull,
-          reason: 'strokeDirection must be propagated from ScoreIntegrator');
       expect(result.compoundStroke, isNotNull,
           reason: 'compoundStroke must be propagated from ScoreIntegrator');
       expect(result.strokeBreak, isNotNull,

@@ -17,7 +17,6 @@ void main() {
       StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0);
 
   ExpectedStroke expectedStroke() => ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: someRect,
       );
 
@@ -77,12 +76,10 @@ void main() {
     test('compound strokes pair positionally too', () {
       final expected = [
         ExpectedStroke(
-          primaryDirection: StrokeDirection.compound,
           startRect: someRect,
           waypoints: const [WaypointRegion.topLeft],
         ),
         ExpectedStroke(
-          primaryDirection: StrokeDirection.compound,
           startRect: someRect,
           waypoints: const [WaypointRegion.bottomRight],
         ),

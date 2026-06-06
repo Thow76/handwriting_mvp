@@ -10,7 +10,6 @@ import 'score_result.dart';
 import 'skeletonizer.dart';
 import 'stroke.dart';
 import 'stroke_break_counter.dart';
-import 'stroke_direction_scorer.dart';
 import 'stroke_rasterizer.dart';
 import 'stroke_start_scorer.dart';
 
@@ -35,7 +34,7 @@ class ScoreIntegrator {
   /// `bounds.height.ceil()` × `bounds.width.ceil()`.
   ///
   /// [formationBounds] is the bounding rect passed to the formation scorers
-  /// ([StrokeStartScorer], [StrokeDirectionScorer], [CompoundStrokeScorer]).
+  /// ([StrokeStartScorer], [CompoundStrokeScorer]).
   /// If not supplied, it defaults to [bounds].
   static ScoreResult score({
     required List<List<bool>> referenceMask,
@@ -98,7 +97,6 @@ class ScoreIntegrator {
     // Formation scoring — only when a target letter is supplied and has
     // authored formation data.
     FormationScore? strokeStart;
-    FormationScore? strokeDirection;
     FormationScore? compoundStroke;
     FormationScore? strokeBreak;
 
@@ -106,12 +104,6 @@ class ScoreIntegrator {
       final data = letterFormationRegistry[letter];
       if (data != null) {
         strokeStart = StrokeStartScorer(
-          letter: letter,
-          data: data,
-          bounds: formationBounds,
-        ).score(strokes);
-
-        strokeDirection = StrokeDirectionScorer(
           letter: letter,
           data: data,
           bounds: formationBounds,
@@ -130,11 +122,9 @@ class ScoreIntegrator {
       }
     }
 
-    // The four formation scores are kept independent in ScoreResult and are
+    // The formation scores are kept independent in ScoreResult and are
     // displayed separately in the UI. They are NOT combined into a single
-    // headline formation score, so a StrokeDirectionScorer result of 0.0
-    // (returned when all strokes are waypoint-routed and scoredValues is empty)
-    // does not penalise any aggregate score.
+    // headline formation score.
     return ScoreResult(
       coverage: normalisedCoverage,
       precision: PrecisionScorer.calculate(
@@ -144,7 +134,6 @@ class ScoreIntegrator {
       placement: 0.0,
       efficiency: efficiency,
       strokeStart: strokeStart,
-      strokeDirection: strokeDirection,
       compoundStroke: compoundStroke,
       strokeBreak: strokeBreak,
     );

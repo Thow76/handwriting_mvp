@@ -181,7 +181,7 @@ void main() {
     final ref90 = _mask(90, 90);
     const bounds90 = Rect.fromLTWH(0, 0, 90, 90);
 
-    test('no letter → all four formation fields are null', () {
+    test('no letter → all three formation fields are null', () {
       final result = ScoreIntegrator.score(
         referenceMask: ref90,
         bounds: bounds90,
@@ -189,12 +189,11 @@ void main() {
       );
 
       expect(result.strokeStart, isNull);
-      expect(result.strokeDirection, isNull);
       expect(result.compoundStroke, isNull);
       expect(result.strokeBreak, isNull);
     });
 
-    test('unknown letter → all four formation fields are null (defensive)', () {
+    test('unknown letter → all three formation fields are null (defensive)', () {
       final result = ScoreIntegrator.score(
         referenceMask: ref90,
         bounds: bounds90,
@@ -203,12 +202,11 @@ void main() {
       );
 
       expect(result.strokeStart, isNull);
-      expect(result.strokeDirection, isNull);
       expect(result.compoundStroke, isNull);
       expect(result.strokeBreak, isNull);
     });
 
-    test('correct n → all four formation scores attached; start, compound and '
+    test('correct n → all three formation scores attached; start, compound and '
         'break scores are 1.0', () {
       // n has a single compound stroke with waypoints:
       //   topLeft → bottomLeft → top → bottomRight
@@ -237,19 +235,13 @@ void main() {
         letter: 'n',
       );
 
-      // All four formation score objects must be attached.
+      // All three formation score objects must be attached.
       expect(result.strokeStart, isNotNull);
-      expect(result.strokeDirection, isNotNull);
       expect(result.compoundStroke, isNotNull);
       expect(result.strokeBreak, isNotNull);
 
       // Stroke first point (10, 10) is inside n's startRect → 1.0.
       expect(result.strokeStart!.overallScore, 1.0);
-
-      // n has only compound strokes; StrokeDirectionScorer excludes compound
-      // strokes from its mean → overallScore is 0.0 (no direction-scored
-      // strokes found).
-      expect(result.strokeDirection!.overallScore, 0.0);
 
       // All 4 waypoints hit in order → 1.0.
       expect(result.compoundStroke!.overallScore, 1.0);
@@ -275,14 +267,10 @@ void main() {
         letter: 'o',
       );
 
-      // All four formation score objects must be attached.
+      // All three formation score objects must be attached.
       expect(result.strokeStart, isNotNull);
-      expect(result.strokeDirection, isNotNull);
       expect(result.compoundStroke, isNotNull);
       expect(result.strokeBreak, isNotNull);
-
-      // o[0] now has waypoints, so StrokeDirectionScorer skips it.
-      expect(result.strokeDirection!.overallScore, 0.0);
 
       // All 4 waypoints are hit in order.
       expect(result.compoundStroke!.overallScore, 1.0);

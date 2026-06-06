@@ -78,7 +78,7 @@ void main() {
       const result = ScoreResult(coverage: 1.0, precision: 1.0, placement: 1.0, efficiency: 1.0);
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
-      expect(find.text('—'), findsNWidgets(4));
+      expect(find.text('—'), findsNWidgets(3));
     });
 
     testWidgets('displays Start label and percentage', (tester) async {
@@ -93,20 +93,6 @@ void main() {
 
       expect(find.text('Start'), findsOneWidget);
       expect(find.text('75%'), findsOneWidget);
-    });
-
-    testWidgets('displays Direction label and percentage', (tester) async {
-      final result = ScoreResult(
-        coverage: 1.0,
-        precision: 1.0,
-        placement: 1.0,
-        efficiency: 1.0,
-        strokeDirection: const FormationScore(overallScore: 0.50, observations: [], summary: ''),
-      );
-      await tester.pumpWidget(_app(ScoreDisplay(result: result)));
-
-      expect(find.text('Direction'), findsOneWidget);
-      expect(find.text('50%'), findsOneWidget);
     });
 
     testWidgets('displays Path label and percentage', (tester) async {
@@ -144,12 +130,12 @@ void main() {
         placement: 1.0,
         efficiency: 1.0,
         strokeStart: const FormationScore(overallScore: 0.80, observations: [], summary: ''),
-        // strokeDirection, compoundStroke, strokeBreak are null
+        // compoundStroke, strokeBreak are null
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
       expect(find.text('80%'), findsOneWidget);
-      expect(find.text('—'), findsNWidgets(3));
+      expect(find.text('—'), findsNWidgets(2));
     });
 
     testWidgets('displays 0% for zero formation score (not em-dash)', (tester) async {
@@ -163,7 +149,7 @@ void main() {
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
       expect(find.text('0%'), findsOneWidget);
-      expect(find.text('—'), findsNWidgets(3));
+      expect(find.text('—'), findsNWidgets(2));
     });
 
     testWidgets('displays 100% for perfect formation score', (tester) async {
@@ -173,13 +159,12 @@ void main() {
         placement: 1.0,
         efficiency: 1.0,
         strokeStart: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
-        strokeDirection: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
         compoundStroke: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
         strokeBreak: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
-      expect(find.text('100%'), findsNWidgets(8));
+      expect(find.text('100%'), findsNWidgets(7));
     });
   });
 
