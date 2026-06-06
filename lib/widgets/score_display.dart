@@ -39,7 +39,6 @@ class ScoreDisplay extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _FormationScoreItem(label: 'Start', value: result?.strokeStart?.overallScore),
-              _FormationScoreItem(label: 'Direction', value: result?.strokeDirection?.overallScore),
               _FormationScoreItem(label: 'Path', value: result?.compoundStroke?.overallScore),
               if (showStrokes)
                 _FormationScoreItem(label: 'Strokes', value: result?.strokeBreak?.overallScore),

@@ -53,7 +53,6 @@ class DebugScoreView extends StatelessWidget {
           if (tightBounds != null) _TightBoundsLine(bounds: tightBounds!),
           const Divider(),
           _FormationPanel(name: 'StrokeStartScorer', score: r.strokeStart),
-          _FormationPanel(name: 'StrokeDirectionScorer', score: r.strokeDirection),
           _FormationPanel(name: 'CompoundStrokeScorer', score: r.compoundStroke),
           _FormationPanel(name: 'StrokeBreakCounter', score: r.strokeBreak),
         ],

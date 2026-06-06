@@ -62,7 +62,6 @@ void main() {
       await tester.pumpWidget(_app(const DebugScoreView(result: result)));
 
       expect(find.textContaining('StrokeStartScorer — (not applicable)'), findsOneWidget);
-      expect(find.textContaining('StrokeDirectionScorer — (not applicable)'), findsOneWidget);
       expect(find.textContaining('CompoundStrokeScorer — (not applicable)'), findsOneWidget);
       expect(find.textContaining('StrokeBreakCounter — (not applicable)'), findsOneWidget);
     });
@@ -82,7 +81,6 @@ void main() {
       await tester.pumpWidget(_app(DebugScoreView(result: result)));
 
       expect(find.textContaining('StrokeStartScorer — 80%'), findsOneWidget);
-      expect(find.textContaining('StrokeDirectionScorer — (not applicable)'), findsOneWidget);
       expect(find.textContaining('CompoundStrokeScorer — (not applicable)'), findsOneWidget);
       expect(find.textContaining('StrokeBreakCounter — (not applicable)'), findsOneWidget);
     });
@@ -169,39 +167,6 @@ void main() {
       expect(
         find.textContaining(
             'A stroke started in the wrong place — should start in x 0–25%, y 0–15%.'),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('renders StrokeDirectionScorer panel with both columns',
-        (tester) async {
-      final result = ScoreResult(
-        coverage: 1.0,
-        precision: 1.0,
-        placement: 1.0,
-        efficiency: 1.0,
-        strokeDirection: const FormationScore(
-          overallScore: 0.5,
-          observations: [
-            StrokeObservation(
-              strokeIndex: 0,
-              expected: 'anticlockwise',
-              observed: 'clockwise',
-              score: 0.0,
-              note: 'Drew the circle clockwise; should be drawn anticlockwise.',
-            ),
-          ],
-          summary: 'All strokes were drawn in the wrong direction.',
-        ),
-      );
-      await tester.pumpWidget(_app(DebugScoreView(result: result)));
-
-      expect(find.textContaining('StrokeDirectionScorer — 50%'), findsOneWidget);
-      expect(find.textContaining('expected=anticlockwise'), findsOneWidget);
-      expect(find.textContaining('observed=clockwise'), findsOneWidget);
-      expect(find.textContaining('score=0.00'), findsOneWidget);
-      expect(
-        find.textContaining('Drew the circle clockwise; should be drawn anticlockwise.'),
         findsOneWidget,
       );
     });
@@ -299,7 +264,7 @@ void main() {
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeDirection: const FormationScore(
+        compoundStroke: const FormationScore(
           overallScore: 1.0,
           observations: [
             StrokeObservation(
@@ -310,7 +275,7 @@ void main() {
               note: skippedNote,
             ),
           ],
-          summary: 'No direction-scored strokes were found.',
+          summary: 'No waypoint-scored strokes were found.',
         ),
       );
       await tester.pumpWidget(_app(DebugScoreView(result: result)));
@@ -329,7 +294,7 @@ void main() {
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeDirection: const FormationScore(
+        compoundStroke: const FormationScore(
           overallScore: 1.0,
           observations: [
             StrokeObservation(
@@ -340,7 +305,7 @@ void main() {
               note: skippedNote,
             ),
           ],
-          summary: 'No direction-scored strokes were found.',
+          summary: 'No waypoint-scored strokes were found.',
         ),
       );
       await tester.pumpWidget(_app(DebugScoreView(result: result)));

@@ -52,11 +52,11 @@ import 'stroke_start_rect.dart';
 /// ## Single-stroke letters — `c, e, l, o, s, v, w, z`
 ///
 /// Every entry has `minRequiredStrokes = 1` and exactly one [ExpectedStroke].
-/// Direction assignments follow the Universal Core table in
-/// `stroke_formation_scope.md`:
+/// The canonical drawing direction (documented below for reference) follows
+/// the Universal Core table in `stroke_formation_scope.md`:
 ///
-/// | Letter | primaryDirection | Notes |
-/// |--------|-----------------|-------|
+/// | Letter | Direction | Notes |
+/// |--------|-----------|-------|
 /// | c      | anticlockwise   | Left-opening arc |
 /// | e      | anticlockwise   | Closed left-opening oval |
 /// | l      | topToBottom     | Vertical stem |
@@ -76,12 +76,12 @@ import 'stroke_start_rect.dart';
 ///
 /// For b, d, g, p, q the strokes list contains two [ExpectedStroke]s
 /// representing the canonical separated form (stem + bowl/oval). This gives
-/// direction scoring the correct structure without requiring a lift.
+/// the scorers the correct structure without requiring a lift.
 /// `strokes.length` is the canonical count; `minRequiredStrokes` is the
 /// scoring floor — these are intentionally different for these five letters.
 ///
-/// | Letter | Stroke | primaryDirection | Notes |
-/// |--------|--------|-----------------|-------|
+/// | Letter | Stroke | Direction | Notes |
+/// |--------|--------|-----------|-------|
 /// | a      | 1      | anticlockwise   | Closed left-opening oval (single stroke) |
 /// | b      | 1      | topToBottom     | Vertical stem |
 /// | b      | 2      | clockwise       | Right-opening bowl |
@@ -101,8 +101,8 @@ import 'stroke_start_rect.dart';
 /// Every entry has `minRequiredStrokes = 2` and two [ExpectedStroke]s.
 /// The pen-lift is mandatory; failing to lift is a formation error.
 ///
-/// | Letter | Stroke | primaryDirection | Notes |
-/// |--------|--------|-----------------|-------|
+/// | Letter | Stroke | Direction | Notes |
+/// |--------|--------|-----------|-------|
 /// | f      | 1      | topToBottom     | Vertical stem |
 /// | f      | 2      | leftToRight     | Crossbar |
 /// | i      | 1      | topToBottom     | Vertical stem |
@@ -117,12 +117,11 @@ import 'stroke_start_rect.dart';
 /// ## Compound-stroke letters — `h, k, m, n, r, u`
 ///
 /// Letters whose pen never lifts but travels through multiple directional
-/// phases. Compound [ExpectedStroke]s have `primaryDirection = compound` and
-/// a non-empty `waypoints` list specifying the ordered 3×3 grid cells the
-/// stroke must pass through.
+/// phases. Compound [ExpectedStroke]s carry a non-empty `waypoints` list
+/// specifying the ordered 3×3 grid cells the stroke must pass through.
 ///
-/// | Letter | Stroke | primaryDirection | Waypoints                                               |
-/// |--------|--------|-----------------|--------------------------------------------------------|
+/// | Letter | Stroke | Direction | Waypoints                                               |
+/// |--------|--------|-----------|--------------------------------------------------------|
 /// | h      | 1      | topToBottom     | — (stem)                                                |
 /// | h      | 2      | compound        | left → top → bottomRight                               |
 /// | k      | 1      | topToBottom     | — (stem)                                                |
@@ -144,7 +143,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.anticlockwise,
         startRect: const StrokeStartRect(
           minX: 0.55,
           maxX: 0.95,
@@ -164,7 +162,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.anticlockwise,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -184,7 +181,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 1.00,
@@ -199,7 +195,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.anticlockwise,
         startRect: const StrokeStartRect(
           minX: 0.55,
           maxX: 0.95,
@@ -220,7 +215,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.55,
           maxX: 0.95,
@@ -239,7 +233,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -254,7 +247,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -269,7 +261,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -287,14 +278,13 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
   // both correct; the scoring floor is 1, not the canonical stroke count.
   //
   // For b, d, g, p, q the strokes list has two entries (canonical separated
-  // form) so direction scoring has the right structure; minRequiredStrokes
+  // form) so the scorers have the right structure; minRequiredStrokes
   // remains 1 because failing to lift is NOT a formation error for these.
   // -------------------------------------------------------------------------
   'a': LetterFormationData(
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.anticlockwise,
         startRect: const StrokeStartRect(
           minX: 0.55,
           maxX: 0.95,
@@ -314,7 +304,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -324,7 +313,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.clockwise,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
@@ -344,7 +332,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.75,
           maxX: 1.00,
@@ -354,7 +341,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.anticlockwise,
         startRect: const StrokeStartRect(
           minX: 0.70,
           maxX: 1.00,
@@ -374,7 +360,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.anticlockwise,
         startRect: const StrokeStartRect(
           minX: 0.65,
           maxX: 0.85,
@@ -389,7 +374,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         ],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.74,
           maxX: 0.99,
@@ -404,7 +388,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -414,7 +397,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.clockwise,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
@@ -434,7 +416,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.anticlockwise,
         startRect: const StrokeStartRect(
           minX: 0.68,
           maxX: 0.95,
@@ -449,7 +430,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         ],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.87,
           maxX: 1.00,
@@ -464,7 +444,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -474,7 +453,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
@@ -489,7 +467,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -499,7 +476,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.75,
           maxX: 1.00,
@@ -518,7 +494,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.55,
           maxX: 1.00,
@@ -528,7 +503,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.leftToRight,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -543,7 +517,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.25,
           maxX: 0.75,
@@ -553,7 +526,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.dot,
         startRect: const StrokeStartRect(
           minX: 0.15,
           maxX: 0.85,
@@ -567,7 +539,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.25,
           maxX: 0.75,
@@ -577,7 +548,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.dot,
         startRect: const StrokeStartRect(
           minX: 0.15,
           maxX: 0.85,
@@ -591,7 +561,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.35,
           maxX: 0.65,
@@ -601,7 +570,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.leftToRight,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.24,
@@ -616,7 +584,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -626,7 +593,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.75,
           maxX: 1.00,
@@ -641,9 +607,8 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
   // Compound-stroke letters — h, k, m, n, r, u
   //
   // Letters whose pen never lifts but travels through multiple directional
-  // phases. Compound strokes have primaryDirection = compound and a non-empty
-  // waypoints list specifying the ordered 3×3 WaypointRegion grid cells the
-  // stroke must pass through.
+  // phases. Compound strokes carry a non-empty waypoints list specifying the
+  // ordered 3×3 WaypointRegion grid cells the stroke must pass through.
   //
   // h, k, r: stem (topToBottom) + compound second stroke.
   //   minRequiredStrokes = 2 — the pen-lift between stem and arch/kick is
@@ -660,7 +625,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -670,7 +634,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
@@ -689,7 +652,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 2,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.topToBottom,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.25,
@@ -699,7 +661,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
       ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.60,
           maxX: 0.90,
@@ -718,7 +679,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
@@ -740,7 +700,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
@@ -760,7 +719,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
-        primaryDirection: StrokeDirection.compound,
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,

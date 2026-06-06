@@ -46,7 +46,6 @@ ScoreResult buildScoreResult({
     placement: placement,
     efficiency: bitmapResult.efficiency,
     strokeStart: bitmapResult.strokeStart,
-    strokeDirection: bitmapResult.strokeDirection,
     compoundStroke: bitmapResult.compoundStroke,
     strokeBreak: bitmapResult.strokeBreak,
   );

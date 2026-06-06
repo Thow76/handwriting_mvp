@@ -26,7 +26,6 @@ void main() {
       );
 
       expect(result.strokeStart, isNull);
-      expect(result.strokeDirection, isNull);
       expect(result.compoundStroke, isNull);
       expect(result.strokeBreak, isNull);
     });

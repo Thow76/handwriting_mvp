@@ -9,19 +9,6 @@ import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 // removed, or reordered, update the expected list and the scope document
 // together.
 void main() {
-  group('StrokeDirection', () {
-    test('has the expected values in declaration order', () {
-      expect(StrokeDirection.values, const [
-        StrokeDirection.topToBottom,
-        StrokeDirection.leftToRight,
-        StrokeDirection.clockwise,
-        StrokeDirection.anticlockwise,
-        StrokeDirection.compound,
-        StrokeDirection.dot,
-      ]);
-    });
-  });
-
   group('WaypointRegion', () {
     test('has the expected values in declaration order', () {
       expect(WaypointRegion.values, const [

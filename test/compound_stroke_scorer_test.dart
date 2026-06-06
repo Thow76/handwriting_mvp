@@ -422,7 +422,6 @@ void main() {
       minRequiredStrokes: 2,
       strokes: [
         ExpectedStroke(
-          primaryDirection: StrokeDirection.compound,
           startRect: const StrokeStartRect(
             minX: 0.0,
             maxX: 1.0,
@@ -436,7 +435,6 @@ void main() {
           ],
         ),
         ExpectedStroke(
-          primaryDirection: StrokeDirection.compound,
           startRect: const StrokeStartRect(
             minX: 0.0,
             maxX: 1.0,
@@ -488,7 +486,6 @@ void main() {
         minRequiredStrokes: 1,
         strokes: [
           ExpectedStroke(
-            primaryDirection: StrokeDirection.topToBottom,
             startRect: const StrokeStartRect(
               minX: 0.0,
               maxX: 1.0,
@@ -503,7 +500,7 @@ void main() {
       final verticalStroke = Stroke(const [Offset(150, 50), Offset(150, 250)]);
 
       test(
-        'is scored via waypoints even when primaryDirection is topToBottom',
+        'is scored via waypoints for a straight top-to-bottom stroke',
         () {
           final scorer = CompoundStrokeScorer(
             letter: 'synthetic',
@@ -739,7 +736,6 @@ void main() {
         minRequiredStrokes: 1,
         strokes: [
           ExpectedStroke(
-            primaryDirection: StrokeDirection.compound,
             startRect: const StrokeStartRect(
               minX: 0.0,
               maxX: 1.0,
@@ -776,7 +772,6 @@ void main() {
           minRequiredStrokes: 2,
           strokes: [
             ExpectedStroke(
-              primaryDirection: StrokeDirection.compound,
               startRect: const StrokeStartRect(
                 minX: 0.0,
                 maxX: 0.5,
@@ -786,7 +781,6 @@ void main() {
               waypoints: const [],
             ),
             ExpectedStroke(
-              primaryDirection: StrokeDirection.topToBottom,
               startRect: const StrokeStartRect(
                 minX: 0.5,
                 maxX: 1.0,

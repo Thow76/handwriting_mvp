@@ -18,9 +18,6 @@ class ScoreResult {
   /// Formation score for stroke-start regions, or null if not applicable.
   final FormationScore? strokeStart;
 
-  /// Formation score for stroke directions, or null if not applicable.
-  final FormationScore? strokeDirection;
-
   /// Formation score for compound stroke waypoints, or null if not applicable.
   final FormationScore? compoundStroke;
 
@@ -33,7 +30,6 @@ class ScoreResult {
     required this.placement,
     required this.efficiency,
     this.strokeStart,
-    this.strokeDirection,
     this.compoundStroke,
     this.strokeBreak,
   });
