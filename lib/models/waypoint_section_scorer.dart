@@ -17,9 +17,16 @@ import 'stroke_matcher.dart';
 /// For each observed stroke matched to an [ExpectedStroke] with a non-empty
 /// `sections` list, [matchWaypointSections] is called to scan the stroke's
 /// point stream and find how many sections were hit in sequential order.
-/// The per-stroke score is `hitCount / sections.length` (partial credit for
-/// the in-order prefix). The [FormationScore.overallScore] is the mean of all
-/// per-section-stroke scores.
+/// Scoring is **all-or-nothing**: the per-stroke score is `1.0` only when every
+/// section is hit in the correct sequential order (`hitCount == sections.length`),
+/// and `0.0` otherwise. There is no partial credit for a correct in-order
+/// prefix — a stroke that completes 3 of 6 sections scores `0.0`, not `0.5`.
+/// The [FormationScore.overallScore] is the mean of all per-section-stroke
+/// scores.
+///
+/// Note: [matchWaypointSections] still reports the full `hitCount` and
+/// per-section hit detail, which the debug view uses to show where the sequence
+/// broke; only the pass/fail decision lives here in the scorer.
 ///
 /// When the letter has no section-scored expected strokes, returns vacuously
 /// correct (`overallScore: 1.0`), matching [CompoundStrokeScorer]'s convention.
@@ -80,7 +87,8 @@ class WaypointSectionScorer {
         bounds,
       );
 
-      final strokeScore = result.hitCount / sections.length;
+      // All-or-nothing: full marks only when every section is hit in order.
+      final strokeScore = result.hitCount == sections.length ? 1.0 : 0.0;
       scoredValues.add(strokeScore);
 
       final expectedStr =

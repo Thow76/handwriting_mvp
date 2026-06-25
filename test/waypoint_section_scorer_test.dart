@@ -128,10 +128,10 @@ void main() {
   });
 
   // ---------------------------------------------------------------------------
-  // Partial hit — only prefix matched
+  // Incomplete sequence — a correct in-order prefix earns NO partial credit
   // ---------------------------------------------------------------------------
 
-  group('partial hit — 2 of 3 sections hit', () {
+  group('incomplete sequence — 2 of 3 sections hit scores 0.0', () {
     late WaypointSectionScorer scorer;
 
     setUp(() {
@@ -150,7 +150,7 @@ void main() {
       );
     });
 
-    test('overallScore is 2/3', () {
+    test('overallScore is 0.0 (no partial credit for the in-order prefix)', () {
       // Hits section 1 and section 2, but not section 3.
       final stroke = Stroke(const [
         Offset(10, 10), // inside section 1
@@ -158,17 +158,17 @@ void main() {
         Offset(160, 160), // NOT inside section 3
       ]);
       final result = scorer.score([stroke]);
-      expect(result.overallScore, closeTo(2.0 / 3.0, 0.001));
+      expect(result.overallScore, 0.0);
     });
 
-    test('observation score is 2/3', () {
+    test('observation score is 0.0', () {
       final stroke = Stroke(const [
         Offset(10, 10),
         Offset(150, 150),
         Offset(160, 160),
       ]);
       final result = scorer.score([stroke]);
-      expect(result.observations.single.score, closeTo(2.0 / 3.0, 0.001));
+      expect(result.observations.single.score, 0.0);
     });
 
     test('observation note says 2 of 3 hit', () {
