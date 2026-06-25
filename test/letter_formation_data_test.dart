@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
+import 'package:handwriting_mvp/models/waypoint_section.dart';
 
 void main() {
   group('WaypointRegion serialisation', () {
@@ -81,6 +82,54 @@ void main() {
         waypoints: [],
       );
       expect(stroke.waypoints, isEmpty);
+    });
+
+    test('defaults sections to empty list', () {
+      final stroke = ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.0,
+          maxX: 1.0,
+          minY: 0.0,
+          maxY: 1.0 / 3.0,
+        ),
+      );
+      expect(stroke.sections, isEmpty);
+    });
+
+    test('can be created with non-empty sections', () {
+      final stroke = ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.0,
+          maxX: 1.0,
+          minY: 0.0,
+          maxY: 1.0 / 3.0,
+        ),
+        sections: const [
+          WaypointSection(index: 0, minX: 0.0, maxX: 0.5, minY: 0.0, maxY: 0.5),
+          WaypointSection(index: 1, minX: 0.5, maxX: 1.0, minY: 0.5, maxY: 1.0),
+        ],
+      );
+      expect(stroke.sections.length, 2);
+      expect(stroke.sections[0].index, 0);
+      expect(stroke.sections[1].index, 1);
+    });
+
+    test('can have both waypoints and sections simultaneously', () {
+      final stroke = ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.0,
+          maxX: 1.0,
+          minY: 0.0,
+          maxY: 1.0 / 3.0,
+        ),
+        waypoints: [WaypointRegion.top, WaypointRegion.bottom],
+        sections: const [
+          WaypointSection(index: 0, minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 0.5),
+          WaypointSection(index: 1, minX: 0.0, maxX: 1.0, minY: 0.5, maxY: 1.0),
+        ],
+      );
+      expect(stroke.waypoints, [WaypointRegion.top, WaypointRegion.bottom]);
+      expect(stroke.sections.length, 2);
     });
   });
 
