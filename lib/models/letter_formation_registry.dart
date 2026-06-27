@@ -311,7 +311,26 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
-        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+        sections: [
+          WaypointSection(
+            number: 1,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.30,
+              minY: 0.00,
+              maxY: 0.20,
+            ),
+          ),
+          WaypointSection(
+            number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.30,
+              minY: 0.80,
+              maxY: 1.00,
+            ),
+          ),
+        ],
       ),
       ExpectedStroke(
         startRect: const StrokeStartRect(
@@ -320,11 +339,43 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.40,
           maxY: 0.60,
         ),
-        waypoints: const [
-          WaypointRegion.topRight,
-          WaypointRegion.right,
-          WaypointRegion.bottom,
-          WaypointRegion.left,
+        sections: [
+          WaypointSection(
+            number: 1,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.35,
+              minY: 0.35,
+              maxY: 0.55,
+            ),
+          ),
+          WaypointSection(
+            number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.50,
+              maxX: 1.00,
+              minY: 0.35,
+              maxY: 0.60,
+            ),
+          ),
+          WaypointSection(
+            number: 3,
+            rect: const StrokeStartRect(
+              minX: 0.50,
+              maxX: 1.00,
+              minY: 0.75,
+              maxY: 1.00,
+            ),
+          ),
+          WaypointSection(
+            number: 4,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.35,
+              minY: 0.75,
+              maxY: 1.00,
+            ),
+          ),
         ],
       ),
     ],
