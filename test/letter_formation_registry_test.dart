@@ -123,13 +123,63 @@ void main() {
       });
     }
 
-    // a: single oval stroke.
+    // a: single oval stroke with sections (migrated from waypoints).
     test('a: has exactly one stroke', () {
       expect(letterFormationRegistry['a']!.strokes, hasLength(1));
     });
 
+    test('a: compound stroke has non-empty sections', () {
+      expect(letterFormationRegistry['a']!.strokes[0].sections, isNotEmpty);
+    });
+
+    test('a: sections are 4 bespoke rectangles covering the anticlockwise oval',
+        () {
+      final sections = letterFormationRegistry['a']!.strokes[0].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 1,
+          rect: const StrokeStartRect(
+            minX: 0.55,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.30,
+          ),
+        ),
+        WaypointSection(
+          number: 2,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.35,
+            minY: 0.25,
+            maxY: 0.70,
+          ),
+        ),
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.20,
+            maxX: 0.80,
+            minY: 0.70,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 4,
+          rect: const StrokeStartRect(
+            minX: 0.65,
+            maxX: 1.00,
+            minY: 0.30,
+            maxY: 0.75,
+          ),
+        ),
+      ]);
+    });
+
+    test('a: waypoints list is empty (migrated to sections)', () {
+      expect(letterFormationRegistry['a']!.strokes[0].waypoints, isEmpty);
+    });
+
     for (final entry in {
-      'a': 0,
       'c': 0,
       'e': 0,
       'o': 0,
