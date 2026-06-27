@@ -27,6 +27,29 @@ void main() {
     Offset(250, 250),
   ]);
 
+  // Inline LetterFormationData for 'n' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final nDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.30,
+          minY: 0.00,
+          maxY: 0.20,
+        ),
+        waypoints: [
+          WaypointRegion.topLeft,
+          WaypointRegion.bottomLeft,
+          WaypointRegion.top,
+          WaypointRegion.bottomRight,
+        ],
+      ),
+    ],
+  );
+
   Stroke topLeftToBottomRightDiagonal() =>
       Stroke(const [Offset(50, 50), Offset(250, 250)]);
 
@@ -53,7 +76,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'n',
-        data: letterFormationRegistry['n']!,
+        data: nDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -123,7 +146,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'n',
-        data: letterFormationRegistry['n']!,
+        data: nDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -169,7 +192,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'n',
-        data: letterFormationRegistry['n']!,
+        data: nDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -547,7 +570,7 @@ void main() {
     test('default tolerance gives 4/4', () {
       final scorer = CompoundStrokeScorer(
         letter: 'n',
-        data: letterFormationRegistry['n']!,
+        data: nDataWithWaypoints,
         bounds: bounds,
       );
       final result = scorer.score([nearMissStroke]);
@@ -557,7 +580,7 @@ void main() {
     test('tighter tolerance fraction (0.3) drops the off-centre waypoint', () {
       final scorer = CompoundStrokeScorer(
         letter: 'n',
-        data: letterFormationRegistry['n']!,
+        data: nDataWithWaypoints,
         bounds: bounds,
         toleranceFraction: 0.3,
       );
@@ -684,7 +707,7 @@ void main() {
     test('empty observed list — overallScore 0.0, no observations', () {
       final scorer = CompoundStrokeScorer(
         letter: 'n',
-        data: letterFormationRegistry['n']!,
+        data: nDataWithWaypoints,
         bounds: bounds,
       );
       final result = scorer.score([]);
@@ -719,7 +742,7 @@ void main() {
         // skipped by the scorer.
         final scorer = CompoundStrokeScorer(
           letter: 'n',
-          data: letterFormationRegistry['n']!,
+          data: nDataWithWaypoints,
           bounds: bounds,
         );
         final result = scorer.score([

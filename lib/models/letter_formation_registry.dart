@@ -1,6 +1,7 @@
 import 'letter_formation_data.dart';
 import 'stroke_formation_enums.dart';
 import 'stroke_start_rect.dart';
+import 'waypoint_section.dart';
 
 /// Formation data for authored lowercase letters.
 ///
@@ -706,11 +707,43 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.20,
         ),
-        waypoints: [
-          WaypointRegion.topLeft,
-          WaypointRegion.bottomLeft,
-          WaypointRegion.top,
-          WaypointRegion.bottomRight,
+        sections: [
+          WaypointSection(
+            number: 1,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.33,
+              minY: 0.00,
+              maxY: 0.33,
+            ),
+          ),
+          WaypointSection(
+            number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.33,
+              minY: 0.67,
+              maxY: 1.00,
+            ),
+          ),
+          WaypointSection(
+            number: 3,
+            rect: const StrokeStartRect(
+              minX: 0.33,
+              maxX: 0.67,
+              minY: 0.00,
+              maxY: 0.33,
+            ),
+          ),
+          WaypointSection(
+            number: 4,
+            rect: const StrokeStartRect(
+              minX: 0.67,
+              maxX: 1.00,
+              minY: 0.67,
+              maxY: 1.00,
+            ),
+          ),
         ],
       ),
     ],
