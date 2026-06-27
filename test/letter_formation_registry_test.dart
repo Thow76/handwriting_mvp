@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_registry.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
+import 'package:handwriting_mvp/models/waypoint_section.dart';
 
 void main() {
   // ---------------------------------------------------------------------------
@@ -300,17 +301,49 @@ void main() {
       expect(letterFormationRegistry['n']!.strokes, hasLength(1));
     });
 
-    test('n: compound stroke has non-empty waypoints', () {
-      expect(letterFormationRegistry['n']!.strokes[0].waypoints, isNotEmpty);
+    test('n: compound stroke has non-empty sections', () {
+      expect(letterFormationRegistry['n']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('n: waypoints are topLeft → bottomLeft → top → bottomRight', () {
-      final waypoints = letterFormationRegistry['n']!.strokes[0].waypoints;
-      expect(waypoints, [
-        WaypointRegion.topLeft,
-        WaypointRegion.bottomLeft,
-        WaypointRegion.top,
-        WaypointRegion.bottomRight,
+    test('n: sections are 4 bespoke rectangles covering the n path', () {
+      final sections = letterFormationRegistry['n']!.strokes[0].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 1,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.33,
+            minY: 0.00,
+            maxY: 0.33,
+          ),
+        ),
+        WaypointSection(
+          number: 2,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.33,
+            minY: 0.67,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.33,
+            maxX: 0.67,
+            minY: 0.00,
+            maxY: 0.33,
+          ),
+        ),
+        WaypointSection(
+          number: 4,
+          rect: const StrokeStartRect(
+            minX: 0.67,
+            maxX: 1.00,
+            minY: 0.67,
+            maxY: 1.00,
+          ),
+        ),
       ]);
     });
 
