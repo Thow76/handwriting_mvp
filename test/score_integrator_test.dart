@@ -446,6 +446,82 @@ void main() {
       expect(result.compoundStroke!.overallScore, 0.0);
     });
 
+    test('correct c (open anticlockwise arc) → compoundStroke score is 1.0',
+        () {
+      // c uses section-based scoring (WaypointSectionScorer) with 3 sections:
+      //   section 1: upper-right  [0.55, 1.00) × [0.00, 0.30)
+      //   section 2: left         [0.00, 0.35) × [0.25, 0.75)
+      //   section 3: bottom       [0.20, 0.80) × [0.70, 1.00)
+      // In a 90×90 grid:
+      //   section 1: x[49.5, 90) y[0, 27)
+      //   section 2: x[0, 31.5) y[22.5, 67.5)
+      //   section 3: x[18, 72) y[63, 90)
+      final stroke = Stroke(const [
+        Offset(70, 10), // section 1 (upper-right)
+        Offset(15, 45), // section 2 (left)
+        Offset(45, 80), // section 3 (bottom)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'c',
+      );
+
+      expect(result.strokeStart, isNotNull);
+      expect(result.compoundStroke, isNotNull);
+      expect(result.strokeBreak, isNotNull);
+
+      // Stroke first point (70, 10) is inside c's startRect → 1.0.
+      expect(result.strokeStart!.overallScore, 1.0);
+
+      // All 3 sections hit in order → 1.0 (section scorer, all-or-nothing).
+      expect(result.compoundStroke!.overallScore, 1.0);
+
+      // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
+      expect(result.strokeBreak!.overallScore, 1.0);
+    });
+
+    test('incomplete c path (1 of 3 sections) → compoundStroke score is 0.0',
+        () {
+      // Only hits section 1, never reaches left or bottom.
+      final stroke = Stroke(const [
+        Offset(70, 10), // section 1 (upper-right)
+        Offset(70, 15), // still upper-right, never reaches left or bottom
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'c',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('out-of-order c path (section 1 → 3 → 2) → compoundStroke '
+        'score is 0.0', () {
+      // Hits sections out of sequential order: 1 then 3 (skipping 2).
+      final stroke = Stroke(const [
+        Offset(70, 10), // section 1 (upper-right)
+        Offset(45, 80), // section 3 (bottom) — out of order
+        Offset(15, 45), // section 2 (left) — too late
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'c',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
     final stem = Stroke(const [Offset(45, 15), Offset(45, 75)]);
     final clockwiseBowl = Stroke(const [
       Offset(75, 15), // topRight centroid
