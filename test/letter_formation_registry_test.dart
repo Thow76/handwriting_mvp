@@ -390,12 +390,12 @@ void main() {
       expect(letterFormationRegistry['b']!.strokes[1].waypoints, isEmpty);
     });
 
-    test('b: bowl sections are 4 bespoke rectangles (clockwise right-opening)',
-        () {
+    test('b: bowl sections are 4 bespoke rectangles numbered 3–6 (clockwise '
+        'right-opening, continuing the letter path after the stem)', () {
       final sections = letterFormationRegistry['b']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
-          number: 1,
+          number: 3,
           rect: const StrokeStartRect(
             minX: 0.00,
             maxX: 0.35,
@@ -404,7 +404,7 @@ void main() {
           ),
         ),
         WaypointSection(
-          number: 2,
+          number: 4,
           rect: const StrokeStartRect(
             minX: 0.50,
             maxX: 1.00,
@@ -413,7 +413,7 @@ void main() {
           ),
         ),
         WaypointSection(
-          number: 3,
+          number: 5,
           rect: const StrokeStartRect(
             minX: 0.50,
             maxX: 1.00,
@@ -422,7 +422,7 @@ void main() {
           ),
         ),
         WaypointSection(
-          number: 4,
+          number: 6,
           rect: const StrokeStartRect(
             minX: 0.00,
             maxX: 0.35,

@@ -447,17 +447,18 @@ void main() {
     });
 
     test('b bowl out-of-order → compoundStroke is 0.0', () {
-      // Stem is correct but bowl visits sections out of order.
+      // Stem is correct but bowl visits sections out of order, so the single
+      // letter path (sections 1–6) breaks → 0.0. No partial credit.
       final bStem = Stroke(const [
-        Offset(10, 10), // stem section 1
-        Offset(10, 80), // stem section 2
+        Offset(10, 10), // section 1
+        Offset(10, 80), // section 2
       ]);
-      // Bowl: section 1 → section 4 (skips 2 and 3) → breaks sequential match.
+      // Bowl: section 3 → section 6 (skips 4 and 5) → breaks the sequence.
       final bBowl = Stroke(const [
-        Offset(10, 40), // bowl section 1 (mid-left)
-        Offset(10, 80), // bowl section 4 (bottom-left) — out of order
-        Offset(70, 40), // bowl section 2 — too late
-        Offset(70, 80), // bowl section 3
+        Offset(10, 40), // section 3 (mid-left)
+        Offset(10, 80), // section 6 (bottom-left) — out of order
+        Offset(70, 40), // section 4 — too late
+        Offset(70, 80), // section 5
       ]);
 
       final result = ScoreIntegrator.score(
@@ -468,8 +469,50 @@ void main() {
       );
 
       expect(result.compoundStroke, isNotNull);
-      // Stem is correct (1.0) but bowl is wrong (0.0) → average 0.5.
-      expect(result.compoundStroke!.overallScore, 0.5);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('b stem only (bowl never drawn) → compoundStroke is 0.0', () {
+      // Drawing only the stem completes sections 1–2 but not the bowl (3–6),
+      // so the letter path is incomplete → 0.0, not 100%.
+      final bStem = Stroke(const [
+        Offset(10, 10), // section 1
+        Offset(10, 80), // section 2
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [bStem],
+        letter: 'b',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('connected b (one no-lift stroke, full path) → compoundStroke is 1.0',
+        () {
+      // A single continuous stroke through all six sections in order scores
+      // identically to the lifted two-stroke form — lifts are judged separately.
+      final bConnected = Stroke(const [
+        Offset(10, 10), // section 1 (stem top)
+        Offset(10, 80), // section 2 (stem bottom)
+        Offset(10, 40), // section 3 (bowl mid-left)
+        Offset(70, 40), // section 4 (bowl right)
+        Offset(70, 80), // section 5 (bowl bottom-right)
+        Offset(10, 80), // section 6 (bowl bottom-left)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [bConnected],
+        letter: 'b',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 1.0);
     });
   });
 }

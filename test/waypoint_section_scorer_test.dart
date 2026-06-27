@@ -15,374 +15,205 @@ void main() {
   const someRect =
       StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0);
 
-  // Three sections covering different parts of the 300×300 box.
-  final section1 = WaypointSection(
+  // Four disjoint corner sections, numbered as one ordered letter path.
+  //   1 top-left      centre (45, 45)
+  //   2 top-right     centre (255, 45)
+  //   3 bottom-right  centre (255, 255)
+  //   4 bottom-left   centre (45, 255)
+  final s1 = WaypointSection(
     number: 1,
     rect: const StrokeStartRect(minX: 0.0, maxX: 0.3, minY: 0.0, maxY: 0.3),
   );
-  final section2 = WaypointSection(
+  final s2 = WaypointSection(
     number: 2,
-    rect: const StrokeStartRect(minX: 0.4, maxX: 0.6, minY: 0.4, maxY: 0.6),
+    rect: const StrokeStartRect(minX: 0.7, maxX: 1.0, minY: 0.0, maxY: 0.3),
   );
-  final section3 = WaypointSection(
+  final s3 = WaypointSection(
     number: 3,
     rect: const StrokeStartRect(minX: 0.7, maxX: 1.0, minY: 0.7, maxY: 1.0),
   );
+  final s4 = WaypointSection(
+    number: 4,
+    rect: const StrokeStartRect(minX: 0.0, maxX: 0.3, minY: 0.7, maxY: 1.0),
+  );
 
-  // ---------------------------------------------------------------------------
-  // Vacuously correct — no section-scored strokes
-  // ---------------------------------------------------------------------------
-
-  group('no section-scored strokes → vacuously correct', () {
-    late WaypointSectionScorer scorer;
-
-    setUp(() {
-      scorer = WaypointSectionScorer(
-        letter: 'a',
+  // A single-stroke letter carrying the whole 4-section path.
+  WaypointSectionScorer singleStrokeScorer() => WaypointSectionScorer(
+        letter: 'x',
         data: LetterFormationData(
-          strokes: [ExpectedStroke(startRect: someRect)],
+          strokes: [ExpectedStroke(startRect: someRect, sections: [s1, s2, s3, s4])],
           minRequiredStrokes: 1,
         ),
         bounds: bounds,
       );
-    });
+
+  // ---------------------------------------------------------------------------
+  // No sections → vacuously correct
+  // ---------------------------------------------------------------------------
+
+  group('no sections → vacuously correct', () {
+    final scorer = WaypointSectionScorer(
+      letter: 'a',
+      data: LetterFormationData(
+        strokes: [ExpectedStroke(startRect: someRect)],
+        minRequiredStrokes: 1,
+      ),
+      bounds: bounds,
+    );
 
     test('overallScore is 1.0', () {
-      final result = scorer.score([Stroke(const [Offset(50, 50)])]);
-      expect(result.overallScore, 1.0);
+      expect(scorer.score([Stroke(const [Offset(50, 50)])]).overallScore, 1.0);
     });
 
     test('observations is empty', () {
-      final result = scorer.score([Stroke(const [Offset(50, 50)])]);
-      expect(result.observations, isEmpty);
+      expect(scorer.score([Stroke(const [Offset(50, 50)])]).observations,
+          isEmpty);
     });
 
-    test('summary mentions no section-scored strokes', () {
-      final result = scorer.score([Stroke(const [Offset(50, 50)])]);
-      expect(result.summary, contains('No section-scored strokes'));
+    test('summary mentions no section-scored path', () {
+      expect(scorer.score([Stroke(const [Offset(50, 50)])]).summary,
+          contains('No section-scored path'));
     });
   });
 
   // ---------------------------------------------------------------------------
-  // All sections hit in order — perfect score
+  // Whole path completed in order → 1.0
   // ---------------------------------------------------------------------------
 
-  group('all sections hit in order — perfect score', () {
-    late WaypointSectionScorer scorer;
-
-    setUp(() {
-      scorer = WaypointSectionScorer(
-        letter: 'b',
-        data: LetterFormationData(
-          strokes: [
-            ExpectedStroke(
-              startRect: someRect,
-              sections: [section1, section2, section3],
-            ),
-          ],
-          minRequiredStrokes: 1,
-        ),
-        bounds: bounds,
-      );
-    });
+  group('full path in order → 1.0', () {
+    final fullPath = Stroke(const [
+      Offset(45, 45), // section 1
+      Offset(255, 45), // section 2
+      Offset(255, 255), // section 3
+      Offset(45, 255), // section 4
+    ]);
 
     test('overallScore is 1.0', () {
-      final stroke = Stroke(const [
-        Offset(10, 10), // inside section 1
-        Offset(150, 150), // inside section 2
-        Offset(250, 250), // inside section 3
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.overallScore, 1.0);
-    });
-
-    test('observation score is 1.0', () {
-      final stroke = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(250, 250),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.score, 1.0);
+      expect(singleStrokeScorer().score([fullPath]).overallScore, 1.0);
     });
 
     test('observation note says all sections hit', () {
-      final stroke = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(250, 250),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.note, contains('All 3 sections hit'));
+      expect(singleStrokeScorer().score([fullPath]).observations.single.note,
+          contains('All 4 sections hit'));
     });
 
-    test('summary says all followed correct path', () {
-      final stroke = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(250, 250),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.summary, contains('All section-scored strokes followed'));
+    test('summary says the path followed the correct sequence', () {
+      expect(singleStrokeScorer().score([fullPath]).summary,
+          contains('followed the correct section sequence'));
     });
   });
 
   // ---------------------------------------------------------------------------
-  // Incomplete sequence — a correct in-order prefix earns NO partial credit
+  // Incomplete / out-of-order → 0.0 (no partial credit)
   // ---------------------------------------------------------------------------
 
-  group('incomplete sequence — 2 of 3 sections hit scores 0.0', () {
-    late WaypointSectionScorer scorer;
+  group('incomplete path → 0.0', () {
+    // Hits sections 1 and 2, then never reaches 3 or 4.
+    final partial = Stroke(const [
+      Offset(45, 45), // section 1
+      Offset(255, 45), // section 2
+      Offset(150, 150), // centre — in no section
+    ]);
 
-    setUp(() {
-      scorer = WaypointSectionScorer(
-        letter: 'c',
-        data: LetterFormationData(
-          strokes: [
-            ExpectedStroke(
-              startRect: someRect,
-              sections: [section1, section2, section3],
-            ),
-          ],
-          minRequiredStrokes: 1,
-        ),
-        bounds: bounds,
-      );
+    test('overallScore is 0.0 (no credit for the in-order prefix)', () {
+      expect(singleStrokeScorer().score([partial]).overallScore, 0.0);
     });
 
-    test('overallScore is 0.0 (no partial credit for the in-order prefix)', () {
-      // Hits section 1 and section 2, but not section 3.
-      final stroke = Stroke(const [
-        Offset(10, 10), // inside section 1
-        Offset(150, 150), // inside section 2
-        Offset(160, 160), // NOT inside section 3
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.overallScore, 0.0);
+    test('observation note says 2 of 4 hit', () {
+      expect(singleStrokeScorer().score([partial]).observations.single.note,
+          contains('2 of 4 sections hit'));
     });
 
-    test('observation score is 0.0', () {
-      final stroke = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(160, 160),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.score, 0.0);
-    });
-
-    test('observation note says 2 of 3 hit', () {
-      final stroke = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(160, 160),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.note, contains('2 of 3 sections hit'));
-    });
-
-    test('observed string shows missed section', () {
-      final stroke = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(160, 160),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.observed, contains('[missed section 3]'));
+    test('observed string shows the first missed section', () {
+      expect(singleStrokeScorer().score([partial]).observations.single.observed,
+          contains('[missed section 3]'));
     });
   });
 
-  // ---------------------------------------------------------------------------
-  // No sections hit — score 0
-  // ---------------------------------------------------------------------------
-
-  group('no sections hit — score 0', () {
-    late WaypointSectionScorer scorer;
-
-    setUp(() {
-      scorer = WaypointSectionScorer(
-        letter: 'd',
-        data: LetterFormationData(
-          strokes: [
-            ExpectedStroke(
-              startRect: someRect,
-              sections: [section1, section2, section3],
-            ),
-          ],
-          minRequiredStrokes: 1,
-        ),
-        bounds: bounds,
-      );
-    });
+  group('no sections hit → 0.0', () {
+    final miss = Stroke(const [Offset(150, 150), Offset(150, 160)]);
 
     test('overallScore is 0.0', () {
-      // All points outside any section.
-      final stroke = Stroke(const [
-        Offset(100, 10), // between sections
-        Offset(100, 100),
-        Offset(100, 200),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.overallScore, 0.0);
+      expect(singleStrokeScorer().score([miss]).overallScore, 0.0);
     });
 
-    test('observation note says no sections hit', () {
-      final stroke = Stroke(const [
-        Offset(100, 10),
-        Offset(100, 100),
-        Offset(100, 200),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.note,
-          contains('No sections were hit'));
-    });
-
-    test('summary says no strokes followed correct path', () {
-      final stroke = Stroke(const [
-        Offset(100, 10),
-        Offset(100, 100),
-        Offset(100, 200),
-      ]);
-      final result = scorer.score([stroke]);
-      expect(result.summary,
-          contains('No section-scored strokes followed'));
+    test('summary says the path did not follow the sequence', () {
+      expect(singleStrokeScorer().score([miss]).summary,
+          contains('did not follow the correct section sequence'));
     });
   });
 
   // ---------------------------------------------------------------------------
-  // Multiple section-scored strokes — overallScore is the mean
+  // One path across multiple strokes — lift and no-lift score identically
   // ---------------------------------------------------------------------------
 
-  group('multiple section-scored strokes — overallScore is the mean', () {
-    late WaypointSectionScorer scorer;
+  group('one path across strokes (lift vs no-lift)', () {
+    // Sections split across two expected strokes, but one ordered path 1→4.
+    WaypointSectionScorer twoStrokeScorer() => WaypointSectionScorer(
+          letter: 'b',
+          data: LetterFormationData(
+            strokes: [
+              ExpectedStroke(startRect: someRect, sections: [s1, s2]),
+              ExpectedStroke(startRect: someRect, sections: [s3, s4]),
+            ],
+            minRequiredStrokes: 1,
+          ),
+          bounds: bounds,
+        );
 
-    setUp(() {
-      scorer = WaypointSectionScorer(
-        letter: 'e',
-        data: LetterFormationData(
-          strokes: [
-            ExpectedStroke(
-              startRect: someRect,
-              sections: [section1, section2, section3],
-            ),
-            ExpectedStroke(
-              startRect: someRect,
-              sections: [section1, section2, section3],
-            ),
-          ],
-          minRequiredStrokes: 2,
-        ),
-        bounds: bounds,
-      );
+    final firstHalf = Stroke(const [Offset(45, 45), Offset(255, 45)]); // 1, 2
+    final secondHalf = Stroke(const [Offset(255, 255), Offset(45, 255)]); // 3, 4
+    final connected = Stroke(const [
+      Offset(45, 45),
+      Offset(255, 45),
+      Offset(255, 255),
+      Offset(45, 255),
+    ]);
+
+    test('drawn as two strokes in order → 1.0', () {
+      expect(twoStrokeScorer().score([firstHalf, secondHalf]).overallScore, 1.0);
     });
 
-    test('first perfect, second zero → mean is 0.5', () {
-      final perfect = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(250, 250),
-      ]);
-      final miss = Stroke(const [
-        Offset(100, 10),
-        Offset(100, 100),
-        Offset(100, 200),
-      ]);
-      final result = scorer.score([perfect, miss]);
-      expect(result.overallScore, 0.5);
+    test('drawn as one connected stroke → 1.0 (identical to lifted)', () {
+      expect(twoStrokeScorer().score([connected]).overallScore, 1.0);
     });
 
-    test('two observations produced', () {
-      final s1 = Stroke(const [Offset(10, 10), Offset(150, 150), Offset(250, 250)]);
-      final s2 = Stroke(const [Offset(10, 10), Offset(150, 150), Offset(250, 250)]);
-      final result = scorer.score([s1, s2]);
-      expect(result.observations.length, 2);
+    test('only the first stroke drawn → 0.0 (rest of the path missing)', () {
+      expect(twoStrokeScorer().score([firstHalf]).overallScore, 0.0);
+    });
+
+    test('strokes drawn in the wrong order → 0.0', () {
+      expect(twoStrokeScorer().score([secondHalf, firstHalf]).overallScore, 0.0);
+    });
+
+    test('exactly one observation regardless of stroke count', () {
+      expect(twoStrokeScorer().score([firstHalf, secondHalf]).observations.length,
+          1);
     });
   });
 
   // ---------------------------------------------------------------------------
-  // Mixed strokes — only section-scored ones contribute
-  // ---------------------------------------------------------------------------
-
-  group('mixed strokes — only section-scored ones are evaluated', () {
-    late WaypointSectionScorer scorer;
-
-    setUp(() {
-      scorer = WaypointSectionScorer(
-        letter: 'f',
-        data: LetterFormationData(
-          strokes: [
-            // First stroke has no sections — not section-scored.
-            ExpectedStroke(startRect: someRect),
-            // Second stroke is section-scored.
-            ExpectedStroke(
-              startRect: someRect,
-              sections: [section1, section2, section3],
-            ),
-          ],
-          minRequiredStrokes: 2,
-        ),
-        bounds: bounds,
-      );
-    });
-
-    test('only one observation produced for the section-scored stroke', () {
-      final s1 = Stroke(const [Offset(50, 50)]);
-      final s2 = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(250, 250),
-      ]);
-      final result = scorer.score([s1, s2]);
-      expect(result.observations.length, 1);
-      expect(result.observations.single.strokeIndex, 1);
-    });
-
-    test('overallScore reflects only the section-scored stroke', () {
-      final s1 = Stroke(const [Offset(50, 50)]);
-      final s2 = Stroke(const [
-        Offset(10, 10),
-        Offset(150, 150),
-        Offset(250, 250),
-      ]);
-      final result = scorer.score([s1, s2]);
-      expect(result.overallScore, 1.0);
-    });
-  });
-
-  // ---------------------------------------------------------------------------
-  // Expected string format
+  // Observation expected/observed format
   // ---------------------------------------------------------------------------
 
   group('observation expected/observed format', () {
-    late WaypointSectionScorer scorer;
-
-    setUp(() {
-      scorer = WaypointSectionScorer(
-        letter: 'g',
-        data: LetterFormationData(
-          strokes: [
-            ExpectedStroke(
-              startRect: someRect,
-              sections: [section1, section2],
-            ),
-          ],
-          minRequiredStrokes: 1,
-        ),
-        bounds: bounds,
-      );
-    });
+    final scorer = WaypointSectionScorer(
+      letter: 'g',
+      data: LetterFormationData(
+        strokes: [ExpectedStroke(startRect: someRect, sections: [s1, s2])],
+        minRequiredStrokes: 1,
+      ),
+      bounds: bounds,
+    );
+    final stroke = Stroke(const [Offset(45, 45), Offset(255, 45)]);
 
     test('expected string uses section numbers', () {
-      final stroke = Stroke(const [Offset(10, 10), Offset(150, 150)]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.expected,
+      expect(scorer.score([stroke]).observations.single.expected,
           'section 1 → section 2');
     });
 
     test('observed string uses section numbers for hits', () {
-      final stroke = Stroke(const [Offset(10, 10), Offset(150, 150)]);
-      final result = scorer.score([stroke]);
-      expect(result.observations.single.observed,
+      expect(scorer.score([stroke]).observations.single.observed,
           'section 1 → section 2');
     });
   });
