@@ -179,8 +179,54 @@ void main() {
       expect(letterFormationRegistry['a']!.strokes[0].waypoints, isEmpty);
     });
 
+    // c: single open-arc stroke with sections (migrated from waypoints).
+    test('c: has exactly one stroke', () {
+      expect(letterFormationRegistry['c']!.strokes, hasLength(1));
+    });
+
+    test('c: compound stroke has non-empty sections', () {
+      expect(letterFormationRegistry['c']!.strokes[0].sections, isNotEmpty);
+    });
+
+    test('c: sections are 3 bespoke rectangles covering the open anticlockwise arc',
+        () {
+      final sections = letterFormationRegistry['c']!.strokes[0].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 1,
+          rect: const StrokeStartRect(
+            minX: 0.55,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.30,
+          ),
+        ),
+        WaypointSection(
+          number: 2,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.35,
+            minY: 0.25,
+            maxY: 0.75,
+          ),
+        ),
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.20,
+            maxX: 0.80,
+            minY: 0.70,
+            maxY: 1.00,
+          ),
+        ),
+      ]);
+    });
+
+    test('c: waypoints list is empty (migrated to sections)', () {
+      expect(letterFormationRegistry['c']!.strokes[0].waypoints, isEmpty);
+    });
+
     for (final entry in {
-      'c': 0,
       'e': 0,
       'o': 0,
       'd': 1,
