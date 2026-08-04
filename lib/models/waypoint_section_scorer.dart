@@ -1,35 +1,40 @@
-import 'dart:ui' show Rect;
+import 'dart:ui' show Offset, Rect;
 
 import 'formation_score.dart';
 import 'letter_formation_data.dart';
 import 'match_waypoint_sections.dart';
 import 'stroke.dart';
-import 'stroke_matcher.dart';
 
-/// Scores whether each section-scored stroke visits the expected
-/// [WaypointSection] rectangles in the correct order, as defined by
-/// [LetterFormationData].
+/// Scores whether the learner's pen travelled through the letter's expected
+/// [WaypointSection] rectangles in the correct sequential order.
 ///
 /// This is the section-based counterpart to [CompoundStrokeScorer] (which uses
-/// the shared 3×3 [WaypointRegion] grid). It evaluates the new per-letter
-/// rectangular sections introduced by the `WaypointSection` migration.
+/// the shared 3×3 [WaypointRegion] grid). It evaluates the bespoke per-letter
+/// rectangles introduced by the `WaypointSection` migration.
 ///
-/// For each observed stroke matched to an [ExpectedStroke] with a non-empty
-/// `sections` list, [matchWaypointSections] is called to scan the stroke's
-/// point stream and find how many sections were hit in sequential order.
-/// Scoring is **all-or-nothing**: the per-stroke score is `1.0` only when every
-/// section is hit in the correct sequential order (`hitCount == sections.length`),
-/// and `0.0` otherwise. There is no partial credit for a correct in-order
-/// prefix — a stroke that completes 3 of 6 sections scores `0.0`, not `0.5`.
-/// The [FormationScore.overallScore] is the mean of all per-section-stroke
-/// scores.
+/// ## One path per letter
 ///
-/// Note: [matchWaypointSections] still reports the full `hitCount` and
-/// per-section hit detail, which the debug view uses to show where the sequence
-/// broke; only the pass/fail decision lives here in the scorer.
+/// The letter's full ordered section sequence is gathered across **all** its
+/// expected strokes (sorted by [WaypointSection.number]), and every observed
+/// point is concatenated in drawing order into a single stream. Matching runs
+/// **once** over that stream. A letter drawn with a pen-lift and the same
+/// letter drawn as one continuous stroke therefore score identically — whether
+/// a lift was required is judged separately by [StrokeBreakCounter], and where
+/// strokes start by [StrokeStartScorer].
 ///
-/// When the letter has no section-scored expected strokes, returns vacuously
-/// correct (`overallScore: 1.0`), matching [CompoundStrokeScorer]'s convention.
+/// ## All-or-nothing
+///
+/// The path score is `1.0` only when every section is hit in the correct
+/// sequential order (`hitCount == sections.length`), and `0.0` otherwise. There
+/// is no partial credit for a correct in-order prefix — completing 3 of 6
+/// sections scores `0.0`, not `0.5`.
+///
+/// [matchWaypointSections] still reports the full `hitCount` and per-section hit
+/// detail, which the debug view uses to show where the sequence broke; only the
+/// pass/fail decision lives here in the scorer.
+///
+/// When the letter has no sections, returns vacuously correct
+/// (`overallScore: 1.0`), matching [CompoundStrokeScorer]'s convention.
 class WaypointSectionScorer {
   /// The letter being scored. Used in observations and summaries.
   final String letter;
@@ -39,7 +44,7 @@ class WaypointSectionScorer {
 
   /// The tight bounding box of the letter template.
   ///
-  /// Used for spatial stroke matching and section rectangle mapping.
+  /// Used to map each section's fractional rectangle into absolute coordinates.
   final Rect bounds;
 
   /// Creates a [WaypointSectionScorer].
@@ -49,78 +54,63 @@ class WaypointSectionScorer {
     required this.bounds,
   });
 
-  /// Scores [observed] strokes against expected section sequences.
+  /// Scores [observed] strokes against the letter's expected section sequence.
   ///
   /// Returns a [FormationScore] containing:
-  /// - [FormationScore.overallScore]: mean of per-section-stroke scores.
-  ///   Returns 1.0 when the letter has no section-scored expected strokes.
-  /// - [FormationScore.observations]: one [StrokeObservation] per observed
-  ///   stroke that was matched to a section-scored expected stroke.
+  /// - [FormationScore.overallScore]: `1.0` if the whole letter path was
+  ///   completed in order, else `0.0`. `1.0` when the letter has no sections.
+  /// - [FormationScore.observations]: a single observation describing the
+  ///   letter's section path and where (if anywhere) it broke.
   /// - [FormationScore.summary]: a learner-facing summary sentence.
   FormationScore score(List<Stroke> observed) {
-    // If the letter definition has no section-scored expected strokes there is
-    // nothing for this scorer to evaluate — vacuously correct.
-    final hasSectionStrokes = data.strokes.any((s) => s.sections.isNotEmpty);
-    if (!hasSectionStrokes) {
+    // Gather the letter's full ordered section sequence across every expected
+    // stroke. The path is one sequence for the whole letter, independent of how
+    // many strokes (pen-lifts) it is decomposed into.
+    final sections = data.strokes.expand((s) => s.sections).toList()
+      ..sort((a, b) => a.number.compareTo(b.number));
+
+    // No sections to evaluate — vacuously correct.
+    if (sections.isEmpty) {
       return const FormationScore(
         overallScore: 1.0,
         observations: [],
-        summary: 'No section-scored strokes in this letter.',
+        summary: 'No section-scored path in this letter.',
       );
     }
 
-    final matchIndices = matchStrokes(observed, data.strokes, bounds);
-    final observations = <StrokeObservation>[];
-    final scoredValues = <double>[];
+    // Concatenate every observed point in drawing order into one stream, so a
+    // connected (no-lift) letter and a lifted letter are scored identically.
+    final points = <Offset>[for (final s in observed) ...s.points];
 
-    for (var i = 0; i < observed.length; i++) {
-      final expectedIndex = matchIndices[i];
-      if (expectedIndex == -1) continue;
+    final result = matchWaypointSections(points, sections, bounds);
+    final passed = result.hitCount == sections.length;
+    final pathScore = passed ? 1.0 : 0.0;
 
-      final expected = data.strokes[expectedIndex];
-      if (expected.sections.isEmpty) continue;
-
-      final sections = expected.sections;
-      final result = matchWaypointSections(
-        observed[i].points,
-        sections,
-        bounds,
-      );
-
-      // All-or-nothing: full marks only when every section is hit in order.
-      final strokeScore = result.hitCount == sections.length ? 1.0 : 0.0;
-      scoredValues.add(strokeScore);
-
-      final expectedStr =
-          sections.map((s) => 'section ${s.number}').join(' → ');
-      final hitLabels = result.hits
-          .map((h) =>
-              h.isHit ? 'section ${h.section.number}' : '[missed section ${h.section.number}]')
-          .join(' → ');
-
-      observations.add(
-        StrokeObservation(
-          strokeIndex: i,
-          expected: expectedStr,
-          observed: hitLabels,
-          score: strokeScore,
-          note: _buildNote(result.hitCount, sections.length),
-        ),
-      );
-    }
-
-    final overallScore = scoredValues.isEmpty
-        ? 0.0
-        : scoredValues.reduce((a, b) => a + b) / scoredValues.length;
+    final expectedStr = sections.map((s) => 'section ${s.number}').join(' → ');
+    final observedStr = result.hits
+        .map((h) => h.isHit
+            ? 'section ${h.section.number}'
+            : '[missed section ${h.section.number}]')
+        .join(' → ');
 
     return FormationScore(
-      overallScore: overallScore,
-      observations: observations,
-      summary: _buildSummary(scoredValues),
+      overallScore: pathScore,
+      observations: [
+        StrokeObservation(
+          strokeIndex: 0,
+          expected: expectedStr,
+          observed: observedStr,
+          score: pathScore,
+          note: _buildNote(result.hitCount, sections.length),
+        ),
+      ],
+      summary: passed
+          ? 'The letter path followed the correct section sequence.'
+          : 'The letter path did not follow the correct section sequence.',
     );
   }
 
-  /// Builds a plain-English note for one section-scored stroke.
+  /// Builds a plain-English note for the letter's section path.
   String _buildNote(int hits, int total) {
     if (hits == total) {
       return 'All $total sections hit in the correct order — correct.';
@@ -130,19 +120,5 @@ class WaypointSectionScorer {
     }
     final missed = total - hits;
     return '$hits of $total sections hit; $missed missed or out of order.';
-  }
-
-  /// Builds a learner-facing summary from the per-stroke scored values.
-  String _buildSummary(List<double> scoredValues) {
-    if (scoredValues.isEmpty) {
-      return 'No section-scored strokes were found to score.';
-    }
-    if (scoredValues.every((s) => s == 1.0)) {
-      return 'All section-scored strokes followed the correct path.';
-    }
-    if (scoredValues.every((s) => s == 0.0)) {
-      return 'No section-scored strokes followed the correct path.';
-    }
-    return 'One or more section-scored strokes did not follow the correct path.';
   }
 }

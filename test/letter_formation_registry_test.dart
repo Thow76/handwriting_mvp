@@ -197,7 +197,7 @@ void main() {
       );
     }
 
-    for (final entry in {'b': 1, 'p': 1}.entries) {
+    for (final entry in {'p': 1}.entries) {
       test(
         '${entry.key}[${entry.value}]: clockwise bowl waypoints are topRight → right → bottom → left',
         () {
@@ -235,7 +235,6 @@ void main() {
   group('letterFormationRegistry — top-to-bottom stem waypoint migration', () {
     const stemWaypoints = [WaypointRegion.top, WaypointRegion.bottom];
     const stemStrokes = {
-      'b': 0,
       'd': 0,
       'f': 0,
       'g': 1,
@@ -391,6 +390,93 @@ void main() {
             minX: 0.67,
             maxX: 1.00,
             minY: 0.67,
+            maxY: 1.00,
+          ),
+        ),
+      ]);
+    });
+
+    // -------------------------------------------------------------------------
+    // b — two section-scored strokes (stem + bowl)
+    // -------------------------------------------------------------------------
+    test('b: stem stroke has non-empty sections', () {
+      expect(letterFormationRegistry['b']!.strokes[0].sections, isNotEmpty);
+    });
+
+    test('b: stem stroke has no waypoints', () {
+      expect(letterFormationRegistry['b']!.strokes[0].waypoints, isEmpty);
+    });
+
+    test('b: stem sections are 2 bespoke rectangles (top-left → bottom-left)',
+        () {
+      final sections = letterFormationRegistry['b']!.strokes[0].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 1,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.30,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
+        ),
+        WaypointSection(
+          number: 2,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.30,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
+        ),
+      ]);
+    });
+
+    test('b: bowl stroke has non-empty sections', () {
+      expect(letterFormationRegistry['b']!.strokes[1].sections, isNotEmpty);
+    });
+
+    test('b: bowl stroke has no waypoints', () {
+      expect(letterFormationRegistry['b']!.strokes[1].waypoints, isEmpty);
+    });
+
+    test('b: bowl sections are 4 bespoke rectangles numbered 3–6 (clockwise '
+        'right-opening, continuing the letter path after the stem)', () {
+      final sections = letterFormationRegistry['b']!.strokes[1].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.35,
+            minY: 0.35,
+            maxY: 0.55,
+          ),
+        ),
+        WaypointSection(
+          number: 4,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.60,
+          ),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.75,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.35,
+            minY: 0.75,
             maxY: 1.00,
           ),
         ),
