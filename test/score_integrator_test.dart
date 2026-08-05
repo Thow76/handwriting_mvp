@@ -675,5 +675,116 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.compoundStroke!.overallScore, 1.0);
     });
+
+    // -------------------------------------------------------------------------
+    // d — section-based scoring integration tests (horizontal mirror of b)
+    // -------------------------------------------------------------------------
+    // d uses WaypointSectionScorer (sections on both strokes).
+    // Stem stroke (stroke 0): 2 sections — top-right [0.70,1.00)×[0,0.20) and
+    //   bottom-right [0.70,1.00)×[0.80,1.0).
+    // Bowl stroke (stroke 1): 4 sections — mid-right, top-left, bottom-left,
+    //   bottom-right (anticlockwise path).
+    // In a 90×90 grid:
+    //   stem section 1: x[63, 90) y[0, 18)
+    //   stem section 2: x[63, 90) y[72, 90)
+    //   bowl section 3: x[58.5, 90) y[31.5, 49.5)
+    //   bowl section 4: x[0, 45) y[31.5, 54)
+    //   bowl section 5: x[0, 45) y[67.5, 90)
+    //   bowl section 6: x[58.5, 90) y[67.5, 90)
+
+    test('correct d (stem + bowl) → routes through WaypointSectionScorer '
+        'and compoundStroke is 1.0', () {
+      // Stem visits section 1 then section 2 in order.
+      final dStem = Stroke(const [
+        Offset(80, 10), // stem section 1 (top-right)
+        Offset(80, 80), // stem section 2 (bottom-right)
+      ]);
+      // Bowl visits all 4 sections in anticlockwise order.
+      final dBowl = Stroke(const [
+        Offset(80, 40), // bowl section 3 (mid-right)
+        Offset(20, 40), // bowl section 4 (top-left)
+        Offset(20, 80), // bowl section 5 (bottom-left)
+        Offset(80, 80), // bowl section 6 (bottom-right)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [dStem, dBowl],
+        letter: 'd',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 1.0);
+    });
+
+    test('d bowl out-of-order → compoundStroke is 0.0', () {
+      // Stem is correct but bowl visits sections out of order, so the single
+      // letter path (sections 1–6) breaks → 0.0. No partial credit.
+      final dStem = Stroke(const [
+        Offset(80, 10), // section 1
+        Offset(80, 80), // section 2
+      ]);
+      // Bowl: section 3 → section 6 (skips 4 and 5) → breaks the sequence.
+      final dBowl = Stroke(const [
+        Offset(80, 40), // section 3 (mid-right)
+        Offset(80, 80), // section 6 (bottom-right) — out of order
+        Offset(20, 40), // section 4 — too late
+        Offset(20, 80), // section 5
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [dStem, dBowl],
+        letter: 'd',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('d stem only (bowl never drawn) → compoundStroke is 0.0', () {
+      // Drawing only the stem completes sections 1–2 but not the bowl (3–6),
+      // so the letter path is incomplete → 0.0, not 100%.
+      final dStem = Stroke(const [
+        Offset(80, 10), // section 1
+        Offset(80, 80), // section 2
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [dStem],
+        letter: 'd',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('connected d (one no-lift stroke, full path) → compoundStroke is 1.0',
+        () {
+      // A single continuous stroke through all six sections in order scores
+      // identically to the lifted two-stroke form — lifts are judged separately.
+      final dConnected = Stroke(const [
+        Offset(80, 10), // section 1 (stem top)
+        Offset(80, 80), // section 2 (stem bottom)
+        Offset(80, 40), // section 3 (bowl mid-right)
+        Offset(20, 40), // section 4 (bowl top-left)
+        Offset(20, 80), // section 5 (bowl bottom-left)
+        Offset(80, 80), // section 6 (bowl bottom-right)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [dConnected],
+        letter: 'd',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 1.0);
+    });
   });
 }
