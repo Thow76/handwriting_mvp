@@ -50,6 +50,33 @@ void main() {
     ],
   );
 
+  // Inline LetterFormationData for 'f' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final fDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 2,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.55,
+          maxX: 1.00,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+      ),
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.25,
+          minY: 0.25,
+          maxY: 0.40,
+        ),
+        waypoints: const [WaypointRegion.left, WaypointRegion.right],
+      ),
+    ],
+  );
+
   Stroke topLeftToBottomRightDiagonal() =>
       Stroke(const [Offset(50, 50), Offset(250, 250)]);
 
@@ -334,7 +361,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'f',
-        data: letterFormationRegistry['f']!,
+        data: fDataWithWaypoints,
         bounds: bounds,
       );
     });
