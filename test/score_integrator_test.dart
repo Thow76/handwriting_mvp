@@ -879,5 +879,112 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.compoundStroke!.overallScore, 1.0);
     });
+
+    // -------------------------------------------------------------------------
+    // f — section-based scoring integration tests
+    // -------------------------------------------------------------------------
+    // f uses WaypointSectionScorer (sections on both strokes). See
+    // docs/waypoint_section_definitions.md for the design.
+    // Stem stroke (stroke 0): 3 sections — hook top-right, hook meets stem,
+    //   stem body.
+    // Crossbar stroke (stroke 1): 2 sections — left, right.
+    // In a 90×90 grid:
+    //   section 1 (hook top-right):  x[41.4, 90) y[0, 27)
+    //   section 2 (hook meets stem): x[23.4, 41.4) y[0, 27)
+    //   section 3 (stem body):       x[23.4, 41.4) y[27, 90)
+    //   section 4 (crossbar left):   x[0, 23.4) y[27, 90)
+    //   section 5 (crossbar right):  x[41.4, 90) y[27, 90)
+
+    test('correct f (hooked stem + crossbar) → routes through '
+        'WaypointSectionScorer and compoundStroke is 1.0', () {
+      final fStem = Stroke(const [
+        Offset(70, 10), // section 1 (hook top-right)
+        Offset(30, 10), // section 2 (hook meets stem)
+        Offset(30, 60), // section 3 (stem body)
+      ]);
+      final fCrossbar = Stroke(const [
+        Offset(10, 50), // section 4 (crossbar left)
+        Offset(70, 50), // section 5 (crossbar right)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [fStem, fCrossbar],
+        letter: 'f',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 1.0);
+    });
+
+    test('f crossbar drawn right to left → compoundStroke is 0.0', () {
+      // Stem is correct, but the crossbar hits section 5 before section 4,
+      // so the letter path breaks after section 4 (found late) and never
+      // reaches section 5.
+      final fStem = Stroke(const [
+        Offset(70, 10), // section 1
+        Offset(30, 10), // section 2
+        Offset(30, 60), // section 3
+      ]);
+      final fCrossbar = Stroke(const [
+        Offset(70, 50), // section 5 (right) — out of order
+        Offset(10, 50), // section 4 (left) — too late
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [fStem, fCrossbar],
+        letter: 'f',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('f stem drawn without the hook → compoundStroke is 0.0', () {
+      // A straight downward stem never enters section 1 (hook top-right),
+      // which is the gatekeeper for the whole letter path. Even a correct
+      // crossbar afterwards cannot recover the score.
+      final fStraightStem = Stroke(const [
+        Offset(30, 10), // stays in the stem column — never reaches section 1
+        Offset(30, 60),
+      ]);
+      final fCrossbar = Stroke(const [
+        Offset(10, 50), // section 4
+        Offset(70, 50), // section 5
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [fStraightStem, fCrossbar],
+        letter: 'f',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('f stem only (crossbar never drawn) → compoundStroke is 0.0', () {
+      // Drawing only the stem completes sections 1–3 but not the crossbar
+      // (4–5), so the letter path is incomplete → 0.0, not 100%.
+      final fStem = Stroke(const [
+        Offset(70, 10), // section 1
+        Offset(30, 10), // section 2
+        Offset(30, 60), // section 3
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [fStem],
+        letter: 'f',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
   });
 }

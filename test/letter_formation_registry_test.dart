@@ -347,7 +347,6 @@ void main() {
   group('letterFormationRegistry — top-to-bottom stem waypoint migration', () {
     const stemWaypoints = [WaypointRegion.top, WaypointRegion.bottom];
     const stemStrokes = {
-      'f': 0,
       'g': 1,
       'h': 0,
       'i': 0,
@@ -406,8 +405,8 @@ void main() {
       });
     }
 
-    // t and f: second stroke is the crossbar (left → right waypoints)
-    for (final letter in ['t', 'f']) {
+    // t: second stroke is the crossbar (left → right waypoints)
+    for (final letter in ['t']) {
       test('$letter: stroke 2 waypoints are left → right', () {
         final data = letterFormationRegistry[letter]!;
         expect(data.strokes[1].waypoints, [
@@ -416,6 +415,85 @@ void main() {
         ]);
       });
     }
+
+    // f: two section-scored strokes (curved stem + crossbar). Migrated from
+    // waypoints — see docs/waypoint_section_definitions.md for the design.
+    test('f: stem stroke has non-empty sections', () {
+      expect(letterFormationRegistry['f']!.strokes[0].sections, isNotEmpty);
+    });
+
+    test('f: stem stroke has no waypoints', () {
+      expect(letterFormationRegistry['f']!.strokes[0].waypoints, isEmpty);
+    });
+
+    test(
+        'f: stem sections are 3 bespoke rectangles (hook top-right → hook '
+        'meets stem → stem body)', () {
+      final sections = letterFormationRegistry['f']!.strokes[0].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 1,
+          rect: const StrokeStartRect(
+            minX: 0.46,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.30,
+          ),
+        ),
+        WaypointSection(
+          number: 2,
+          rect: const StrokeStartRect(
+            minX: 0.26,
+            maxX: 0.46,
+            minY: 0.00,
+            maxY: 0.30,
+          ),
+        ),
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.26,
+            maxX: 0.46,
+            minY: 0.30,
+            maxY: 1.00,
+          ),
+        ),
+      ]);
+    });
+
+    test('f: crossbar stroke has non-empty sections', () {
+      expect(letterFormationRegistry['f']!.strokes[1].sections, isNotEmpty);
+    });
+
+    test('f: crossbar stroke has no waypoints', () {
+      expect(letterFormationRegistry['f']!.strokes[1].waypoints, isEmpty);
+    });
+
+    test(
+        'f: crossbar sections are 2 bespoke rectangles numbered 4–5 (left → '
+        'right, continuing the letter path after the stem)', () {
+      final sections = letterFormationRegistry['f']!.strokes[1].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 4,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.26,
+            minY: 0.30,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.46,
+            maxX: 1.00,
+            minY: 0.30,
+            maxY: 1.00,
+          ),
+        ),
+      ]);
+    });
 
     test('x: stroke 1 waypoints are topLeft → bottomRight', () {
       final data = letterFormationRegistry['x']!;
