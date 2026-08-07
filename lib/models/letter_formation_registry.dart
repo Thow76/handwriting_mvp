@@ -104,8 +104,8 @@ import 'waypoint_section.dart';
 ///
 /// | Letter | Stroke | Direction | Notes |
 /// |--------|--------|-----------|-------|
-/// | f      | 1      | topToBottom     | Vertical stem |
-/// | f      | 2      | leftToRight     | Crossbar |
+/// | f      | 1      | topToBottom     | Curved stem with top-right hook (section-scored; see `docs/waypoint_section_definitions.md`) |
+/// | f      | 2      | leftToRight     | Crossbar (section-scored) |
 /// | i      | 1      | topToBottom     | Vertical stem |
 /// | i      | 2      | dot             | Dot — scored on presence |
 /// | j      | 1      | topToBottom     | Vertical stem |
@@ -699,7 +699,35 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
-        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+        sections: [
+          WaypointSection(
+            number: 1,
+            rect: const StrokeStartRect(
+              minX: 0.46,
+              maxX: 1.00,
+              minY: 0.00,
+              maxY: 0.30,
+            ),
+          ),
+          WaypointSection(
+            number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.26,
+              maxX: 0.46,
+              minY: 0.00,
+              maxY: 0.30,
+            ),
+          ),
+          WaypointSection(
+            number: 3,
+            rect: const StrokeStartRect(
+              minX: 0.26,
+              maxX: 0.46,
+              minY: 0.30,
+              maxY: 1.00,
+            ),
+          ),
+        ],
       ),
       ExpectedStroke(
         startRect: const StrokeStartRect(
@@ -708,7 +736,26 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.25,
           maxY: 0.40,
         ),
-        waypoints: const [WaypointRegion.left, WaypointRegion.right],
+        sections: [
+          WaypointSection(
+            number: 4,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.26,
+              minY: 0.30,
+              maxY: 1.00,
+            ),
+          ),
+          WaypointSection(
+            number: 5,
+            rect: const StrokeStartRect(
+              minX: 0.46,
+              maxX: 1.00,
+              minY: 0.30,
+              maxY: 1.00,
+            ),
+          ),
+        ],
       ),
     ],
   ),
