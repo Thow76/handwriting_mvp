@@ -522,6 +522,99 @@ void main() {
       expect(result.compoundStroke!.overallScore, 0.0);
     });
 
+    // -------------------------------------------------------------------------
+    // 'e' — section-based scoring (WaypointSectionScorer)
+    // -------------------------------------------------------------------------
+
+    test(
+        'correct e (tongue + anticlockwise sweep) → compoundStroke score is '
+        '1.0', () {
+      // e uses section-based scoring with 5 sections:
+      //   section 1: tongue       [0.15, 0.90) × [0.40, 0.60)
+      //   section 2: upper-right  [0.55, 1.00) × [0.00, 0.30)
+      //   section 3: left         [0.00, 0.35) × [0.25, 0.70)
+      //   section 4: bottom       [0.20, 0.80) × [0.70, 1.00)
+      //   section 5: right        [0.65, 1.00) × [0.30, 0.75)
+      // In a 90×90 grid:
+      //   section 1: x[13.5, 81) y[36, 54)
+      //   section 2: x[49.5, 90) y[0, 27)
+      //   section 3: x[0, 31.5) y[22.5, 63)
+      //   section 4: x[18, 72) y[63, 90)
+      //   section 5: x[58.5, 90) y[27, 67.5)
+      final stroke = Stroke(const [
+        Offset(10, 45), // e's startRect (mid-left)
+        Offset(70, 45), // section 1 (tongue)
+        Offset(70, 10), // section 2 (upper-right)
+        Offset(15, 45), // section 3 (left)
+        Offset(45, 80), // section 4 (bottom)
+        Offset(75, 50), // section 5 (right, closing)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'e',
+      );
+
+      expect(result.strokeStart, isNotNull);
+      expect(result.compoundStroke, isNotNull);
+      expect(result.strokeBreak, isNotNull);
+
+      // Stroke first point (10, 45) is inside e's startRect → 1.0.
+      expect(result.strokeStart!.overallScore, 1.0);
+
+      // All 5 sections hit in order → 1.0 (section scorer, all-or-nothing).
+      expect(result.compoundStroke!.overallScore, 1.0);
+
+      // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
+      expect(result.strokeBreak!.overallScore, 1.0);
+    });
+
+    test('incomplete e path (2 of 5 sections) → compoundStroke score is 0.0',
+        () {
+      // Only hits section 1 (tongue) and section 2 (upper-right), never
+      // reaches the left, bottom, or closing sections.
+      final stroke = Stroke(const [
+        Offset(70, 45), // section 1 (tongue)
+        Offset(70, 10), // section 2 (upper-right)
+        Offset(70, 15), // still upper-right, never reaches left/bottom/right
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'e',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test(
+        'out-of-order e path (section 1 → 3 → 2 → 4 → 5) → compoundStroke '
+        'score is 0.0', () {
+      // Hits sections out of sequential order: 1 then 3 (skipping 2).
+      final stroke = Stroke(const [
+        Offset(70, 45), // section 1 (tongue)
+        Offset(15, 45), // section 3 (left) — out of order
+        Offset(70, 10), // section 2 (upper-right) — too late
+        Offset(45, 80), // section 4 (bottom)
+        Offset(75, 50), // section 5 (right)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [stroke],
+        letter: 'e',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
     final stem = Stroke(const [Offset(45, 15), Offset(45, 75)]);
     final clockwiseBowl = Stroke(const [
       Offset(75, 15), // topRight centroid
