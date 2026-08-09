@@ -88,8 +88,8 @@ import 'waypoint_section.dart';
 /// | b      | 2      | clockwise       | Right-opening bowl |
 /// | d      | 1      | topToBottom     | Vertical stem (written first) |
 /// | d      | 2      | anticlockwise   | Left-opening oval (written second) |
-/// | g      | 1      | anticlockwise   | Left-opening oval |
-/// | g      | 2      | topToBottom     | Descending tail |
+/// | g      | 1      | anticlockwise   | Left-opening oval (section-scored) |
+/// | g      | 2      | topToBottom     | Descending stem with bottom-left hook (section-scored; see `docs/waypoint_section_definitions.md`) |
 /// | p      | 1      | topToBottom     | Vertical stem |
 /// | p      | 2      | clockwise       | Right-opening bowl |
 /// | q      | 1      | anticlockwise   | Left-opening oval |
@@ -565,11 +565,34 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
-        waypoints: const [
-          WaypointRegion.topRight,
-          WaypointRegion.left,
-          WaypointRegion.bottom,
-          WaypointRegion.right,
+        sections: [
+          WaypointSection(
+            number: 1,
+            rect: const StrokeStartRect(
+              minX: 0.78,
+              maxX: 1.00,
+              minY: 0.00,
+              maxY: 0.40,
+            ),
+          ),
+          WaypointSection(
+            number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.78,
+              minY: 0.00,
+              maxY: 0.40,
+            ),
+          ),
+          WaypointSection(
+            number: 3,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.78,
+              minY: 0.40,
+              maxY: 0.65,
+            ),
+          ),
         ],
       ),
       ExpectedStroke(
@@ -579,7 +602,35 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.02,
           maxY: 0.17,
         ),
-        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+        sections: [
+          WaypointSection(
+            number: 4,
+            rect: const StrokeStartRect(
+              minX: 0.78,
+              maxX: 1.00,
+              minY: 0.40,
+              maxY: 0.65,
+            ),
+          ),
+          WaypointSection(
+            number: 5,
+            rect: const StrokeStartRect(
+              minX: 0.78,
+              maxX: 1.00,
+              minY: 0.65,
+              maxY: 1.00,
+            ),
+          ),
+          WaypointSection(
+            number: 6,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.78,
+              minY: 0.65,
+              maxY: 1.00,
+            ),
+          ),
+        ],
       ),
     ],
   ),
