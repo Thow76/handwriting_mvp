@@ -986,5 +986,142 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.compoundStroke!.overallScore, 0.0);
     });
+
+    // -------------------------------------------------------------------------
+    // g — section-based scoring integration tests
+    // -------------------------------------------------------------------------
+    // g uses WaypointSectionScorer (sections on both strokes). See
+    // docs/waypoint_section_definitions.md for the design.
+    // Bowl stroke (stroke 0): 3 sections — top-right, top-left, bottom.
+    // Descender stroke (stroke 1): 3 sections — stem top, stem bottom, hook.
+    // In a 90×90 grid:
+    //   section 1 (bowl top-right): x[70.2, 90) y[0, 36)
+    //   section 2 (bowl top-left):  x[0, 70.2) y[0, 36)
+    //   section 3 (bowl bottom):    x[0, 70.2) y[36, 58.5)
+    //   section 4 (stem top):       x[70.2, 90) y[36, 58.5)
+    //   section 5 (stem bottom):    x[70.2, 90) y[58.5, 90)
+    //   section 6 (descender hook): x[0, 70.2) y[58.5, 90)
+
+    test('correct g (bowl + descender) → routes through '
+        'WaypointSectionScorer and compoundStroke is 1.0', () {
+      final gBowl = Stroke(const [
+        Offset(80, 10), // section 1 (bowl top-right)
+        Offset(30, 10), // section 2 (bowl top-left)
+        Offset(30, 45), // section 3 (bowl bottom)
+      ]);
+      final gDescender = Stroke(const [
+        Offset(80, 45), // section 4 (stem top)
+        Offset(80, 70), // section 5 (stem bottom)
+        Offset(30, 70), // section 6 (hook)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [gBowl, gDescender],
+        letter: 'g',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 1.0);
+    });
+
+    test('g clockwise bowl (reversed) with correct descender → '
+        'compoundStroke is 0.0', () {
+      // Bowl drawn clockwise: top-right → bottom → top-left, instead of the
+      // expected anticlockwise top-right → top-left → bottom. The path
+      // breaks looking for section 3, which is never reached.
+      final gClockwiseBowl = Stroke(const [
+        Offset(80, 10), // section 1
+        Offset(30, 45), // intended bottom — out of order
+        Offset(30, 10), // section 2, found late
+      ]);
+      final gDescender = Stroke(const [
+        Offset(80, 45), // section 4
+        Offset(80, 70), // section 5
+        Offset(30, 70), // section 6
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [gClockwiseBowl, gDescender],
+        letter: 'g',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('g correct bowl with reversed descender stem → compoundStroke '
+        'is 0.0', () {
+      // Bowl is correct, but the descender draws stem-bottom before
+      // stem-top, so the path breaks looking for section 5.
+      final gBowl = Stroke(const [
+        Offset(80, 10), // section 1
+        Offset(30, 10), // section 2
+        Offset(30, 45), // section 3
+      ]);
+      final gReversedDescender = Stroke(const [
+        Offset(80, 70), // intended stem bottom — out of order
+        Offset(80, 45), // section 4, found late
+        Offset(30, 70), // never reaches section 5, so section 6 is unreachable
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [gBowl, gReversedDescender],
+        letter: 'g',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('g bowl only (descender never drawn) → compoundStroke is 0.0', () {
+      // Drawing only the bowl completes sections 1–3 but not the descender
+      // (4–6), so the letter path is incomplete → 0.0, not 100%.
+      final gBowl = Stroke(const [
+        Offset(80, 10), // section 1
+        Offset(30, 10), // section 2
+        Offset(30, 45), // section 3
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [gBowl],
+        letter: 'g',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('g correct bowl with straight stem and no hook → compoundStroke '
+        'is 0.0', () {
+      // The descender stays in the stem column the whole way down and never
+      // hooks left into section 6, so the path is incomplete.
+      final gBowl = Stroke(const [
+        Offset(80, 10), // section 1
+        Offset(30, 10), // section 2
+        Offset(30, 45), // section 3
+      ]);
+      final gStraightStem = Stroke(const [
+        Offset(80, 45), // section 4
+        Offset(80, 80), // section 5 — stays at x=80, never hooks left
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [gBowl, gStraightStem],
+        letter: 'g',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
   });
 }
