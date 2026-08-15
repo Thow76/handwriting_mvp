@@ -157,6 +157,7 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
               child: DebugScoreView(
                 result: _scoreResult,
                 tightBounds: _tightBounds,
+                letter: _currentLetter,
               ),
             ),
           _LetterNav(

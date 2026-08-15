@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/formation_score.dart';
+import '../models/letter_formation_registry.dart';
 import '../models/score_result.dart';
 
 /// A developer-only widget that exposes every scorer's full diagnostic output.
@@ -30,7 +31,22 @@ class DebugScoreView extends StatelessWidget {
   /// When provided, rendered as a single diagnostic line.
   final Rect? tightBounds;
 
-  const DebugScoreView({super.key, this.result, this.tightBounds});
+  /// The letter [result] was scored against. Used to label the path-scoring
+  /// panel with the scorer that actually ran — [WaypointSectionScorer] for
+  /// letters migrated to `sections`, [CompoundStrokeScorer] otherwise — since
+  /// [ScoreResult.compoundStroke] is populated by either one depending on the
+  /// letter (see `ScoreIntegrator.score`'s routing).
+  final String? letter;
+
+  const DebugScoreView({super.key, this.result, this.tightBounds, this.letter});
+
+  /// The name of the scorer that produced [ScoreResult.compoundStroke] for
+  /// [letter], mirroring the routing in `ScoreIntegrator.score`.
+  String get _compoundStrokeScorerName {
+    final data = letter == null ? null : letterFormationRegistry[letter];
+    final usesSections = data?.strokes.any((s) => s.sections.isNotEmpty) ?? false;
+    return usesSections ? 'WaypointSectionScorer' : 'CompoundStrokeScorer';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +69,8 @@ class DebugScoreView extends StatelessWidget {
           if (tightBounds != null) _TightBoundsLine(bounds: tightBounds!),
           const Divider(),
           _FormationPanel(name: 'StrokeStartScorer', score: r.strokeStart),
-          _FormationPanel(name: 'CompoundStrokeScorer', score: r.compoundStroke),
+          _FormationPanel(
+              name: _compoundStrokeScorerName, score: r.compoundStroke),
           _FormationPanel(name: 'StrokeBreakCounter', score: r.strokeBreak),
         ],
       ),
