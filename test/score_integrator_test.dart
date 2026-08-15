@@ -526,28 +526,67 @@ void main() {
     // 'e' — section-based scoring (WaypointSectionScorer)
     // -------------------------------------------------------------------------
 
+    // e's 7-section design (issue #149 — full replacement of the PR #141
+    // design, whose closing section was copied from a's closed-loop point
+    // and was never reachable by a real e, since e ends in an open curl).
+    // Measured against the real Andika glyph (scripts/measure_e_glyph.py):
+    //   section 1: tongue left     [0.00, 0.48) × [0.35, 0.55)
+    //   section 2: tongue right    [0.48, 0.95) × [0.35, 0.55)
+    //   section 3: top-right       [0.55, 1.00) × [0.00, 0.30)
+    //   section 4: top-middle      [0.10, 0.60) × [0.00, 0.20)
+    //   section 5: left edge       [0.00, 0.35) × [0.10, 0.85)
+    //   section 6: bottom-middle   [0.15, 0.65) × [0.80, 1.00)
+    //   section 7: bottom-right    [0.65, 1.00) × [0.65, 0.85)  (open finish)
+    // In a 90×90 grid:
+    //   section 1: x[0, 43.2) y[31.5, 49.5)
+    //   section 2: x[43.2, 85.5) y[31.5, 49.5)
+    //   section 3: x[49.5, 90) y[0, 27)
+    //   section 4: x[9, 54) y[0, 18)
+    //   section 5: x[0, 31.5) y[9, 76.5)
+    //   section 6: x[13.5, 58.5) y[72, 90)
+    //   section 7: x[58.5, 90) y[58.5, 76.5)
+    //
+    // Test strokes below use a realistic multi-point curved path — not a
+    // single hand-placed centre point per section — since a hand-placed
+    // point per section is exactly the kind of shortcut that let the
+    // original (broken) design pass its own tests without ever being
+    // checked against a real stroke shape.
     test(
-        'correct e (tongue + anticlockwise sweep) → compoundStroke score is '
-        '1.0', () {
-      // e uses section-based scoring with 5 sections:
-      //   section 1: tongue       [0.15, 0.90) × [0.40, 0.60)
-      //   section 2: upper-right  [0.55, 1.00) × [0.00, 0.30)
-      //   section 3: left         [0.00, 0.35) × [0.25, 0.70)
-      //   section 4: bottom       [0.20, 0.80) × [0.70, 1.00)
-      //   section 5: right        [0.65, 1.00) × [0.30, 0.75)
-      // In a 90×90 grid:
-      //   section 1: x[13.5, 81) y[36, 54)
-      //   section 2: x[49.5, 90) y[0, 27)
-      //   section 3: x[0, 31.5) y[22.5, 63)
-      //   section 4: x[18, 72) y[63, 90)
-      //   section 5: x[58.5, 90) y[27, 67.5)
+        'correct e (tongue + anticlockwise sweep to open terminal) → '
+        'compoundStroke score is 1.0', () {
       final stroke = Stroke(const [
-        Offset(10, 45), // e's startRect (mid-left)
-        Offset(70, 45), // section 1 (tongue)
-        Offset(70, 10), // section 2 (upper-right)
-        Offset(15, 45), // section 3 (left)
-        Offset(45, 80), // section 4 (bottom)
-        Offset(75, 50), // section 5 (right, closing)
+        Offset(8, 44), // e's startRect / tongue left
+        Offset(16, 43),
+        Offset(24, 42),
+        Offset(32, 41),
+        Offset(40, 40), // section 1 (tongue left)
+        Offset(48, 40),
+        Offset(56, 39),
+        Offset(64, 38),
+        Offset(72, 36), // section 2 (tongue right)
+        Offset(79, 29),
+        Offset(84, 20),
+        Offset(87, 12), // section 3 (top-right)
+        Offset(78, 4),
+        Offset(68, 1),
+        Offset(56, 0),
+        Offset(44, 1), // section 4 (top-middle)
+        Offset(32, 3),
+        Offset(22, 7),
+        Offset(14, 13),
+        Offset(8, 22),
+        Offset(5, 34),
+        Offset(4, 46),
+        Offset(5, 58),
+        Offset(9, 68), // section 5 (left edge)
+        Offset(15, 76),
+        Offset(24, 83),
+        Offset(35, 87),
+        Offset(46, 88), // section 6 (bottom-middle)
+        Offset(56, 85),
+        Offset(64, 79),
+        Offset(71, 71),
+        Offset(77, 63), // section 7 (bottom-right, open finish)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -561,24 +600,33 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.strokeBreak, isNotNull);
 
-      // Stroke first point (10, 45) is inside e's startRect → 1.0.
+      // Stroke first point (8, 44) is inside e's startRect → 1.0.
       expect(result.strokeStart!.overallScore, 1.0);
 
-      // All 5 sections hit in order → 1.0 (section scorer, all-or-nothing).
+      // All 7 sections hit in order → 1.0 (section scorer, all-or-nothing).
       expect(result.compoundStroke!.overallScore, 1.0);
 
       // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
       expect(result.strokeBreak!.overallScore, 1.0);
     });
 
-    test('incomplete e path (2 of 5 sections) → compoundStroke score is 0.0',
+    test(
+        'reversed tongue e (right to left) → compoundStroke score is 0.0',
         () {
-      // Only hits section 1 (tongue) and section 2 (upper-right), never
-      // reaches the left, bottom, or closing sections.
+      // The tongue is drawn right-to-left instead of left-to-right: section
+      // 1 (tongue left) still ends up hit eventually (later in the point
+      // stream than section 2's rectangle), but by then the cursor is past
+      // the only points that fall inside section 2's rectangle, so section 2
+      // is never reached in order and the sequence breaks there.
       final stroke = Stroke(const [
-        Offset(70, 45), // section 1 (tongue)
-        Offset(70, 10), // section 2 (upper-right)
-        Offset(70, 15), // still upper-right, never reaches left/bottom/right
+        Offset(56, 39), // tongue right, drawn first — reversed
+        Offset(64, 38),
+        Offset(40, 41), // tongue left, drawn second — reversed
+        Offset(24, 43),
+        Offset(10, 44),
+        Offset(20, 15), // curves away without re-entering the tongue-right
+        Offset(40, 3), // rectangle, so section 2 can never be matched
+        Offset(70, 6),
       ]);
 
       final result = ScoreIntegrator.score(
@@ -592,16 +640,18 @@ void main() {
       expect(result.compoundStroke!.overallScore, 0.0);
     });
 
-    test(
-        'out-of-order e path (section 1 → 3 → 2 → 4 → 5) → compoundStroke '
-        'score is 0.0', () {
-      // Hits sections out of sequential order: 1 then 3 (skipping 2).
+    test('tongue only, no oval e → compoundStroke score is 0.0', () {
+      // The tongue (sections 1-2) is drawn correctly left to right, but the
+      // stroke stops there — the oval (sections 3-7) is never attempted.
       final stroke = Stroke(const [
-        Offset(70, 45), // section 1 (tongue)
-        Offset(15, 45), // section 3 (left) — out of order
-        Offset(70, 10), // section 2 (upper-right) — too late
-        Offset(45, 80), // section 4 (bottom)
-        Offset(75, 50), // section 5 (right)
+        Offset(8, 44),
+        Offset(16, 43),
+        Offset(24, 42),
+        Offset(32, 41), // section 1 (tongue left)
+        Offset(48, 40),
+        Offset(56, 39),
+        Offset(64, 38), // section 2 (tongue right)
+        Offset(72, 36), // still in the tongue band, never curves up
       ]);
 
       final result = ScoreIntegrator.score(
