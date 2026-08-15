@@ -132,8 +132,9 @@ void main() {
       expect(letterFormationRegistry['a']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('a: sections are 4 bespoke rectangles covering the anticlockwise oval',
-        () {
+    test(
+        'a: sections are 6 bespoke rectangles covering the anticlockwise '
+        'oval and stem', () {
       final sections = letterFormationRegistry['a']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
@@ -170,6 +171,24 @@ void main() {
             maxX: 1.00,
             minY: 0.30,
             maxY: 0.75,
+          ),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.72,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.50,
+          ),
+        ),
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.72,
+            maxX: 1.00,
+            minY: 0.50,
+            maxY: 1.00,
           ),
         ),
       ]);
