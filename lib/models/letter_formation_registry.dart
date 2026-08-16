@@ -196,14 +196,23 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           WaypointSection(
             number: 1,
             rect: const StrokeStartRect(
-              minX: 0.15,
-              maxX: 0.90,
-              minY: 0.40,
-              maxY: 0.60,
+              minX: 0.00,
+              maxX: 0.48,
+              minY: 0.35,
+              maxY: 0.55,
             ),
           ),
           WaypointSection(
             number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.48,
+              maxX: 0.95,
+              minY: 0.35,
+              maxY: 0.55,
+            ),
+          ),
+          WaypointSection(
+            number: 3,
             rect: const StrokeStartRect(
               minX: 0.55,
               maxX: 1.00,
@@ -212,30 +221,39 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
             ),
           ),
           WaypointSection(
-            number: 3,
-            rect: const StrokeStartRect(
-              minX: 0.00,
-              maxX: 0.35,
-              minY: 0.25,
-              maxY: 0.70,
-            ),
-          ),
-          WaypointSection(
             number: 4,
             rect: const StrokeStartRect(
-              minX: 0.20,
-              maxX: 0.80,
-              minY: 0.70,
-              maxY: 1.00,
+              minX: 0.10,
+              maxX: 0.60,
+              minY: 0.00,
+              maxY: 0.20,
             ),
           ),
           WaypointSection(
             number: 5,
             rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.35,
+              minY: 0.10,
+              maxY: 0.85,
+            ),
+          ),
+          WaypointSection(
+            number: 6,
+            rect: const StrokeStartRect(
+              minX: 0.15,
+              maxX: 0.65,
+              minY: 0.80,
+              maxY: 1.00,
+            ),
+          ),
+          WaypointSection(
+            number: 7,
+            rect: const StrokeStartRect(
               minX: 0.65,
               maxX: 1.00,
-              minY: 0.30,
-              maxY: 0.75,
+              minY: 0.65,
+              maxY: 0.85,
             ),
           ),
         ],

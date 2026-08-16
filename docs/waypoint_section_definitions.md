@@ -263,70 +263,94 @@ closes back at the bottom-middle.
 ## Letter: e
 
 > **Provenance note.** Unlike every other letter in this document, e was
-> never designed here. No screenshot or grid layout was agreed for it
-> during the authoring session, and the letter was skipped. The design
-> below was authored by a coding agent during the Phase D migration
-> (PR #141, closing issue #137) and is recorded here after the fact so
-> the document is complete. It has not been reviewed against a grid
-> overlay in the way the other 25 letters were.
+> never designed here originally. No screenshot or grid layout was agreed
+> for it during the authoring session, and the letter was skipped. A
+> 5-section design was authored by a coding agent during the Phase D
+> migration (PR #141, closing issue #137) and recorded here after the
+> fact. That design copied its closing section straight from a's
+> bowl-closing rectangle — but a is a closed loop and e is not, so the
+> section sat in a region of the glyph a real e stroke never passes
+> through. Every correctly-drawn e scored 0% as a result (issue #149).
+> The 7-section design below is a full replacement, measured directly
+> against the real Andika `e` glyph (`scripts/measure_e_glyph.py`,
+> `scripts/visualize_e_proposed.py`) rather than reasoned about
+> abstractly, specifically to avoid repeating that mistake.
 
 ### Grid layout
 
-5 sections, single stroke.
+7 sections, single stroke. Unlike the clean N×M grids used for most
+other letters, e's sections don't tile a simple grid — the left side of
+the glyph is covered by **one** rectangle spanning nearly the full
+height (section 5), while the top, tongue, and bottom are each split
+into two horizontally-adjacent sections. Section rectangles are allowed
+to overlap; the matcher only requires sections to be visited in order,
+not for their rectangles to be disjoint.
 
-e is the only letter that begins with a horizontal movement before
-joining a curve. The first section is bespoke — it covers the tongue,
-the straight horizontal stroke that runs left to right across the
-middle of the letter. Once the tongue completes, the path is
-genuinely identical to a's anticlockwise oval, so the remaining four
-sections reuse that geometry.
+- Sections 1–2 (tongue): the horizontal bar, split left/right, at
+  x 0.00–0.95, y 0.35–0.55.
+- Sections 3–4 (top): the upper arc, split right/middle, at
+  y 0.00–0.30.
+- Section 5 (left edge): the whole left arc, top-left through
+  bottom-left, at x 0.00–0.35, y 0.10–0.85.
+- Sections 6–7 (bottom): the lower arc and open finish, split
+  middle/right, at y 0.65–1.00.
+
+Note: e's `startRect` (x 0.00–0.25, y 0.40–0.60) visually overlaps part
+of section 5's rectangle. This is not a bug — the matcher only starts
+looking for section 5 after sections 1–4 have been hit in order, so the
+overlap has no effect on scoring.
 
 ### Section definitions
 
 | Section | Stroke | Label | x min | x max | y min | y max |
 |---------|--------|-------|-------|-------|-------|-------|
-| 1 | 0 | Tongue (horizontal) | *see registry* | | | |
-| 2 | 0 | Oval top-right | *see registry* | | | |
-| 3 | 0 | Oval top-left | *see registry* | | | |
-| 4 | 0 | Oval bottom-left | *see registry* | | | |
-| 5 | 0 | Oval bottom-right | *see registry* | | | |
-
-The exact rectangle values live in `letter_formation_registry.dart`
-and are pinned by assertions in `letter_formation_registry_test.dart`.
-They have not been transcribed into this document.
+| 1 | 0 | Tongue (left) | 0.00 | 0.48 | 0.35 | 0.55 |
+| 2 | 0 | Tongue (right) | 0.48 | 0.95 | 0.35 | 0.55 |
+| 3 | 0 | Top-right | 0.55 | 1.00 | 0.00 | 0.30 |
+| 4 | 0 | Top-middle | 0.10 | 0.60 | 0.00 | 0.20 |
+| 5 | 0 | Left edge (top-left → bottom-left) | 0.00 | 0.35 | 0.10 | 0.85 |
+| 6 | 0 | Bottom-middle | 0.15 | 0.65 | 0.80 | 1.00 |
+| 7 | 0 | Bottom-right (open finish) | 0.65 | 1.00 | 0.65 | 0.85 |
 
 ### Expected sequence
 
-- Stroke 0 (single continuous stroke): 1 → 2 → 3 → 4 → 5
+- Stroke 0 (single continuous stroke): 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 The stroke starts at the left end of the tongue, travels right across
-the middle of the letter, then curves up and sweeps anticlockwise —
-over the top, down the left side, along the bottom — to finish at the
-bottom-right.
+the middle of the letter, curves up to the top-right, sweeps left
+across the top, down the full left edge, along the bottom, then
+curves up-right to finish at the open terminal — a short hook that
+stops short of closing the loop, matching the real glyph's open
+aperture. It does not reach back toward the tongue.
 
 ### Error cases
 
 | Scenario | Score |
 |----------|-------|
 | Correct e | PASS |
-| Tongue drawn right to left | FAIL — section 1 never entered from the left |
+| Tongue drawn right to left | FAIL — section 2 never entered after section 1 is finally hit |
 | Oval drawn first, tongue second | FAIL — sequence starts out of order |
-| Tongue only, no oval | FAIL |
+| Tongue only, no oval | FAIL — sequence stops after section 2 |
 | Correct tongue, clockwise oval | FAIL — sequence breaks after section 2 |
 
 ### Notes
 
 - e is the only letter in the document with a bespoke leading section
-  followed by borrowed geometry.
+  (the tongue) followed by an open (non-closing) curve — every other
+  single-stroke oval letter (a, c, o, s) closes or nearly closes its
+  loop.
 - The starting position was confirmed separately during the start
   rectangle work: e begins on the **left**, where the tongue starts,
   not on the right. Start rectangle x 0–25%, y 40–60%.
 - The e template glyph previously had a malformed tongue, which
   distorted its tight ink bounds. This was resolved by the change to
   the Andika typeface.
-- Because this layout was agent-authored rather than designed against
-  a grid overlay, it is the strongest candidate in the document for
-  review during the a–z validation sweep.
+- This is the second design for e's sections. The first (PR #141) was
+  never checked against the real glyph and scored 0% on every correct
+  e. This design was measured directly against rendered ink
+  specifically to avoid repeating that failure mode — see
+  `scripts/measure_e_glyph.py` and the overlay images it and
+  `scripts/visualize_e_proposed.py` produce.
 
 ---
 

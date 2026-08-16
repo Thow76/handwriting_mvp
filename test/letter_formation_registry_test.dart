@@ -246,8 +246,12 @@ void main() {
     });
 
     // e: single stroke with sections (migrated from waypoints). Starts
-    // mid-left and forms the horizontal tongue/eye before the anticlockwise
-    // sweep, so its first section is bespoke — not copied from a/c/o.
+    // mid-left and forms the horizontal tongue before curving anticlockwise
+    // around the bowl to an open terminal, so its sections are bespoke —
+    // not copied from a/c/o. Measured against the real Andika glyph (see
+    // scripts/measure_e_glyph.py) after the original agent-authored design
+    // (PR #141) proved unreachable and scored 0% on every correct e — see
+    // issue #149.
     test('e: has exactly one stroke', () {
       expect(letterFormationRegistry['e']!.strokes, hasLength(1));
     });
@@ -257,21 +261,30 @@ void main() {
     });
 
     test(
-        'e: sections are 5 bespoke rectangles — tongue, then anticlockwise sweep',
-        () {
+        'e: sections are 7 bespoke rectangles — tongue, top sweep, left '
+        'edge, bottom, open terminal', () {
       final sections = letterFormationRegistry['e']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-            minX: 0.15,
-            maxX: 0.90,
-            minY: 0.40,
-            maxY: 0.60,
+            minX: 0.00,
+            maxX: 0.48,
+            minY: 0.35,
+            maxY: 0.55,
           ),
         ),
         WaypointSection(
           number: 2,
+          rect: const StrokeStartRect(
+            minX: 0.48,
+            maxX: 0.95,
+            minY: 0.35,
+            maxY: 0.55,
+          ),
+        ),
+        WaypointSection(
+          number: 3,
           rect: const StrokeStartRect(
             minX: 0.55,
             maxX: 1.00,
@@ -280,30 +293,39 @@ void main() {
           ),
         ),
         WaypointSection(
-          number: 3,
-          rect: const StrokeStartRect(
-            minX: 0.00,
-            maxX: 0.35,
-            minY: 0.25,
-            maxY: 0.70,
-          ),
-        ),
-        WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-            minX: 0.20,
-            maxX: 0.80,
-            minY: 0.70,
-            maxY: 1.00,
+            minX: 0.10,
+            maxX: 0.60,
+            minY: 0.00,
+            maxY: 0.20,
           ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.35,
+            minY: 0.10,
+            maxY: 0.85,
+          ),
+        ),
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.15,
+            maxX: 0.65,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
             minX: 0.65,
             maxX: 1.00,
-            minY: 0.30,
-            maxY: 0.75,
+            minY: 0.65,
+            maxY: 0.85,
           ),
         ),
       ]);
