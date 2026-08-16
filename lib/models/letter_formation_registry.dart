@@ -115,7 +115,7 @@ import 'waypoint_section.dart';
 /// | x      | 1      | topToBottom     | Diagonal stroke (top-left to bottom-right) |
 /// | x      | 2      | topToBottom     | Diagonal stroke (top-right to bottom-left) |
 ///
-/// ## Compound-stroke letters — `h, k, m, n, r, u`
+/// ## Compound-stroke letters — `k, m, r, u`
 ///
 /// Letters whose pen never lifts but travels through multiple directional
 /// phases. Compound [ExpectedStroke]s carry a non-empty `waypoints` list
@@ -123,20 +123,21 @@ import 'waypoint_section.dart';
 ///
 /// | Letter | Stroke | Direction | Waypoints                                               |
 /// |--------|--------|-----------|--------------------------------------------------------|
-/// | h      | 1      | topToBottom     | — (stem)                                                |
-/// | h      | 2      | compound        | left → top → bottomRight                               |
 /// | k      | 1      | topToBottom     | — (stem)                                                |
 /// | k      | 2      | compound        | topRight → middle → bottomRight                        |
 /// | m      | 1      | compound        | topLeft → bottomLeft → top → bottom → top → bottomRight |
-/// | n      | 1      | compound        | topLeft → bottomLeft → top → bottomRight               |
 /// | r      | 1      | topToBottom     | — (stem)                                                |
 /// | r      | 2      | compound        | left → topRight                                        |
 /// | u      | 1      | compound        | topLeft → bottomLeft → bottom → bottomRight → topRight |
 ///
-/// `h`, `k`, and `r` have `minRequiredStrokes = 2` — the pen-lift between
-/// stem and compound stroke is mandatory. `m`, `n`, and `u` have
-/// `minRequiredStrokes = 1` — they are drawn in a single continuous compound
-/// stroke.
+/// `k` and `r` have `minRequiredStrokes = 2` — the pen-lift between stem and
+/// compound stroke is mandatory. `m` and `u` have `minRequiredStrokes = 1` —
+/// they are drawn in a single continuous compound stroke.
+///
+/// `h` and `n` belong to this same structural family (pen travels through
+/// multiple directional phases) but have been migrated to bespoke numbered
+/// sections — see `docs/waypoint_section_definitions.md` — and are scored
+/// via `WaypointSectionScorer` instead of the shared 3×3 grid.
 ///
 /// Returns `null` for any letter not yet authored.
 final Map<String, LetterFormationData> letterFormationRegistry = {
@@ -937,18 +938,22 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     ],
   ),
   // -------------------------------------------------------------------------
-  // Compound-stroke letters — h, k, m, n, r, u
+  // Compound-stroke letters — k, m, r, u
   //
   // Letters whose pen never lifts but travels through multiple directional
   // phases. Compound strokes carry a non-empty waypoints list specifying the
   // ordered 3×3 WaypointRegion grid cells the stroke must pass through.
   //
-  // h, k, r: stem (topToBottom) + compound second stroke.
+  // k, r: stem (topToBottom) + compound second stroke.
   //   minRequiredStrokes = 2 — the pen-lift between stem and arch/kick is
   //   mandatory.
   //
-  // m, n, u: single continuous compound stroke.
+  // m, u: single continuous compound stroke.
   //   minRequiredStrokes = 1.
+  //
+  // h and n share this structural family but have been migrated to bespoke
+  // numbered sections — see docs/waypoint_section_definitions.md — and are
+  // scored via WaypointSectionScorer instead of the shared 3×3 grid.
   //
   // Waypoint sequences are starting-point calibrations; exact cell assignments
   // will be refined against real learner data in a post-launch calibration
@@ -964,7 +969,26 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.00,
           maxY: 0.15,
         ),
-        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+        sections: [
+          WaypointSection(
+            number: 1,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.22,
+              minY: 0.00,
+              maxY: 0.57,
+            ),
+          ),
+          WaypointSection(
+            number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.22,
+              minY: 0.57,
+              maxY: 1.00,
+            ),
+          ),
+        ],
       ),
       ExpectedStroke(
         startRect: const StrokeStartRect(
@@ -973,10 +997,25 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
           minY: 0.40,
           maxY: 0.60,
         ),
-        waypoints: [
-          WaypointRegion.left,
-          WaypointRegion.top,
-          WaypointRegion.bottomRight,
+        sections: [
+          WaypointSection(
+            number: 3,
+            rect: const StrokeStartRect(
+              minX: 0.22,
+              maxX: 1.00,
+              minY: 0.00,
+              maxY: 0.57,
+            ),
+          ),
+          WaypointSection(
+            number: 4,
+            rect: const StrokeStartRect(
+              minX: 0.22,
+              maxX: 1.00,
+              minY: 0.57,
+              maxY: 1.00,
+            ),
+          ),
         ],
       ),
     ],

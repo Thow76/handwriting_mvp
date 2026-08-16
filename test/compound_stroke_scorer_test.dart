@@ -77,6 +77,37 @@ void main() {
     ],
   );
 
+  // Inline LetterFormationData for 'h' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final hDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 2,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.25,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+      ),
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.30,
+          minY: 0.40,
+          maxY: 0.60,
+        ),
+        waypoints: const [
+          WaypointRegion.left,
+          WaypointRegion.top,
+          WaypointRegion.bottomRight,
+        ],
+      ),
+    ],
+  );
+
   Stroke topLeftToBottomRightDiagonal() =>
       Stroke(const [Offset(50, 50), Offset(250, 250)]);
 
@@ -249,6 +280,10 @@ void main() {
   // ---------------------------------------------------------------------------
   // 'h' — multi-stroke letter; stem and compound stroke are both waypoint-scored
   //
+  // The registry entry for 'h' has been migrated to sections (see
+  // hDataWithWaypoints above), so this group uses inline legacy waypoint data
+  // to validate the CompoundStrokeScorer itself against a waypoint-based path.
+  //
   // 'h' has two expected strokes:
   //   stroke 0: topToBottom, startRect (0.00–0.25, 0.00–0.15)
   //             → expected centroid (37.5, 22.5) in 300×300 box
@@ -276,7 +311,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'h',
-        data: letterFormationRegistry['h']!,
+        data: hDataWithWaypoints,
         bounds: bounds,
       );
     });

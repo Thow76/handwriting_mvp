@@ -1018,6 +1018,111 @@ void main() {
     });
 
     // -------------------------------------------------------------------------
+    // h — section-based scoring integration tests
+    // -------------------------------------------------------------------------
+    // h uses WaypointSectionScorer (sections on both strokes).
+    // Stem stroke (stroke 0): 2 sections — stem top [0.00,0.22)×[0.00,0.57)
+    //   and stem bottom [0.00,0.22)×[0.57,1.00).
+    // Arch stroke (stroke 1): 2 sections — arch peak [0.22,1.00)×[0.00,0.57)
+    //   and arch right leg [0.22,1.00)×[0.57,1.00).
+    // In a 90×90 grid:
+    //   stem section 1: x[0, 19.8) y[0, 51.3)
+    //   stem section 2: x[0, 19.8) y[51.3, 90)
+    //   arch section 3: x[19.8, 90) y[0, 51.3)
+    //   arch section 4: x[19.8, 90) y[51.3, 90)
+
+    test('correct h (stem + arch) → routes through WaypointSectionScorer '
+        'and compoundStroke is 1.0', () {
+      // Stem visits section 1 then section 2 in order.
+      final hStem = Stroke(const [
+        Offset(10, 10), // stem section 1 (top)
+        Offset(10, 80), // stem section 2 (bottom)
+      ]);
+      // Arch visits section 3 then section 4 in order.
+      final hArch = Stroke(const [
+        Offset(70, 10), // arch section 3 (peak)
+        Offset(70, 80), // arch section 4 (right leg)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [hStem, hArch],
+        letter: 'h',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 1.0);
+    });
+
+    test('reversed h stem, correct arch → compoundStroke is 0.0', () {
+      // Stem visits section 2 before section 1 → breaks the sequence at the
+      // very first step, so the letter path never starts. No partial credit
+      // for a correct arch.
+      final hStem = Stroke(const [
+        Offset(10, 80), // stem section 2 (bottom) — out of order
+        Offset(10, 10), // stem section 1 (top) — too late
+      ]);
+      final hArch = Stroke(const [
+        Offset(70, 10), // arch section 3 (peak)
+        Offset(70, 80), // arch section 4 (right leg)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [hStem, hArch],
+        letter: 'h',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('correct h stem, arch drawn bottom to top → compoundStroke is 0.0',
+        () {
+      // Arch visits section 4 before section 3 — the gatekeeper (arch peak)
+      // is never hit first, so the arch stroke fails.
+      final hStem = Stroke(const [
+        Offset(10, 10), // stem section 1 (top)
+        Offset(10, 80), // stem section 2 (bottom)
+      ]);
+      final hArch = Stroke(const [
+        Offset(70, 80), // arch section 4 (right leg) — out of order
+        Offset(70, 10), // arch section 3 (peak) — too late
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [hStem, hArch],
+        letter: 'h',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('h stem only (arch never drawn) → compoundStroke is 0.0', () {
+      // Drawing only the stem completes sections 1-2 but not the arch (3-4),
+      // so the letter path is incomplete → 0.0, not 100%.
+      final hStem = Stroke(const [
+        Offset(10, 10), // stem section 1 (top)
+        Offset(10, 80), // stem section 2 (bottom)
+      ]);
+
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [hStem],
+        letter: 'h',
+      );
+
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    // -------------------------------------------------------------------------
     // f — section-based scoring integration tests
     // -------------------------------------------------------------------------
     // f uses WaypointSectionScorer (sections on both strokes). See
