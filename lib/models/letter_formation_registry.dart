@@ -393,6 +393,24 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
               maxY: 0.75,
             ),
           ),
+          WaypointSection(
+            number: 5,
+            rect: const StrokeStartRect(
+              minX: 0.72,
+              maxX: 1.00,
+              minY: 0.00,
+              maxY: 0.50,
+            ),
+          ),
+          WaypointSection(
+            number: 6,
+            rect: const StrokeStartRect(
+              minX: 0.72,
+              maxX: 1.00,
+              minY: 0.50,
+              maxY: 1.00,
+            ),
+          ),
         ],
       ),
     ],

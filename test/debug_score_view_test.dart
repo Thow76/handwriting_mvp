@@ -198,6 +198,50 @@ void main() {
       expect(find.textContaining('All waypoints matched.'), findsOneWidget);
     });
 
+    testWidgets(
+        'labels the path-scoring panel WaypointSectionScorer for a '
+        'sections-based letter', (tester) async {
+      final result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+        compoundStroke: const FormationScore(
+          overallScore: 1.0,
+          observations: [],
+          summary: 'The letter path followed the correct section sequence.',
+        ),
+      );
+      await tester.pumpWidget(
+        _app(DebugScoreView(result: result, letter: 'a')),
+      );
+
+      expect(find.textContaining('WaypointSectionScorer — 100%'), findsOneWidget);
+      expect(find.textContaining('CompoundStrokeScorer'), findsNothing);
+    });
+
+    testWidgets(
+        'keeps the CompoundStrokeScorer label for a waypoint-based letter',
+        (tester) async {
+      final result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+        compoundStroke: const FormationScore(
+          overallScore: 1.0,
+          observations: [],
+          summary: 'All waypoints matched.',
+        ),
+      );
+      await tester.pumpWidget(
+        _app(DebugScoreView(result: result, letter: 'm')),
+      );
+
+      expect(find.textContaining('CompoundStrokeScorer — 100%'), findsOneWidget);
+      expect(find.textContaining('WaypointSectionScorer'), findsNothing);
+    });
+
     testWidgets('renders StrokeBreakCounter panel with both columns',
         (tester) async {
       final result = ScoreResult(
