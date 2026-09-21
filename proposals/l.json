@@ -1,0 +1,33 @@
+{
+  "_letter": "l",
+  "_sequence": "single stem, top to bottom",
+  "sections": [
+    {
+      "n": 1,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 1.0,
+      "minY": 0.0,
+      "maxY": 0.35,
+      "label": "stem top"
+    },
+    {
+      "n": 2,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 1.0,
+      "minY": 0.35,
+      "maxY": 0.7,
+      "label": "stem middle"
+    },
+    {
+      "n": 3,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 1.0,
+      "minY": 0.7,
+      "maxY": 1.0,
+      "label": "stem bottom"
+    }
+  ]
+}

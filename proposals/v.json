@@ -1,0 +1,51 @@
+{
+  "_letter": "v",
+  "_sequence": "down to the point, then back up to the right",
+  "sections": [
+    {
+      "n": 1,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 0.3,
+      "minY": 0.0,
+      "maxY": 0.25,
+      "label": "top left start"
+    },
+    {
+      "n": 2,
+      "stroke": 0,
+      "minX": 0.12,
+      "maxX": 0.45,
+      "minY": 0.25,
+      "maxY": 0.65,
+      "label": "left descent"
+    },
+    {
+      "n": 3,
+      "stroke": 0,
+      "minX": 0.2,
+      "maxX": 0.6,
+      "minY": 0.7,
+      "maxY": 1.0,
+      "label": "point"
+    },
+    {
+      "n": 4,
+      "stroke": 0,
+      "minX": 0.55,
+      "maxX": 0.88,
+      "minY": 0.25,
+      "maxY": 0.65,
+      "label": "right ascent"
+    },
+    {
+      "n": 5,
+      "stroke": 0,
+      "minX": 0.7,
+      "maxX": 1.0,
+      "minY": 0.0,
+      "maxY": 0.25,
+      "label": "top right finish"
+    }
+  ]
+}

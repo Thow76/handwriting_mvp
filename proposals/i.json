@@ -1,0 +1,33 @@
+{
+  "_letter": "i",
+  "_sequence": "stem top\u2192bottom, then the dot",
+  "sections": [
+    {
+      "n": 1,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 1.0,
+      "minY": 0.28,
+      "maxY": 0.62,
+      "label": "stem top"
+    },
+    {
+      "n": 2,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 1.0,
+      "minY": 0.62,
+      "maxY": 1.0,
+      "label": "stem bottom"
+    },
+    {
+      "n": 3,
+      "stroke": 1,
+      "minX": 0.0,
+      "maxX": 1.0,
+      "minY": 0.0,
+      "maxY": 0.18,
+      "label": "dot"
+    }
+  ]
+}

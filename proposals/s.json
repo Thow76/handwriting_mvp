@@ -1,0 +1,69 @@
+{
+  "_letter": "s",
+  "_sequence": "start top right, over the top, down the left, across the middle, down the right, out to the left",
+  "sections": [
+    {
+      "n": 1,
+      "stroke": 0,
+      "minX": 0.55,
+      "maxX": 0.9,
+      "minY": 0.0,
+      "maxY": 0.2,
+      "label": "top right start"
+    },
+    {
+      "n": 2,
+      "stroke": 0,
+      "minX": 0.1,
+      "maxX": 0.45,
+      "minY": 0.0,
+      "maxY": 0.22,
+      "label": "over the top"
+    },
+    {
+      "n": 3,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 0.3,
+      "minY": 0.22,
+      "maxY": 0.45,
+      "label": "upper left"
+    },
+    {
+      "n": 4,
+      "stroke": 0,
+      "minX": 0.3,
+      "maxX": 0.7,
+      "minY": 0.4,
+      "maxY": 0.68,
+      "label": "middle crossover"
+    },
+    {
+      "n": 5,
+      "stroke": 0,
+      "minX": 0.7,
+      "maxX": 1.0,
+      "minY": 0.55,
+      "maxY": 0.82,
+      "label": "lower right"
+    },
+    {
+      "n": 6,
+      "stroke": 0,
+      "minX": 0.45,
+      "maxX": 0.85,
+      "minY": 0.78,
+      "maxY": 1.0,
+      "label": "bottom right"
+    },
+    {
+      "n": 7,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 0.45,
+      "minY": 0.78,
+      "maxY": 1.0,
+      "label": "bottom left finish"
+    }
+  ]
+}
