@@ -1,0 +1,61 @@
+{
+  "_letter": "b",
+  "_sequence": "stem down, then the bowl clockwise from the stem",
+  "_note": "Replaces the registry version. Column lines 0.30 / 0.65; row lines 0.35, 0.50 and 0.65.",
+  "sections": [
+    {
+      "n": 1,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 0.3,
+      "minY": 0.0,
+      "maxY": 0.5,
+      "label": "stem top"
+    },
+    {
+      "n": 2,
+      "stroke": 0,
+      "minX": 0.0,
+      "maxX": 0.3,
+      "minY": 0.5,
+      "maxY": 1.0,
+      "label": "stem bottom"
+    },
+    {
+      "n": 3,
+      "stroke": 1,
+      "minX": 0.3,
+      "maxX": 0.65,
+      "minY": 0.35,
+      "maxY": 0.5,
+      "label": "bowl leaves the stem"
+    },
+    {
+      "n": 4,
+      "stroke": 1,
+      "minX": 0.65,
+      "maxX": 1.0,
+      "minY": 0.35,
+      "maxY": 0.65,
+      "label": "bowl right side"
+    },
+    {
+      "n": 5,
+      "stroke": 1,
+      "minX": 0.65,
+      "maxX": 1.0,
+      "minY": 0.65,
+      "maxY": 1.0,
+      "label": "bowl bottom right"
+    },
+    {
+      "n": 6,
+      "stroke": 1,
+      "minX": 0.3,
+      "maxX": 0.65,
+      "minY": 0.65,
+      "maxY": 1.0,
+      "label": "bowl bottom left"
+    }
+  ]
+}

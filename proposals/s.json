@@ -1,12 +1,13 @@
 {
   "_letter": "s",
   "_sequence": "start top right, over the top, down the left, across the middle, down the right, out to the left",
+  "_note": "Two column lines (0.30, 0.70) carry the whole letter; each step of the S drops onto the next row line. The old version had zones 5 and 6 overlapping.",
   "sections": [
     {
       "n": 1,
       "stroke": 0,
-      "minX": 0.55,
-      "maxX": 0.9,
+      "minX": 0.7,
+      "maxX": 1.0,
       "minY": 0.0,
       "maxY": 0.2,
       "label": "top right start"
@@ -14,10 +15,10 @@
     {
       "n": 2,
       "stroke": 0,
-      "minX": 0.1,
-      "maxX": 0.45,
+      "minX": 0.3,
+      "maxX": 0.7,
       "minY": 0.0,
-      "maxY": 0.22,
+      "maxY": 0.2,
       "label": "over the top"
     },
     {
@@ -25,17 +26,17 @@
       "stroke": 0,
       "minX": 0.0,
       "maxX": 0.3,
-      "minY": 0.22,
-      "maxY": 0.45,
-      "label": "upper left"
+      "minY": 0.2,
+      "maxY": 0.42,
+      "label": "down the left"
     },
     {
       "n": 4,
       "stroke": 0,
       "minX": 0.3,
       "maxX": 0.7,
-      "minY": 0.4,
-      "maxY": 0.68,
+      "minY": 0.42,
+      "maxY": 0.62,
       "label": "middle crossover"
     },
     {
@@ -43,24 +44,24 @@
       "stroke": 0,
       "minX": 0.7,
       "maxX": 1.0,
-      "minY": 0.55,
-      "maxY": 0.82,
-      "label": "lower right"
+      "minY": 0.62,
+      "maxY": 0.78,
+      "label": "down the right"
     },
     {
       "n": 6,
       "stroke": 0,
-      "minX": 0.45,
-      "maxX": 0.85,
+      "minX": 0.3,
+      "maxX": 1.0,
       "minY": 0.78,
       "maxY": 1.0,
-      "label": "bottom right"
+      "label": "bottom, right half"
     },
     {
       "n": 7,
       "stroke": 0,
       "minX": 0.0,
-      "maxX": 0.45,
+      "maxX": 0.3,
       "minY": 0.78,
       "maxY": 1.0,
       "label": "bottom left finish"

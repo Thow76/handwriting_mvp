@@ -1,12 +1,13 @@
 {
   "_letter": "w",
   "_sequence": "down, up, down, up \u2014 two joined v shapes",
+  "_note": "Five equal columns; tops use the 0-0.25 band and valleys the 0.70-1.00 band, so every edge is on a shared line.",
   "sections": [
     {
       "n": 1,
       "stroke": 0,
       "minX": 0.0,
-      "maxX": 0.18,
+      "maxX": 0.2,
       "minY": 0.0,
       "maxY": 0.25,
       "label": "top left start"
@@ -14,8 +15,8 @@
     {
       "n": 2,
       "stroke": 0,
-      "minX": 0.15,
-      "maxX": 0.42,
+      "minX": 0.2,
+      "maxX": 0.4,
       "minY": 0.7,
       "maxY": 1.0,
       "label": "first point"
@@ -23,16 +24,16 @@
     {
       "n": 3,
       "stroke": 0,
-      "minX": 0.38,
+      "minX": 0.4,
       "maxX": 0.6,
       "minY": 0.0,
-      "maxY": 0.28,
+      "maxY": 0.25,
       "label": "middle peak"
     },
     {
       "n": 4,
       "stroke": 0,
-      "minX": 0.52,
+      "minX": 0.6,
       "maxX": 0.8,
       "minY": 0.7,
       "maxY": 1.0,

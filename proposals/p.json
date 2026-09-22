@@ -1,6 +1,7 @@
 {
   "_letter": "p",
   "_sequence": "stem down through the descender, then the bowl clockwise",
+  "_note": "Single row line at y=0.50 shared by every column; the bowl bottom stops at y=0.72 with open space below it.",
   "sections": [
     {
       "n": 1,
@@ -26,7 +27,7 @@
       "minX": 0.24,
       "maxX": 0.72,
       "minY": 0.0,
-      "maxY": 0.22,
+      "maxY": 0.5,
       "label": "bowl top"
     },
     {
@@ -34,7 +35,7 @@
       "stroke": 1,
       "minX": 0.72,
       "maxX": 1.0,
-      "minY": 0.15,
+      "minY": 0.0,
       "maxY": 0.5,
       "label": "bowl right"
     },

@@ -1,6 +1,7 @@
 {
   "_letter": "x",
   "_sequence": "first diagonal top left to bottom right, then top right to bottom left",
+  "_note": "Unchanged \u2014 already a valid ragged grid. The crossing box is an island with open space on all four sides.",
   "sections": [
     {
       "n": 1,

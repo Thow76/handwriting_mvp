@@ -1,6 +1,7 @@
 {
   "_letter": "k",
   "_sequence": "stem down, then arm in from upper right, through the junction, out to lower right",
+  "_note": "Arm band now ends at y=0.52 where the junction band begins, so the two share a line.",
   "sections": [
     {
       "n": 1,
@@ -26,7 +27,7 @@
       "minX": 0.62,
       "maxX": 1.0,
       "minY": 0.33,
-      "maxY": 0.55,
+      "maxY": 0.52,
       "label": "arm start, upper right"
     },
     {

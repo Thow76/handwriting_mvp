@@ -1,6 +1,7 @@
 {
   "_letter": "u",
   "_sequence": "down the left, round the bottom, up the right",
+  "_note": "Unchanged \u2014 already a valid ragged grid.",
   "sections": [
     {
       "n": 1,
