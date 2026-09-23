@@ -1,52 +1,55 @@
 {
-  "_letter": "t",
-  "_sequence": "stem down with the foot, then the crossbar left to right",
-  "_note": "Unchanged \u2014 already a valid ragged grid.",
-  "sections": [
-    {
-      "n": 1,
-      "stroke": 0,
-      "minX": 0.2,
-      "maxX": 0.62,
-      "minY": 0.0,
-      "maxY": 0.4,
-      "label": "stem top"
-    },
-    {
-      "n": 2,
-      "stroke": 0,
-      "minX": 0.2,
-      "maxX": 0.62,
-      "minY": 0.4,
-      "maxY": 0.8,
-      "label": "stem lower"
-    },
-    {
-      "n": 3,
-      "stroke": 0,
-      "minX": 0.4,
-      "maxX": 1.0,
-      "minY": 0.8,
-      "maxY": 1.0,
-      "label": "foot"
-    },
-    {
-      "n": 4,
-      "stroke": 1,
-      "minX": 0.0,
-      "maxX": 0.2,
-      "minY": 0.2,
-      "maxY": 0.38,
-      "label": "crossbar left"
-    },
-    {
-      "n": 5,
-      "stroke": 1,
-      "minX": 0.62,
-      "maxX": 1.0,
-      "minY": 0.2,
-      "maxY": 0.38,
-      "label": "crossbar right"
-    }
-  ]
+ "_letter": "t",
+ "_sequence": "Stroke one: down the stem, curving right at the foot. Stroke two: the crossbar, left to right.",
+ "_grid": "3 columns x 3 rows",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.28,
+   "maxX": 0.58,
+   "minY": 0,
+   "maxY": 0.4
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.28,
+   "maxX": 0.58,
+   "minY": 0.4,
+   "maxY": 0.78
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.28,
+   "maxX": 0.58,
+   "minY": 0.78,
+   "maxY": 1
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.58,
+   "maxX": 1,
+   "minY": 0.78,
+   "maxY": 1
+  },
+  {
+   "n": 5,
+   "stroke": 1,
+   "minX": 0,
+   "maxX": 0.28,
+   "minY": 0,
+   "maxY": 0.4
+  },
+  {
+   "n": 6,
+   "stroke": 1,
+   "minX": 0.58,
+   "maxX": 1,
+   "minY": 0,
+   "maxY": 0.4
+  }
+ ]
 }

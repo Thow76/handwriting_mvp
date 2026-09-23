@@ -1,61 +1,55 @@
 {
-  "_letter": "a",
-  "_sequence": "oval anticlockwise from the top, close it, then up the stem and back down",
-  "_note": "Replaces the registry version, which had five overlapping pairs. Column lines 0.35 / 0.72; row lines 0.25, 0.50 and 0.70.",
-  "sections": [
-    {
-      "n": 1,
-      "stroke": 0,
-      "minX": 0.35,
-      "maxX": 0.72,
-      "minY": 0.0,
-      "maxY": 0.25,
-      "label": "oval top, where the stroke starts"
-    },
-    {
-      "n": 2,
-      "stroke": 0,
-      "minX": 0.0,
-      "maxX": 0.35,
-      "minY": 0.25,
-      "maxY": 0.7,
-      "label": "oval left side"
-    },
-    {
-      "n": 3,
-      "stroke": 0,
-      "minX": 0.0,
-      "maxX": 0.35,
-      "minY": 0.7,
-      "maxY": 1.0,
-      "label": "oval bottom left"
-    },
-    {
-      "n": 4,
-      "stroke": 0,
-      "minX": 0.35,
-      "maxX": 0.72,
-      "minY": 0.7,
-      "maxY": 1.0,
-      "label": "oval bottom right, closing"
-    },
-    {
-      "n": 5,
-      "stroke": 0,
-      "minX": 0.72,
-      "maxX": 1.0,
-      "minY": 0.0,
-      "maxY": 0.5,
-      "label": "stem top"
-    },
-    {
-      "n": 6,
-      "stroke": 0,
-      "minX": 0.72,
-      "maxX": 1.0,
-      "minY": 0.5,
-      "maxY": 1.0,
-      "label": "stem bottom"
-    }
-  ]
+ "_letter": "a",
+ "_sequence": "Start at the top of the round part, sweep anticlockwise round it, then up the stem and down again.",
+ "_grid": "3 columns x 2 rows",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.38,
+   "maxX": 0.72,
+   "minY": 0,
+   "maxY": 0.5
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.38,
+   "minY": 0,
+   "maxY": 0.5
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.38,
+   "minY": 0.5,
+   "maxY": 1
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.38,
+   "maxX": 0.72,
+   "minY": 0.5,
+   "maxY": 1
+  },
+  {
+   "n": 5,
+   "stroke": 0,
+   "minX": 0.72,
+   "maxX": 1,
+   "minY": 0,
+   "maxY": 0.5
+  },
+  {
+   "n": 6,
+   "stroke": 0,
+   "minX": 0.72,
+   "maxX": 1,
+   "minY": 0.5,
+   "maxY": 1
+  }
+ ]
 }

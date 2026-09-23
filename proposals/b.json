@@ -1,61 +1,14 @@
 {
   "_letter": "b",
-  "_sequence": "stem down, then the bowl clockwise from the stem",
-  "_note": "Replaces the registry version. Column lines 0.30 / 0.65; row lines 0.35, 0.50 and 0.65.",
+  "_sequence": "Stroke one: straight down the stem. Stroke two: from the middle of the stem, out across the top of the bowl, down the right-hand side, and back along the bottom to the stem.",
+  "_grid": "3 columns x 3 rows. Columns: stem | inner bowl | outer bowl. Rows: above the bowl | upper bowl | lower bowl. Two cells above the bowl are hatched - there is no letter there.",
   "sections": [
-    {
-      "n": 1,
-      "stroke": 0,
-      "minX": 0.0,
-      "maxX": 0.3,
-      "minY": 0.0,
-      "maxY": 0.5,
-      "label": "stem top"
-    },
-    {
-      "n": 2,
-      "stroke": 0,
-      "minX": 0.0,
-      "maxX": 0.3,
-      "minY": 0.5,
-      "maxY": 1.0,
-      "label": "stem bottom"
-    },
-    {
-      "n": 3,
-      "stroke": 1,
-      "minX": 0.3,
-      "maxX": 0.65,
-      "minY": 0.35,
-      "maxY": 0.5,
-      "label": "bowl leaves the stem"
-    },
-    {
-      "n": 4,
-      "stroke": 1,
-      "minX": 0.65,
-      "maxX": 1.0,
-      "minY": 0.35,
-      "maxY": 0.65,
-      "label": "bowl right side"
-    },
-    {
-      "n": 5,
-      "stroke": 1,
-      "minX": 0.65,
-      "maxX": 1.0,
-      "minY": 0.65,
-      "maxY": 1.0,
-      "label": "bowl bottom right"
-    },
-    {
-      "n": 6,
-      "stroke": 1,
-      "minX": 0.3,
-      "maxX": 0.65,
-      "minY": 0.65,
-      "maxY": 1.0,
-      "label": "bowl bottom left"
-    }
+    {"n": 1, "stroke": 0, "minX": 0.00, "maxX": 0.25, "minY": 0.00, "maxY": 0.35, "label": "stem top"},
+    {"n": 2, "stroke": 0, "minX": 0.00, "maxX": 0.25, "minY": 0.35, "maxY": 0.67, "label": "stem middle"},
+    {"n": 3, "stroke": 0, "minX": 0.00, "maxX": 0.25, "minY": 0.67, "maxY": 1.00, "label": "stem bottom"},
+    {"n": 4, "stroke": 1, "minX": 0.25, "maxX": 0.62, "minY": 0.35, "maxY": 0.67, "label": "bowl top, leaving the stem"},
+    {"n": 5, "stroke": 1, "minX": 0.62, "maxX": 1.00, "minY": 0.35, "maxY": 0.67, "label": "bowl upper right"},
+    {"n": 6, "stroke": 1, "minX": 0.62, "maxX": 1.00, "minY": 0.67, "maxY": 1.00, "label": "bowl lower right"},
+    {"n": 7, "stroke": 1, "minX": 0.25, "maxX": 0.62, "minY": 0.67, "maxY": 1.00, "label": "bowl bottom, back to the stem"}
   ]
 }

@@ -1,52 +1,63 @@
 {
-  "_letter": "k",
-  "_sequence": "stem down, then arm in from upper right, through the junction, out to lower right",
-  "_note": "Arm band now ends at y=0.52 where the junction band begins, so the two share a line.",
-  "sections": [
-    {
-      "n": 1,
-      "stroke": 0,
-      "minX": 0.0,
-      "maxX": 0.28,
-      "minY": 0.0,
-      "maxY": 0.5,
-      "label": "stem top"
-    },
-    {
-      "n": 2,
-      "stroke": 0,
-      "minX": 0.0,
-      "maxX": 0.28,
-      "minY": 0.5,
-      "maxY": 1.0,
-      "label": "stem bottom"
-    },
-    {
-      "n": 3,
-      "stroke": 1,
-      "minX": 0.62,
-      "maxX": 1.0,
-      "minY": 0.33,
-      "maxY": 0.52,
-      "label": "arm start, upper right"
-    },
-    {
-      "n": 4,
-      "stroke": 1,
-      "minX": 0.28,
-      "maxX": 0.62,
-      "minY": 0.52,
-      "maxY": 0.76,
-      "label": "junction"
-    },
-    {
-      "n": 5,
-      "stroke": 1,
-      "minX": 0.62,
-      "maxX": 1.0,
-      "minY": 0.76,
-      "maxY": 1.0,
-      "label": "leg end, lower right"
-    }
-  ]
+ "_letter": "k",
+ "_sequence": "Stroke one: down the stem. Stroke two: in from the upper right to the stem, then out to the lower right.",
+ "_grid": "3 columns x 3 rows",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.28,
+   "minY": 0,
+   "maxY": 0.35
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.28,
+   "minY": 0.35,
+   "maxY": 0.68
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.28,
+   "minY": 0.68,
+   "maxY": 1
+  },
+  {
+   "n": 4,
+   "stroke": 1,
+   "minX": 0.62,
+   "maxX": 1,
+   "minY": 0.35,
+   "maxY": 0.68
+  },
+  {
+   "n": 5,
+   "stroke": 1,
+   "minX": 0.28,
+   "maxX": 0.62,
+   "minY": 0.35,
+   "maxY": 0.68
+  },
+  {
+   "n": 6,
+   "stroke": 1,
+   "minX": 0.28,
+   "maxX": 0.62,
+   "minY": 0.68,
+   "maxY": 1
+  },
+  {
+   "n": 7,
+   "stroke": 1,
+   "minX": 0.62,
+   "maxX": 1,
+   "minY": 0.68,
+   "maxY": 1
+  }
+ ]
 }

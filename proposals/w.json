@@ -1,52 +1,47 @@
 {
-  "_letter": "w",
-  "_sequence": "down, up, down, up \u2014 two joined v shapes",
-  "_note": "Five equal columns; tops use the 0-0.25 band and valleys the 0.70-1.00 band, so every edge is on a shared line.",
-  "sections": [
-    {
-      "n": 1,
-      "stroke": 0,
-      "minX": 0.0,
-      "maxX": 0.2,
-      "minY": 0.0,
-      "maxY": 0.25,
-      "label": "top left start"
-    },
-    {
-      "n": 2,
-      "stroke": 0,
-      "minX": 0.2,
-      "maxX": 0.4,
-      "minY": 0.7,
-      "maxY": 1.0,
-      "label": "first point"
-    },
-    {
-      "n": 3,
-      "stroke": 0,
-      "minX": 0.4,
-      "maxX": 0.6,
-      "minY": 0.0,
-      "maxY": 0.25,
-      "label": "middle peak"
-    },
-    {
-      "n": 4,
-      "stroke": 0,
-      "minX": 0.6,
-      "maxX": 0.8,
-      "minY": 0.7,
-      "maxY": 1.0,
-      "label": "second point"
-    },
-    {
-      "n": 5,
-      "stroke": 0,
-      "minX": 0.8,
-      "maxX": 1.0,
-      "minY": 0.0,
-      "maxY": 0.25,
-      "label": "top right finish"
-    }
-  ]
+ "_letter": "w",
+ "_sequence": "Down, up, down, up - left to right.",
+ "_grid": "5 columns x 2 rows",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.2,
+   "minY": 0,
+   "maxY": 0.5
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.2,
+   "maxX": 0.4,
+   "minY": 0.5,
+   "maxY": 1
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.4,
+   "maxX": 0.6,
+   "minY": 0,
+   "maxY": 0.5
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.6,
+   "maxX": 0.8,
+   "minY": 0.5,
+   "maxY": 1
+  },
+  {
+   "n": 5,
+   "stroke": 0,
+   "minX": 0.8,
+   "maxX": 1,
+   "minY": 0,
+   "maxY": 0.5
+  }
+ ]
 }
