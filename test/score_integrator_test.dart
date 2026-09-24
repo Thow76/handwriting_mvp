@@ -296,13 +296,22 @@ void main() {
     });
 
     test('anticlockwise o oval path → compoundStroke score is 1.0', () {
-      // o uses waypoint routing: topRight → left → bottom → right.
-      // This path visits those cells in the authored order.
+      // o uses section-based scoring (WaypointSectionScorer) with 6 sections
+      // (3 columns x 2 rows, anticlockwise from the top):
+      //   section 1: top          [0.33, 0.67) × [0.00, 0.50)
+      //   section 2: upper-left   [0.00, 0.33) × [0.00, 0.50)
+      //   section 3: lower-left   [0.00, 0.33) × [0.50, 1.00)
+      //   section 4: bottom       [0.33, 0.67) × [0.50, 1.00)
+      //   section 5: lower-right  [0.67, 1.00) × [0.50, 1.00)
+      //   section 6: upper-right  [0.67, 1.00) × [0.00, 0.50)
+      // In a 90×90 grid, this path visits each section's centre in order.
       final stroke = Stroke(const [
-        Offset(75, 15), // topRight centroid
-        Offset(15, 45), // left centroid
-        Offset(45, 75), // bottom centroid
-        Offset(75, 45), // right centroid
+        Offset(45, 22), // section 1 (top)
+        Offset(15, 22), // section 2 (upper-left)
+        Offset(15, 68), // section 3 (lower-left)
+        Offset(45, 68), // section 4 (bottom)
+        Offset(75, 68), // section 5 (lower-right)
+        Offset(75, 22), // section 6 (upper-right)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -367,27 +376,27 @@ void main() {
 
     test('correct a (anticlockwise oval + stem) → compoundStroke score is 1.0',
         () {
-      // a uses section-based scoring with 6 sections (bowl + stem):
-      //   section 1: upper-right   [0.55, 1.00) × [0.00, 0.30)
-      //   section 2: left          [0.00, 0.35) × [0.25, 0.70)
-      //   section 3: bottom        [0.20, 0.80) × [0.70, 1.00)
-      //   section 4: right         [0.65, 1.00) × [0.30, 0.75)
-      //   section 5: stem top      [0.72, 1.00) × [0.00, 0.50)
-      //   section 6: stem bottom   [0.72, 1.00) × [0.50, 1.00)
+      // a uses section-based scoring with 6 sections (3 columns x 2 rows):
+      //   section 1: top-centre    [0.38, 0.72) × [0.00, 0.50)
+      //   section 2: top-left      [0.00, 0.38) × [0.00, 0.50)
+      //   section 3: bottom-left   [0.00, 0.38) × [0.50, 1.00)
+      //   section 4: bottom-centre [0.38, 0.72) × [0.50, 1.00)
+      //   section 5: top-right     [0.72, 1.00) × [0.00, 0.50)
+      //   section 6: bottom-right  [0.72, 1.00) × [0.50, 1.00)
       // In a 90×90 grid:
-      //   section 1: x[49.5, 90) y[0, 27)
-      //   section 2: x[0, 31.5) y[22.5, 63)
-      //   section 3: x[18, 72) y[63, 90)
-      //   section 4: x[58.5, 90) y[27, 67.5)
+      //   section 1: x[34.2, 64.8) y[0, 45)
+      //   section 2: x[0, 34.2) y[0, 45)
+      //   section 3: x[0, 34.2) y[45, 90)
+      //   section 4: x[34.2, 64.8) y[45, 90)
       //   section 5: x[64.8, 90) y[0, 45)
       //   section 6: x[64.8, 90) y[45, 90)
       final stroke = Stroke(const [
-        Offset(70, 10), // section 1 (upper-right)
-        Offset(15, 45), // section 2 (left)
-        Offset(45, 80), // section 3 (bottom)
-        Offset(75, 50), // section 4 (right)
-        Offset(77, 10), // section 5 (stem top)
-        Offset(77, 70), // section 6 (stem bottom)
+        Offset(55, 10), // section 1 (top-centre), also inside a's startRect
+        Offset(17, 22), // section 2 (top-left)
+        Offset(17, 68), // section 3 (bottom-left)
+        Offset(49, 68), // section 4 (bottom-centre)
+        Offset(77, 22), // section 5 (top-right)
+        Offset(77, 68), // section 6 (bottom-right)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -402,7 +411,7 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.strokeBreak, isNotNull);
 
-      // Stroke first point (70, 10) is inside a's startRect → 1.0.
+      // Stroke first point (55, 10) is inside a's startRect → 1.0.
       expect(result.strokeStart!.overallScore, 1.0);
 
       // All 6 sections hit in order → 1.0 (section scorer, all-or-nothing).
@@ -535,18 +544,25 @@ void main() {
 
     test('correct c (open anticlockwise arc) → compoundStroke score is 1.0',
         () {
-      // c uses section-based scoring (WaypointSectionScorer) with 3 sections:
-      //   section 1: upper-right  [0.55, 1.00) × [0.00, 0.30)
-      //   section 2: left         [0.00, 0.35) × [0.25, 0.75)
-      //   section 3: bottom       [0.20, 0.80) × [0.70, 1.00)
+      // c uses section-based scoring (WaypointSectionScorer) with 5 sections
+      // (2 columns x 3 rows):
+      //   section 1: top-right     [0.50, 1.00) × [0.00, 0.30)
+      //   section 2: top-left      [0.00, 0.50) × [0.00, 0.30)
+      //   section 3: middle-left   [0.00, 0.50) × [0.30, 0.70)
+      //   section 4: bottom-left   [0.00, 0.50) × [0.70, 1.00)
+      //   section 5: bottom-right  [0.50, 1.00) × [0.70, 1.00)
       // In a 90×90 grid:
-      //   section 1: x[49.5, 90) y[0, 27)
-      //   section 2: x[0, 31.5) y[22.5, 67.5)
-      //   section 3: x[18, 72) y[63, 90)
+      //   section 1: x[45, 90) y[0, 27)
+      //   section 2: x[0, 45) y[0, 27)
+      //   section 3: x[0, 45) y[27, 63)
+      //   section 4: x[0, 45) y[63, 90)
+      //   section 5: x[45, 90) y[63, 90)
       final stroke = Stroke(const [
-        Offset(70, 10), // section 1 (upper-right)
-        Offset(15, 45), // section 2 (left)
-        Offset(45, 80), // section 3 (bottom)
+        Offset(60, 10), // section 1 (top-right), also inside c's startRect
+        Offset(20, 10), // section 2 (top-left)
+        Offset(20, 45), // section 3 (middle-left)
+        Offset(20, 80), // section 4 (bottom-left)
+        Offset(60, 80), // section 5 (bottom-right)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -560,10 +576,10 @@ void main() {
       expect(result.compoundStroke, isNotNull);
       expect(result.strokeBreak, isNotNull);
 
-      // Stroke first point (70, 10) is inside c's startRect → 1.0.
+      // Stroke first point (60, 10) is inside c's startRect → 1.0.
       expect(result.strokeStart!.overallScore, 1.0);
 
-      // All 3 sections hit in order → 1.0 (section scorer, all-or-nothing).
+      // All 5 sections hit in order → 1.0 (section scorer, all-or-nothing).
       expect(result.compoundStroke!.overallScore, 1.0);
 
       // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
@@ -752,78 +768,104 @@ void main() {
       expect(result.compoundStroke!.overallScore, 0.0);
     });
 
-    final stem = Stroke(const [Offset(45, 15), Offset(45, 75)]);
-    final clockwiseBowl = Stroke(const [
-      Offset(75, 15), // topRight centroid
-      Offset(75, 45), // right centroid
-      Offset(45, 75), // bottom centroid
-      Offset(15, 45), // left centroid
+    // p is now fully section-scored (WaypointSectionScorer): stem sections
+    // 1-3 and bowl sections 4-7 form one ordered path across both strokes, so
+    // the CompoundStrokeScorer's old proportional averaging no longer
+    // applies — the result is 1.0 only when every section is hit in order,
+    // else 0.0 (the same all-or-nothing rule as 'h').
+    //   stem section 1: x[0, 22.5) y[0, 31.5)      (top of the stem)
+    //   stem section 2: x[0, 22.5) y[31.5, 63)      (middle of the stem)
+    //   stem section 3: x[0, 22.5) y[63, 90)        (bottom of the stem)
+    //   bowl section 4: x[22.5, 55.8) y[0, 31.5)    (bowl top, leaving stem)
+    //   bowl section 5: x[55.8, 90) y[0, 31.5)      (bowl upper right)
+    //   bowl section 6: x[55.8, 90) y[31.5, 63)     (bowl lower right)
+    //   bowl section 7: x[22.5, 55.8) y[31.5, 63)   (bowl bottom, back to stem)
+    final pStem = Stroke(const [
+      Offset(10, 15), // section 1
+      Offset(10, 47), // section 2
+      Offset(10, 77), // section 3
     ]);
-    final straightBowl = Stroke(const [Offset(15, 5), Offset(15, 85)]);
-    final anticlockwiseBowl = Stroke(const [
-      Offset(15, 45), // left centroid
-      Offset(45, 75), // bottom centroid
-      Offset(75, 45), // right centroid
-      Offset(75, 15), // topRight centroid
+    final pBowlClockwise = Stroke(const [
+      Offset(38, 15), // section 4
+      Offset(75, 15), // section 5
+      Offset(75, 47), // section 6
+      Offset(38, 47), // section 7
     ]);
+    final pBowlReversed = Stroke(const [
+      Offset(38, 47), // section 7 — out of order
+      Offset(75, 47), // section 6 — out of order
+      Offset(75, 15), // section 5 — out of order
+      Offset(38, 15), // section 4 — never reached in order
+    ]);
+    final pBowlStraight = Stroke(const [Offset(15, 5), Offset(15, 85)]);
 
-    double compoundScoreFor(String letter, Stroke bowl) {
+    test('p full path (stem + bowl, correct order) scores 1.0 on compoundStroke',
+        () {
       final result = ScoreIntegrator.score(
         referenceMask: ref90,
         bounds: bounds90,
-        strokes: [stem, bowl],
-        letter: letter,
+        strokes: [pStem, pBowlClockwise],
+        letter: 'p',
       );
       expect(result.compoundStroke, isNotNull);
-      return result.compoundStroke!.overallScore;
-    }
+      expect(result.compoundStroke!.overallScore, 1.0);
+    });
 
-    for (final letter in ['p']) {
-      test('clockwise $letter bowl path scores 1.0 on compoundStroke', () {
-        expect(compoundScoreFor(letter, clockwiseBowl), 1.0);
-      });
-
-      test('straight $letter bowl stroke scores 0.5 on compoundStroke', () {
-        expect(compoundScoreFor(letter, straightBowl), 0.5);
-      });
-
-      test(
-        'anticlockwise $letter bowl path scores 0.625 on compoundStroke',
+    test('p bowl drawn out of order (reversed) scores 0.0 on compoundStroke',
         () {
-          expect(compoundScoreFor(letter, anticlockwiseBowl), 0.625);
-        },
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [pStem, pBowlReversed],
+        letter: 'p',
       );
-    }
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
+
+    test('p bowl drawn as a straight stroke (misses the bowl sections) '
+        'scores 0.0 on compoundStroke', () {
+      final result = ScoreIntegrator.score(
+        referenceMask: ref90,
+        bounds: bounds90,
+        strokes: [pStem, pBowlStraight],
+        letter: 'p',
+      );
+      expect(result.compoundStroke, isNotNull);
+      expect(result.compoundStroke!.overallScore, 0.0);
+    });
 
     // -------------------------------------------------------------------------
     // b — section-based scoring integration tests
     // -------------------------------------------------------------------------
     // b uses WaypointSectionScorer (sections on both strokes).
-    // Stem stroke (stroke 0): 2 sections — top-left [0,0.30)×[0,0.20) and
-    //   bottom-left [0,0.30)×[0.80,1.0).
-    // Bowl stroke (stroke 1): 4 sections — mid-left, top-right, bottom-right,
-    //   bottom-left (clockwise path).
+    // Stem stroke (stroke 0): 3 sections — top [0,0.25)×[0,0.35), middle
+    //   [0,0.25)×[0.35,0.67), bottom [0,0.25)×[0.67,1.0).
+    // Bowl stroke (stroke 1): 4 sections — bowl top, upper-right, lower-right,
+    //   bowl bottom (clockwise path).
     // In a 90×90 grid:
-    //   stem section 1: x[0, 27) y[0, 18)
-    //   stem section 2: x[0, 27) y[72, 90)
-    //   bowl section 1: x[0, 31.5) y[31.5, 49.5)
-    //   bowl section 2: x[45, 90) y[31.5, 54)
-    //   bowl section 3: x[45, 90) y[67.5, 90)
-    //   bowl section 4: x[0, 31.5) y[67.5, 90)
+    //   stem section 1: x[0, 22.5) y[0, 31.5)
+    //   stem section 2: x[0, 22.5) y[31.5, 60.3)
+    //   stem section 3: x[0, 22.5) y[60.3, 90)
+    //   bowl section 4: x[22.5, 55.8) y[31.5, 60.3)
+    //   bowl section 5: x[55.8, 90) y[31.5, 60.3)
+    //   bowl section 6: x[55.8, 90) y[60.3, 90)
+    //   bowl section 7: x[22.5, 55.8) y[60.3, 90)
 
     test('correct b (stem + bowl) → routes through WaypointSectionScorer '
         'and compoundStroke is 1.0', () {
-      // Stem visits section 1 then section 2 in order.
+      // Stem visits sections 1, 2, 3 in order.
       final bStem = Stroke(const [
-        Offset(10, 10), // stem section 1 (top-left)
-        Offset(10, 80), // stem section 2 (bottom-left)
+        Offset(10, 15), // stem section 1 (top)
+        Offset(10, 45), // stem section 2 (middle)
+        Offset(10, 75), // stem section 3 (bottom)
       ]);
       // Bowl visits all 4 sections in clockwise order.
       final bBowl = Stroke(const [
-        Offset(10, 40), // bowl section 1 (mid-left)
-        Offset(70, 40), // bowl section 2 (top-right)
-        Offset(70, 80), // bowl section 3 (bottom-right)
-        Offset(10, 80), // bowl section 4 (bottom-left)
+        Offset(38, 45), // bowl section 4 (top, leaving the stem)
+        Offset(75, 45), // bowl section 5 (upper right)
+        Offset(75, 75), // bowl section 6 (lower right)
+        Offset(38, 75), // bowl section 7 (bottom, back to the stem)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -884,15 +926,16 @@ void main() {
 
     test('connected b (one no-lift stroke, full path) → compoundStroke is 1.0',
         () {
-      // A single continuous stroke through all six sections in order scores
+      // A single continuous stroke through all seven sections in order scores
       // identically to the lifted two-stroke form — lifts are judged separately.
       final bConnected = Stroke(const [
-        Offset(10, 10), // section 1 (stem top)
-        Offset(10, 80), // section 2 (stem bottom)
-        Offset(10, 40), // section 3 (bowl mid-left)
-        Offset(70, 40), // section 4 (bowl right)
-        Offset(70, 80), // section 5 (bowl bottom-right)
-        Offset(10, 80), // section 6 (bowl bottom-left)
+        Offset(10, 15), // section 1 (stem top)
+        Offset(10, 45), // section 2 (stem middle)
+        Offset(10, 75), // section 3 (stem bottom)
+        Offset(38, 45), // section 4 (bowl top, leaving the stem)
+        Offset(75, 45), // section 5 (bowl upper right)
+        Offset(75, 75), // section 6 (bowl lower right)
+        Offset(38, 75), // section 7 (bowl bottom, back to the stem)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -910,31 +953,33 @@ void main() {
     // d — section-based scoring integration tests (horizontal mirror of b)
     // -------------------------------------------------------------------------
     // d uses WaypointSectionScorer (sections on both strokes).
-    // Stem stroke (stroke 0): 2 sections — top-right [0.70,1.00)×[0,0.20) and
-    //   bottom-right [0.70,1.00)×[0.80,1.0).
-    // Bowl stroke (stroke 1): 4 sections — mid-right, top-left, bottom-left,
-    //   bottom-right (anticlockwise path).
+    // Stem stroke (stroke 0): 3 sections — top [0.72,1.00)×[0,0.35), middle
+    //   [0.72,1.00)×[0.35,0.67), bottom [0.72,1.00)×[0.67,1.0).
+    // Bowl stroke (stroke 1): 4 sections — bowl top, upper-left, lower-left,
+    //   bowl bottom (anticlockwise path).
     // In a 90×90 grid:
-    //   stem section 1: x[63, 90) y[0, 18)
-    //   stem section 2: x[63, 90) y[72, 90)
-    //   bowl section 3: x[58.5, 90) y[31.5, 49.5)
-    //   bowl section 4: x[0, 45) y[31.5, 54)
-    //   bowl section 5: x[0, 45) y[67.5, 90)
-    //   bowl section 6: x[58.5, 90) y[67.5, 90)
+    //   stem section 1: x[64.8, 90) y[0, 31.5)
+    //   stem section 2: x[64.8, 90) y[31.5, 60.3)
+    //   stem section 3: x[64.8, 90) y[60.3, 90)
+    //   bowl section 4: x[34.2, 64.8) y[31.5, 60.3)
+    //   bowl section 5: x[0, 34.2) y[31.5, 60.3)
+    //   bowl section 6: x[0, 34.2) y[60.3, 90)
+    //   bowl section 7: x[34.2, 64.8) y[60.3, 90)
 
     test('correct d (stem + bowl) → routes through WaypointSectionScorer '
         'and compoundStroke is 1.0', () {
-      // Stem visits section 1 then section 2 in order.
+      // Stem visits sections 1, 2, 3 in order.
       final dStem = Stroke(const [
-        Offset(80, 10), // stem section 1 (top-right)
-        Offset(80, 80), // stem section 2 (bottom-right)
+        Offset(80, 15), // stem section 1 (top)
+        Offset(80, 45), // stem section 2 (middle)
+        Offset(80, 75), // stem section 3 (bottom)
       ]);
       // Bowl visits all 4 sections in anticlockwise order.
       final dBowl = Stroke(const [
-        Offset(80, 40), // bowl section 3 (mid-right)
-        Offset(20, 40), // bowl section 4 (top-left)
-        Offset(20, 80), // bowl section 5 (bottom-left)
-        Offset(80, 80), // bowl section 6 (bottom-right)
+        Offset(50, 45), // bowl section 4 (top, leaving the stem)
+        Offset(15, 45), // bowl section 5 (upper left)
+        Offset(15, 75), // bowl section 6 (lower left)
+        Offset(50, 75), // bowl section 7 (bottom, back to the stem)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -995,15 +1040,16 @@ void main() {
 
     test('connected d (one no-lift stroke, full path) → compoundStroke is 1.0',
         () {
-      // A single continuous stroke through all six sections in order scores
+      // A single continuous stroke through all seven sections in order scores
       // identically to the lifted two-stroke form — lifts are judged separately.
       final dConnected = Stroke(const [
-        Offset(80, 10), // section 1 (stem top)
-        Offset(80, 80), // section 2 (stem bottom)
-        Offset(80, 40), // section 3 (bowl mid-right)
-        Offset(20, 40), // section 4 (bowl top-left)
-        Offset(20, 80), // section 5 (bowl bottom-left)
-        Offset(80, 80), // section 6 (bowl bottom-right)
+        Offset(80, 15), // section 1 (stem top)
+        Offset(80, 45), // section 2 (stem middle)
+        Offset(80, 75), // section 3 (stem bottom)
+        Offset(50, 45), // section 4 (bowl top, leaving the stem)
+        Offset(15, 45), // section 5 (bowl upper left)
+        Offset(15, 75), // section 6 (bowl lower left)
+        Offset(50, 75), // section 7 (bowl bottom, back to the stem)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -1232,29 +1278,36 @@ void main() {
     // -------------------------------------------------------------------------
     // g — section-based scoring integration tests
     // -------------------------------------------------------------------------
-    // g uses WaypointSectionScorer (sections on both strokes). See
-    // docs/waypoint_section_definitions.md for the design.
-    // Bowl stroke (stroke 0): 3 sections — top-right, top-left, bottom.
-    // Descender stroke (stroke 1): 3 sections — stem top, stem bottom, hook.
+    // g uses WaypointSectionScorer. All 8 sections are numbered on the first
+    // ExpectedStroke (the single continuous letter reading: bowl
+    // anticlockwise, up the right side, down the descender, hook left) — see
+    // docs/zone_review/REVIEW.md for the approved design. The second
+    // ExpectedStroke carries no sections; the scorer concatenates whatever
+    // strokes are observed, so a two-stroke (lifted) drawing scores the same
+    // as one continuous stroke.
     // In a 90×90 grid:
-    //   section 1 (bowl top-right): x[70.2, 90) y[0, 36)
-    //   section 2 (bowl top-left):  x[0, 70.2) y[0, 36)
-    //   section 3 (bowl bottom):    x[0, 70.2) y[36, 58.5)
-    //   section 4 (stem top):       x[70.2, 90) y[36, 58.5)
-    //   section 5 (stem bottom):    x[70.2, 90) y[58.5, 90)
-    //   section 6 (descender hook): x[0, 70.2) y[58.5, 90)
+    //   section 1 (bowl top-right):     x[35.1, 64.8) y[0, 29.7)
+    //   section 2 (bowl top-left):      x[0, 35.1) y[0, 29.7)
+    //   section 3 (bowl bottom-left):   x[0, 35.1) y[29.7, 58.5)
+    //   section 4 (bowl bottom-right):  x[35.1, 64.8) y[29.7, 58.5)
+    //   section 5 (up the right side):  x[64.8, 90) y[10.8, 29.7)
+    //   section 6 (right side, cont.):  x[64.8, 90) y[29.7, 58.5)
+    //   section 7 (descender + hook):   x[35.1, 90) y[58.5, 90)
+    //   section 8 (hook, back to left): x[0, 35.1) y[58.5, 90)
 
     test('correct g (bowl + descender) → routes through '
         'WaypointSectionScorer and compoundStroke is 1.0', () {
       final gBowl = Stroke(const [
-        Offset(80, 10), // section 1 (bowl top-right)
-        Offset(30, 10), // section 2 (bowl top-left)
-        Offset(30, 45), // section 3 (bowl bottom)
+        Offset(50, 15), // section 1 (bowl top-right)
+        Offset(17, 15), // section 2 (bowl top-left)
+        Offset(17, 44), // section 3 (bowl bottom-left)
+        Offset(50, 44), // section 4 (bowl bottom-right)
       ]);
       final gDescender = Stroke(const [
-        Offset(80, 45), // section 4 (stem top)
-        Offset(80, 70), // section 5 (stem bottom)
-        Offset(30, 70), // section 6 (hook)
+        Offset(77, 20), // section 5 (up the right side)
+        Offset(77, 44), // section 6 (right side, continuing)
+        Offset(65, 75), // section 7 (descender + hook)
+        Offset(17, 75), // section 8 (hook, back to the left)
       ]);
 
       final result = ScoreIntegrator.score(

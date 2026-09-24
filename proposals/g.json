@@ -1,0 +1,13 @@
+{
+  "_comment": "Reading of the hand-drawn 8-section g. Single continuous stroke: bowl anticlockwise, up the right side, down the descender, hook left.",
+  "sections": [
+    {"n": 1, "stroke": 0, "minX": 0.39, "maxX": 0.72, "minY": 0.00, "maxY": 0.33},
+    {"n": 2, "stroke": 0, "minX": 0.00, "maxX": 0.39, "minY": 0.00, "maxY": 0.33},
+    {"n": 3, "stroke": 0, "minX": 0.00, "maxX": 0.39, "minY": 0.33, "maxY": 0.65},
+    {"n": 4, "stroke": 0, "minX": 0.39, "maxX": 0.72, "minY": 0.33, "maxY": 0.65},
+    {"n": 5, "stroke": 0, "minX": 0.72, "maxX": 1.00, "minY": 0.12, "maxY": 0.33},
+    {"n": 6, "stroke": 0, "minX": 0.72, "maxX": 1.00, "minY": 0.33, "maxY": 0.65},
+    {"n": 7, "stroke": 0, "minX": 0.39, "maxX": 1.00, "minY": 0.65, "maxY": 1.00},
+    {"n": 8, "stroke": 0, "minX": 0.00, "maxX": 0.39, "minY": 0.65, "maxY": 1.00}
+  ]
+}

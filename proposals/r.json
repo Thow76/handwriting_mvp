@@ -1,0 +1,39 @@
+{
+ "_letter": "r",
+ "_sequence": "Stroke one: down the stem. Stroke two: the shoulder, up out of the stem and over to the right.",
+ "_grid": "3 columns x 2 rows",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.32,
+   "minY": 0,
+   "maxY": 0.4
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.32,
+   "minY": 0.4,
+   "maxY": 1
+  },
+  {
+   "n": 3,
+   "stroke": 1,
+   "minX": 0.32,
+   "maxX": 0.68,
+   "minY": 0,
+   "maxY": 0.4
+  },
+  {
+   "n": 4,
+   "stroke": 1,
+   "minX": 0.68,
+   "maxX": 1,
+   "minY": 0,
+   "maxY": 0.4
+  }
+ ]
+}

@@ -1,0 +1,39 @@
+{
+ "_letter": "v",
+ "_sequence": "Down from the top left to the point, back up to the top right.",
+ "_grid": "2 columns x 2 rows",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.5,
+   "minY": 0,
+   "maxY": 0.5
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.5,
+   "minY": 0.5,
+   "maxY": 1
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.5,
+   "maxX": 1,
+   "minY": 0.5,
+   "maxY": 1
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.5,
+   "maxX": 1,
+   "minY": 0,
+   "maxY": 0.5
+  }
+ ]
+}

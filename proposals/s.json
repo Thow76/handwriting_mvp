@@ -1,0 +1,55 @@
+{
+ "_letter": "s",
+ "_sequence": "Start top right, over the top, down the left, across the middle, down the right, along the bottom to the left.",
+ "_grid": "2 columns x 3 rows",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.5,
+   "maxX": 1,
+   "minY": 0,
+   "maxY": 0.35
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.5,
+   "minY": 0,
+   "maxY": 0.35
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.5,
+   "minY": 0.35,
+   "maxY": 0.65
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.5,
+   "maxX": 1,
+   "minY": 0.35,
+   "maxY": 0.65
+  },
+  {
+   "n": 5,
+   "stroke": 0,
+   "minX": 0.5,
+   "maxX": 1,
+   "minY": 0.65,
+   "maxY": 1
+  },
+  {
+   "n": 6,
+   "stroke": 0,
+   "minX": 0,
+   "maxX": 0.5,
+   "minY": 0.65,
+   "maxY": 1
+  }
+ ]
+}
