@@ -3,7 +3,6 @@ import 'dart:ui' show Offset, Rect;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/compound_stroke_scorer.dart';
 import 'package:handwriting_mvp/models/letter_formation_data.dart';
-import 'package:handwriting_mvp/models/letter_formation_registry.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
@@ -104,6 +103,139 @@ void main() {
           WaypointRegion.top,
           WaypointRegion.bottomRight,
         ],
+      ),
+    ],
+  );
+
+  // Inline LetterFormationData for 't' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final tDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 2,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.35,
+          maxX: 0.65,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
+      ),
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.24,
+          minY: 0.26,
+          maxY: 0.38,
+        ),
+        waypoints: const [WaypointRegion.left, WaypointRegion.right],
+      ),
+    ],
+  );
+
+  // Inline LetterFormationData for 'v' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final vDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.25,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
+      ),
+    ],
+  );
+
+  // Inline LetterFormationData for 'x' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final xDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 2,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.25,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.topLeft, WaypointRegion.bottomRight],
+      ),
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.75,
+          maxX: 1.00,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.topRight, WaypointRegion.bottomLeft],
+      ),
+    ],
+  );
+
+  // Inline LetterFormationData for 'z' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final zDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.25,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.left, WaypointRegion.right],
+      ),
+    ],
+  );
+
+  // Inline LetterFormationData for 'm' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final mDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 0.30,
+          minY: 0.00,
+          maxY: 0.20,
+        ),
+        waypoints: [
+          WaypointRegion.topLeft,
+          WaypointRegion.bottomLeft,
+          WaypointRegion.top,
+          WaypointRegion.bottom,
+          WaypointRegion.top,
+          WaypointRegion.bottomRight,
+        ],
+      ),
+    ],
+  );
+
+  // Inline LetterFormationData for 'l' using the legacy waypoints, since the
+  // registry entry has been migrated to sections. These tests validate the
+  // CompoundStrokeScorer itself against the waypoint-based path.
+  final lDataWithWaypoints = LetterFormationData(
+    minRequiredStrokes: 1,
+    strokes: [
+      ExpectedStroke(
+        startRect: const StrokeStartRect(
+          minX: 0.00,
+          maxX: 1.00,
+          minY: 0.00,
+          maxY: 0.15,
+        ),
+        waypoints: const [WaypointRegion.top, WaypointRegion.bottom],
       ),
     ],
   );
@@ -360,7 +492,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 't',
-        data: letterFormationRegistry['t']!,
+        data: tDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -418,7 +550,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'v',
-        data: letterFormationRegistry['v']!,
+        data: vDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -440,7 +572,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'x',
-        data: letterFormationRegistry['x']!,
+        data: xDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -478,7 +610,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'z',
-        data: letterFormationRegistry['z']!,
+        data: zDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -679,7 +811,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'm',
-        data: letterFormationRegistry['m']!,
+        data: mDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -735,7 +867,7 @@ void main() {
     setUp(() {
       scorer = CompoundStrokeScorer(
         letter: 'm',
-        data: letterFormationRegistry['m']!,
+        data: mDataWithWaypoints,
         bounds: bounds,
       );
     });
@@ -779,10 +911,11 @@ void main() {
     });
 
     test('letter with waypoint-scored stem — one observation, summary', () {
-      // 'l' uses top → bottom waypoints, so this scorer applies.
+      // 'l' uses top → bottom waypoints in this inline fixture (the registry
+      // entry itself has been migrated to sections), so this scorer applies.
       final scorer = CompoundStrokeScorer(
         letter: 'l',
-        data: letterFormationRegistry['l']!,
+        data: lDataWithWaypoints,
         bounds: bounds,
       );
       final result = scorer.score([

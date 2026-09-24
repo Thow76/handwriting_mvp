@@ -221,8 +221,8 @@ void main() {
     });
 
     testWidgets(
-        'keeps the CompoundStrokeScorer label for a waypoint-based letter',
-        (tester) async {
+        'keeps the CompoundStrokeScorer label for a letter with no section '
+        'data (unknown to the registry)', (tester) async {
       final result = ScoreResult(
         coverage: 1.0,
         precision: 1.0,
@@ -234,8 +234,11 @@ void main() {
           summary: 'All waypoints matched.',
         ),
       );
+      // Every authored letter has now been migrated to sections (see
+      // letter_formation_registry.dart), so an unauthored letter key is used
+      // here to exercise the CompoundStrokeScorer fallback label.
       await tester.pumpWidget(
-        _app(DebugScoreView(result: result, letter: 'm')),
+        _app(DebugScoreView(result: result, letter: 'zz')),
       );
 
       expect(find.textContaining('CompoundStrokeScorer — 100%'), findsOneWidget);
