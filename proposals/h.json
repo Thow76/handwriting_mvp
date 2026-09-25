@@ -1,0 +1,47 @@
+{
+ "_letter": "h",
+ "_sequence": "Stroke one: down the stem all the way to the baseline. Stroke two: from the stem up and over the arch, down the right side, all the way to the baseline.",
+ "_grid": "2 columns x 3 rows (left column top two rows merged)",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.22,
+   "minY": 0.0,
+   "maxY": 0.82
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.22,
+   "minY": 0.82,
+   "maxY": 1.0
+  },
+  {
+   "n": 3,
+   "stroke": 1,
+   "minX": 0.22,
+   "maxX": 1.0,
+   "minY": 0.0,
+   "maxY": 0.5
+  },
+  {
+   "n": 4,
+   "stroke": 1,
+   "minX": 0.22,
+   "maxX": 1.0,
+   "minY": 0.5,
+   "maxY": 0.82
+  },
+  {
+   "n": 5,
+   "stroke": 1,
+   "minX": 0.22,
+   "maxX": 1.0,
+   "minY": 0.82,
+   "maxY": 1.0
+  }
+ ]
+}

@@ -1357,7 +1357,9 @@ void main() {
       expect(letterFormationRegistry['h']!.strokes[0].waypoints, isEmpty);
     });
 
-    test('h: stem sections are 2 bespoke rectangles (top → bottom)', () {
+    test(
+        'h: stem sections are 2 bespoke rectangles (top → bottom), with a '
+        'short bottom row forcing the stem to reach the baseline', () {
       final sections = letterFormationRegistry['h']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
@@ -1366,7 +1368,7 @@ void main() {
             minX: 0.00,
             maxX: 0.22,
             minY: 0.00,
-            maxY: 0.57,
+            maxY: 0.82,
           ),
         ),
         WaypointSection(
@@ -1374,7 +1376,7 @@ void main() {
           rect: const StrokeStartRect(
             minX: 0.00,
             maxX: 0.22,
-            minY: 0.57,
+            minY: 0.82,
             maxY: 1.00,
           ),
         ),
@@ -1390,8 +1392,9 @@ void main() {
     });
 
     test(
-        'h: arch sections are 2 bespoke rectangles numbered 3-4 (peak then '
-        'right leg, continuing the letter path after the stem)', () {
+        'h: arch sections are 3 bespoke rectangles numbered 3-5 (peak, right '
+        'leg, then a short bottom row forcing the right leg to reach the '
+        'baseline)', () {
       final sections = letterFormationRegistry['h']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
@@ -1400,7 +1403,7 @@ void main() {
             minX: 0.22,
             maxX: 1.00,
             minY: 0.00,
-            maxY: 0.57,
+            maxY: 0.50,
           ),
         ),
         WaypointSection(
@@ -1408,7 +1411,16 @@ void main() {
           rect: const StrokeStartRect(
             minX: 0.22,
             maxX: 1.00,
-            minY: 0.57,
+            minY: 0.50,
+            maxY: 0.82,
+          ),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.22,
+            maxX: 1.00,
+            minY: 0.82,
             maxY: 1.00,
           ),
         ),
