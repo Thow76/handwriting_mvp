@@ -2,7 +2,7 @@
 
 Each letter is one grid: two to three columns (five for w), two to four rows, every line running the full way across. Numbered cells are the ones the pen must pass through, in order. Hatched cells are where the letter does not go.
 
-Reviewed and approved 2026-09-23. `f`, `h`, `n` are already plain grids in the app and are unchanged.
+Reviewed and approved 2026-09-23. `f` is unchanged from the app's existing grid. `h` and `n` were redesigned and approved 2026-09-25 (issues #157 and #158) so that every downstroke must reach the baseline.
 
 
 ## a — 6 zones, 1 stroke
@@ -47,6 +47,13 @@ Start at the left of the crossbar, along it to the right, up and over the top, d
 Reading of the hand-drawn 8-section g. Single continuous stroke: bowl anticlockwise, up the right side, down the descender, hook left.
 
 
+## h — 5 zones, 2 strokes
+
+![h](h_grid.png)
+
+Stroke one: down the stem, all the way to the baseline. Stroke two: from the stem up and over the arch, down the right side, all the way to the baseline. The short bottom row (zones 2 and 5) means neither stroke can stop early.
+
+
 ## i — 3 zones, 2 strokes
 
 ![i](i_grid.png)
@@ -80,6 +87,13 @@ Straight down.
 ![m](m_grid.png)
 
 Down the first leg, up and over the first arch, down, up and over the second arch, down.
+
+
+## n — 5 zones, 1 stroke
+
+![n](n_grid.png)
+
+Down the stem all the way to the baseline, back up, over the arch, down the right side all the way to the baseline. The short bottom row (zones 2 and 5) means neither downstroke can stop early.
 
 
 ## o — 6 zones, 1 stroke

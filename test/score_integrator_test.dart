@@ -208,26 +208,31 @@ void main() {
 
     test('correct n → all three formation scores attached; start, compound and '
         'break scores are 1.0', () {
-      // n uses section-based scoring (WaypointSectionScorer) with 4 sections:
-      //   section 1: top-left     [0, 0.33) × [0, 0.33)
-      //   section 2: bottom-left  [0, 0.33) × [0.67, 1.0)
-      //   section 3: top-centre   [0.33, 0.67) × [0, 0.33)
-      //   section 4: bottom-right [0.67, 1.0) × [0.67, 1.0)
+      // n uses section-based scoring (WaypointSectionScorer) with 5 sections
+      // (2 columns x 3 rows, left column's top two rows merged, short bottom
+      // row so both downstrokes must reach the baseline):
+      //   section 1: stem          [0.00, 0.30) × [0.00, 0.75)
+      //   section 2: stem bottom   [0.00, 0.30) × [0.75, 1.00)
+      //   section 3: arch          [0.30, 1.00) × [0.00, 0.40)
+      //   section 4: right side    [0.30, 1.00) × [0.40, 0.75)
+      //   section 5: right bottom  [0.30, 1.00) × [0.75, 1.00)
       // In a 90×90 grid, the absolute pixel ranges are:
-      //   section 1: x[0, 29.7) y[0, 29.7)
-      //   section 2: x[0, 29.7) y[60.3, 90)
-      //   section 3: x[29.7, 60.3) y[0, 29.7)
-      //   section 4: x[60.3, 90) y[60.3, 90)
-      // The stroke visits each section exactly, so all 4 are hit in order.
+      //   section 1: x[0, 27) y[0, 67.5)
+      //   section 2: x[0, 27) y[67.5, 90)
+      //   section 3: x[27, 90) y[0, 36)
+      //   section 4: x[27, 90) y[36, 67.5)
+      //   section 5: x[27, 90) y[67.5, 90)
+      // The stroke visits each section exactly, so all 5 are hit in order.
       //
       // n's startRect is minX=0, maxX=0.30, minY=0, maxY=0.20.
       // In 90×90 bounds this corresponds to x ∈ [0, 27) and y ∈ [0, 18).
       // The first point (10, 10) is inside the startRect AND section 1.
       final stroke = Stroke(const [
-        Offset(10, 10), // inside n's startRect and section 1
-        Offset(15, 75), // section 2 (bottom-left)
-        Offset(45, 15), // section 3 (top-centre arch)
-        Offset(75, 75), // section 4 (bottom-right)
+        Offset(10, 10), // inside n's startRect and section 1 (stem)
+        Offset(15, 80), // section 2 (stem bottom, reaches the baseline)
+        Offset(45, 15), // section 3 (arch)
+        Offset(75, 50), // section 4 (right side)
+        Offset(75, 80), // section 5 (right bottom, reaches the baseline)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -245,21 +250,21 @@ void main() {
       // Stroke first point (10, 10) is inside n's startRect → 1.0.
       expect(result.strokeStart!.overallScore, 1.0);
 
-      // All 4 sections hit in order → 1.0 (section scorer, all-or-nothing).
+      // All 5 sections hit in order → 1.0 (section scorer, all-or-nothing).
       expect(result.compoundStroke!.overallScore, 1.0);
 
       // 1 stroke provided; minRequiredStrokes = 1 → 1.0.
       expect(result.strokeBreak!.overallScore, 1.0);
     });
 
-    test('incomplete n path (2 of 4 sections) → compoundStroke score is 0.0',
+    test('incomplete n path (2 of 5 sections) → compoundStroke score is 0.0',
         () {
-      // Only hits section 1 and section 2, misses sections 3 and 4.
+      // Only hits section 1 and section 2, misses sections 3, 4 and 5.
       // All-or-nothing scoring: incomplete → 0.0.
       final stroke = Stroke(const [
-        Offset(10, 10), // section 1 (top-left)
-        Offset(15, 75), // section 2 (bottom-left)
-        Offset(15, 80), // still in section 2, never reaches 3 or 4
+        Offset(10, 10), // section 1 (stem)
+        Offset(15, 80), // section 2 (stem bottom)
+        Offset(15, 85), // still in section 2, never reaches 3, 4 or 5
       ]);
 
       final result = ScoreIntegrator.score(
@@ -273,15 +278,15 @@ void main() {
       expect(result.compoundStroke!.overallScore, 0.0);
     });
 
-    test('out-of-order n path (section 1 → 3 → 2 → 4) → compoundStroke '
+    test('out-of-order n path (section 1 → 3 → 2 → 5) → compoundStroke '
         'score is 0.0', () {
       // Hits sections out of sequential order: 1 then 3 (skipping 2).
       // The sequential match breaks at section 2 → 0.0.
       final stroke = Stroke(const [
-        Offset(10, 10), // section 1 (top-left)
-        Offset(45, 15), // section 3 (top-centre) — out of order
-        Offset(15, 75), // section 2 (bottom-left) — too late
-        Offset(75, 75), // section 4 (bottom-right)
+        Offset(10, 10), // section 1 (stem)
+        Offset(45, 15), // section 3 (arch) — out of order
+        Offset(15, 80), // section 2 (stem bottom) — too late
+        Offset(75, 80), // section 5 (right bottom)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -1066,28 +1071,33 @@ void main() {
     // -------------------------------------------------------------------------
     // h — section-based scoring integration tests
     // -------------------------------------------------------------------------
-    // h uses WaypointSectionScorer (sections on both strokes).
-    // Stem stroke (stroke 0): 2 sections — stem top [0.00,0.22)×[0.00,0.57)
-    //   and stem bottom [0.00,0.22)×[0.57,1.00).
-    // Arch stroke (stroke 1): 2 sections — arch peak [0.22,1.00)×[0.00,0.57)
-    //   and arch right leg [0.22,1.00)×[0.57,1.00).
+    // h uses WaypointSectionScorer (sections on both strokes). Redesigned as
+    // 2 columns x 3 rows with a short bottom row so both strokes must reach
+    // the baseline.
+    // Stem stroke (stroke 0): 2 sections — stem [0.00,0.22)×[0.00,0.82) and
+    //   stem bottom [0.00,0.22)×[0.82,1.00).
+    // Arch stroke (stroke 1): 3 sections — arch [0.22,1.00)×[0.00,0.50),
+    //   right side [0.22,1.00)×[0.50,0.82) and right side bottom
+    //   [0.22,1.00)×[0.82,1.00).
     // In a 90×90 grid:
-    //   stem section 1: x[0, 19.8) y[0, 51.3)
-    //   stem section 2: x[0, 19.8) y[51.3, 90)
-    //   arch section 3: x[19.8, 90) y[0, 51.3)
-    //   arch section 4: x[19.8, 90) y[51.3, 90)
+    //   stem section 1: x[0, 19.8) y[0, 73.8)
+    //   stem section 2: x[0, 19.8) y[73.8, 90)
+    //   arch section 3: x[19.8, 90) y[0, 45)
+    //   arch section 4: x[19.8, 90) y[45, 73.8)
+    //   arch section 5: x[19.8, 90) y[73.8, 90)
 
     test('correct h (stem + arch) → routes through WaypointSectionScorer '
         'and compoundStroke is 1.0', () {
-      // Stem visits section 1 then section 2 in order.
+      // Stem visits section 1 then section 2 in order, reaching the baseline.
       final hStem = Stroke(const [
         Offset(10, 10), // stem section 1 (top)
-        Offset(10, 80), // stem section 2 (bottom)
+        Offset(10, 80), // stem section 2 (bottom, reaches the baseline)
       ]);
-      // Arch visits section 3 then section 4 in order.
+      // Arch visits sections 3, 4 and 5 in order, reaching the baseline.
       final hArch = Stroke(const [
         Offset(70, 10), // arch section 3 (peak)
-        Offset(70, 80), // arch section 4 (right leg)
+        Offset(70, 60), // arch section 4 (right side)
+        Offset(70, 80), // arch section 5 (right side bottom, baseline)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -1111,7 +1121,8 @@ void main() {
       ]);
       final hArch = Stroke(const [
         Offset(70, 10), // arch section 3 (peak)
-        Offset(70, 80), // arch section 4 (right leg)
+        Offset(70, 60), // arch section 4 (right side)
+        Offset(70, 80), // arch section 5 (right side bottom)
       ]);
 
       final result = ScoreIntegrator.score(
@@ -1127,14 +1138,15 @@ void main() {
 
     test('correct h stem, arch drawn bottom to top → compoundStroke is 0.0',
         () {
-      // Arch visits section 4 before section 3 — the gatekeeper (arch peak)
-      // is never hit first, so the arch stroke fails.
+      // Arch visits section 5 before sections 3 and 4 — the gatekeeper (arch
+      // peak) is never hit first, so the arch stroke fails.
       final hStem = Stroke(const [
         Offset(10, 10), // stem section 1 (top)
         Offset(10, 80), // stem section 2 (bottom)
       ]);
       final hArch = Stroke(const [
-        Offset(70, 80), // arch section 4 (right leg) — out of order
+        Offset(70, 80), // arch section 5 (right side bottom) — out of order
+        Offset(70, 60), // arch section 4 (right side) — too late
         Offset(70, 10), // arch section 3 (peak) — too late
       ]);
 
@@ -1150,8 +1162,8 @@ void main() {
     });
 
     test('h stem only (arch never drawn) → compoundStroke is 0.0', () {
-      // Drawing only the stem completes sections 1-2 but not the arch (3-4),
-      // so the letter path is incomplete → 0.0, not 100%.
+      // Drawing only the stem completes sections 1-2 but not the arch
+      // (3-4-5), so the letter path is incomplete → 0.0, not 100%.
       final hStem = Stroke(const [
         Offset(10, 10), // stem section 1 (top)
         Offset(10, 80), // stem section 2 (bottom)
