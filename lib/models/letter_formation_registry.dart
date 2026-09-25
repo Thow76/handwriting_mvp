@@ -1913,35 +1913,44 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
             number: 1,
             rect: const StrokeStartRect(
               minX: 0.00,
-              maxX: 0.33,
+              maxX: 0.30,
               minY: 0.00,
-              maxY: 0.33,
+              maxY: 0.75,
             ),
           ),
           WaypointSection(
             number: 2,
             rect: const StrokeStartRect(
               minX: 0.00,
-              maxX: 0.33,
-              minY: 0.67,
+              maxX: 0.30,
+              minY: 0.75,
               maxY: 1.00,
             ),
           ),
           WaypointSection(
             number: 3,
             rect: const StrokeStartRect(
-              minX: 0.33,
-              maxX: 0.67,
+              minX: 0.30,
+              maxX: 1.00,
               minY: 0.00,
-              maxY: 0.33,
+              maxY: 0.40,
             ),
           ),
           WaypointSection(
             number: 4,
             rect: const StrokeStartRect(
-              minX: 0.67,
+              minX: 0.30,
               maxX: 1.00,
-              minY: 0.67,
+              minY: 0.40,
+              maxY: 0.75,
+            ),
+          ),
+          WaypointSection(
+            number: 5,
+            rect: const StrokeStartRect(
+              minX: 0.30,
+              maxX: 1.00,
+              minY: 0.75,
               maxY: 1.00,
             ),
           ),
