@@ -1423,7 +1423,7 @@ void main() {
             minX: 0.57,
             maxX: 1.00,
             minY: 0.00,
-            maxY: 0.30,
+            maxY: 0.38,
           ),
         ),
         WaypointSection(
@@ -1432,7 +1432,7 @@ void main() {
             minX: 0.29,
             maxX: 0.57,
             minY: 0.00,
-            maxY: 0.30,
+            maxY: 0.38,
           ),
         ),
         WaypointSection(
@@ -1440,7 +1440,7 @@ void main() {
           rect: const StrokeStartRect(
             minX: 0.29,
             maxX: 0.57,
-            minY: 0.30,
+            minY: 0.38,
             maxY: 0.80,
           ),
         ),
@@ -1473,7 +1473,7 @@ void main() {
           rect: const StrokeStartRect(
             minX: 0.00,
             maxX: 0.29,
-            minY: 0.30,
+            minY: 0.38,
             maxY: 1.00,
           ),
         ),
@@ -1482,7 +1482,7 @@ void main() {
           rect: const StrokeStartRect(
             minX: 0.57,
             maxX: 1.00,
-            minY: 0.30,
+            minY: 0.38,
             maxY: 1.00,
           ),
         ),
