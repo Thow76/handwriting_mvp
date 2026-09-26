@@ -1,14 +1,11 @@
-import 'stroke_formation_enums.dart';
 import 'stroke_start_rect.dart';
 import 'waypoint_section.dart';
 
 /// The expected behaviour of a single stroke within a letter.
 ///
-/// [startRect] is the target zone for start-position scoring. [waypoints] is
-/// the ordered list of [WaypointRegion] cells the stroke must pass through,
-/// used by waypoint (compound) scoring. [sections] is the new per-letter
-/// rectangular section list that will replace [waypoints] once all letters are
-/// migrated.
+/// [startRect] is the target zone for start-position scoring. [sections] is
+/// the ordered list of bespoke rectangular sections the stroke must pass
+/// through, used by section (path) scoring.
 ///
 /// All fields are immutable.
 class ExpectedStroke {
@@ -18,22 +15,14 @@ class ExpectedStroke {
   /// anchor for stroke matching.
   final StrokeStartRect startRect;
 
-  /// Ordered waypoints for waypoint-scored strokes; empty for strokes scored
-  /// only on start position and stroke count.
-  final List<WaypointRegion> waypoints;
-
-  /// Ordered bespoke rectangular sections for section-scored strokes.
-  ///
-  /// Empty until the letter is migrated from the shared 3×3 [WaypointRegion]
-  /// grid to per-letter [WaypointSection] rectangles. Both [waypoints] and
-  /// [sections] coexist during the migration period.
+  /// Ordered bespoke rectangular sections for section-scored strokes; empty
+  /// for strokes scored only on start position and stroke count.
   final List<WaypointSection> sections;
 
   /// Creates an [ExpectedStroke].
   ///
   ExpectedStroke({
     required this.startRect,
-    this.waypoints = const [],
     this.sections = const [],
   });
 }

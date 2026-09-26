@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_registry.dart';
-import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 import 'package:handwriting_mvp/models/waypoint_section.dart';
 
@@ -60,10 +59,6 @@ void main() {
       ]);
     });
 
-    test('v: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['v']!.strokes[0].waypoints, isEmpty);
-    });
-
     test('w: sections are 5 bespoke rectangles covering the double diagonal',
         () {
       final sections = letterFormationRegistry['w']!.strokes[0].sections;
@@ -96,10 +91,6 @@ void main() {
       ]);
     });
 
-    test('w: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['w']!.strokes[0].waypoints, isEmpty);
-    });
-
     test('z: sections are 5 bespoke rectangles (top bar → diagonal → base bar)',
         () {
       final sections = letterFormationRegistry['z']!.strokes[0].sections;
@@ -130,10 +121,6 @@ void main() {
               minX: 2 / 3, maxX: 1, minY: 2 / 3, maxY: 1),
         ),
       ]);
-    });
-
-    test('z: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['z']!.strokes[0].waypoints, isEmpty);
     });
 
     test(
@@ -174,9 +161,6 @@ void main() {
       ]);
     });
 
-    test('s: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['s']!.strokes[0].waypoints, isEmpty);
-    });
   });
 
   // ---------------------------------------------------------------------------
@@ -296,10 +280,6 @@ void main() {
       ]);
     });
 
-    test('a: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['a']!.strokes[0].waypoints, isEmpty);
-    });
-
     // c: single open-arc stroke with sections (migrated from waypoints).
     test('c: has exactly one stroke', () {
       expect(letterFormationRegistry['c']!.strokes, hasLength(1));
@@ -335,10 +315,6 @@ void main() {
           rect: const StrokeStartRect(minX: 0.5, maxX: 1, minY: 0.7, maxY: 1),
         ),
       ]);
-    });
-
-    test('c: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['c']!.strokes[0].waypoints, isEmpty);
     });
 
     // e: single stroke with sections (migrated from waypoints). Starts
@@ -407,10 +383,6 @@ void main() {
               minX: 0.67, maxX: 1, minY: 0.52, maxY: 1),
         ),
       ]);
-    });
-
-    test('e: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['e']!.strokes[0].waypoints, isEmpty);
     });
 
     // o: single oval stroke, 6 bespoke sections (3 columns x 2 rows,
@@ -565,10 +537,6 @@ void main() {
       expect(letterFormationRegistry['g']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('g: first stroke has no waypoints', () {
-      expect(letterFormationRegistry['g']!.strokes[0].waypoints, isEmpty);
-    });
-
     test(
         'g: sections are 8 bespoke rectangles, all on the first stroke '
         '(bowl → up the right side → descender → hook)', () {
@@ -620,26 +588,12 @@ void main() {
     test('g: second stroke has no sections (all zones are on the first)', () {
       expect(letterFormationRegistry['g']!.strokes[1].sections, isEmpty);
     });
-
-    test('g: second stroke has no waypoints', () {
-      expect(letterFormationRegistry['g']!.strokes[1].waypoints, isEmpty);
-    });
   });
 
   group('letterFormationRegistry — top-to-bottom stem section migration', () {
     // These strokes used to carry a plain top → bottom waypoints pair; each
     // now carries a bespoke numbered sections list from the approved zone
-    // review (docs/zone_review/REVIEW.md). Every stroke here still has an
-    // empty waypoints list.
-
-    for (final entry in {'i': 0, 'j': 0, 'k': 0, 'l': 0, 'p': 0, 'q': 1, 'r': 0, 't': 0}
-        .entries) {
-      test('${entry.key}[${entry.value}]: waypoints list is empty (migrated to sections)',
-          () {
-        final stroke = letterFormationRegistry[entry.key]!.strokes[entry.value];
-        expect(stroke.waypoints, isEmpty);
-      });
-    }
+    // review (docs/zone_review/REVIEW.md).
 
     test('i[0]: sections are 2 bespoke rectangles (stem, top to bottom)', () {
       final sections = letterFormationRegistry['i']!.strokes[0].sections;
@@ -818,7 +772,7 @@ void main() {
   //   1. Each letter has a non-null entry in the registry.
   //   2. minRequiredStrokes == 2.
   //   3. Exactly two ExpectedStrokes are present.
-  //   4. Waypoint sequences and start regions match the scope specification.
+  //   4. Section sequences and start regions match the scope specification.
   // ---------------------------------------------------------------------------
 
   group('letterFormationRegistry — required-lift letters', () {
@@ -841,20 +795,7 @@ void main() {
       });
     }
 
-    // i and j: second stroke is a dot (empty waypoints, scored on presence)
-    for (final letter in ['i', 'j']) {
-      test('$letter: stroke 2 (dot) has empty waypoints', () {
-        final data = letterFormationRegistry[letter]!;
-        expect(data.strokes[1].waypoints, isEmpty);
-      });
-    }
-
-    // t: second stroke is the crossbar, now section-scored (waypoints empty).
-    test('t: stroke 2 waypoints list is empty (migrated to sections)', () {
-      final data = letterFormationRegistry['t']!;
-      expect(data.strokes[1].waypoints, isEmpty);
-    });
-
+    // t: second stroke is the crossbar, now section-scored.
     test(
         't: stroke 2 (crossbar) sections are 2 bespoke rectangles numbered '
         '5-6, continuing the letter path after the stem', () {
@@ -877,10 +818,6 @@ void main() {
     // waypoints — see docs/waypoint_section_definitions.md for the design.
     test('f: stem stroke has non-empty sections', () {
       expect(letterFormationRegistry['f']!.strokes[0].sections, isNotEmpty);
-    });
-
-    test('f: stem stroke has no waypoints', () {
-      expect(letterFormationRegistry['f']!.strokes[0].waypoints, isEmpty);
     });
 
     test(
@@ -922,10 +859,6 @@ void main() {
       expect(letterFormationRegistry['f']!.strokes[1].sections, isNotEmpty);
     });
 
-    test('f: crossbar stroke has no waypoints', () {
-      expect(letterFormationRegistry['f']!.strokes[1].waypoints, isEmpty);
-    });
-
     test(
         'f: crossbar sections are 2 bespoke rectangles numbered 4–5 (left → '
         'right, continuing the letter path after the stem)', () {
@@ -950,13 +883,6 @@ void main() {
           ),
         ),
       ]);
-    });
-
-    test('x: waypoints lists are empty on both strokes (migrated to sections)',
-        () {
-      final data = letterFormationRegistry['x']!;
-      expect(data.strokes[0].waypoints, isEmpty);
-      expect(data.strokes[1].waypoints, isEmpty);
     });
 
     test(
@@ -1008,8 +934,7 @@ void main() {
   //   1. Each letter has a non-null entry in the registry.
   //   2. minRequiredStrokes matches the spec (2 for h/k, 1 for m/n/u).
   //   3. Stroke counts are correct.
-  //   4. h and n have been migrated to bespoke numbered sections; k, m, and u
-  //      still carry a non-empty waypoints list whose sequence matches the
+  //   4. Each letter's strokes carry bespoke numbered sections matching the
   //      scope table exactly.
   // ---------------------------------------------------------------------------
 
@@ -1091,10 +1016,6 @@ void main() {
       expect(letterFormationRegistry['b']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('b: stem stroke has no waypoints', () {
-      expect(letterFormationRegistry['b']!.strokes[0].waypoints, isEmpty);
-    });
-
     test(
         'b: stem sections are 3 bespoke rectangles (top → middle → bottom '
         'of the stem)', () {
@@ -1120,10 +1041,6 @@ void main() {
 
     test('b: bowl stroke has non-empty sections', () {
       expect(letterFormationRegistry['b']!.strokes[1].sections, isNotEmpty);
-    });
-
-    test('b: bowl stroke has no waypoints', () {
-      expect(letterFormationRegistry['b']!.strokes[1].waypoints, isEmpty);
     });
 
     test('b: bowl sections are 4 bespoke rectangles numbered 4–7 (clockwise '
@@ -1160,10 +1077,6 @@ void main() {
       expect(letterFormationRegistry['d']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('d: stem stroke has no waypoints', () {
-      expect(letterFormationRegistry['d']!.strokes[0].waypoints, isEmpty);
-    });
-
     test(
         'd: stem sections are 3 bespoke rectangles (top → middle → bottom '
         'of the stem)', () {
@@ -1189,10 +1102,6 @@ void main() {
 
     test('d: bowl stroke has non-empty sections', () {
       expect(letterFormationRegistry['d']!.strokes[1].sections, isNotEmpty);
-    });
-
-    test('d: bowl stroke has no waypoints', () {
-      expect(letterFormationRegistry['d']!.strokes[1].waypoints, isEmpty);
     });
 
     test('d: bowl sections are 4 bespoke rectangles numbered 4–7 (anticlockwise '
@@ -1239,10 +1148,6 @@ void main() {
 
     test('m: compound stroke has non-empty sections', () {
       expect(letterFormationRegistry['m']!.strokes[0].sections, isNotEmpty);
-    });
-
-    test('m: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['m']!.strokes[0].waypoints, isEmpty);
     });
 
     test(
@@ -1304,10 +1209,6 @@ void main() {
       expect(letterFormationRegistry['u']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('u: waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['u']!.strokes[0].waypoints, isEmpty);
-    });
-
     test(
       'u: sections are 5 bespoke rectangles (down the left, round the '
       'bottom, up the right)',
@@ -1362,10 +1263,6 @@ void main() {
       expect(letterFormationRegistry['h']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('h: stem stroke has no waypoints', () {
-      expect(letterFormationRegistry['h']!.strokes[0].waypoints, isEmpty);
-    });
-
     test(
         'h: stem sections are 2 bespoke rectangles (top → bottom), with a '
         'short bottom row forcing the stem to reach the baseline', () {
@@ -1394,10 +1291,6 @@ void main() {
 
     test('h: arch stroke has non-empty sections', () {
       expect(letterFormationRegistry['h']!.strokes[1].sections, isNotEmpty);
-    });
-
-    test('h: arch stroke has no waypoints', () {
-      expect(letterFormationRegistry['h']!.strokes[1].waypoints, isEmpty);
     });
 
     test(
@@ -1451,10 +1344,6 @@ void main() {
       expect(letterFormationRegistry['k']!.strokes, hasLength(2));
     });
 
-    test('k: stroke 2 waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['k']!.strokes[1].waypoints, isEmpty);
-    });
-
     test(
         'k: stroke 2 sections are 4 bespoke rectangles numbered 4-7 (in from '
         'the upper right to the stem, then out to the lower right)', () {
@@ -1496,10 +1385,6 @@ void main() {
 
     test('r: has exactly two strokes', () {
       expect(letterFormationRegistry['r']!.strokes, hasLength(2));
-    });
-
-    test('r: stroke 2 waypoints list is empty (migrated to sections)', () {
-      expect(letterFormationRegistry['r']!.strokes[1].waypoints, isEmpty);
     });
 
     test(
