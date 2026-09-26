@@ -278,8 +278,10 @@ void main() {
       expect(letterFormationRegistry['w']!.strokes[0].waypoints, isEmpty);
     });
 
-    test('z: sections are 5 bespoke rectangles (top bar → diagonal → base '
-        'bar, with the base bar reaching the true bottom-right corner)', () {
+    test('z: sections are 7 bespoke rectangles (top bar → diagonal → base '
+        'bar, with the base bar reaching the true bottom-right corner and '
+        'the diagonal split into three bands so the stroke must travel '
+        'through the whole diagonal in order)', () {
       final sections = letterFormationRegistry['z']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
@@ -306,11 +308,29 @@ void main() {
             minX: 0.00,
             maxX: 1.00,
             minY: 0.17,
-            maxY: 0.84,
+            maxY: 0.39,
           ),
         ),
         WaypointSection(
           number: 4,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.39,
+            maxY: 0.62,
+          ),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.62,
+            maxY: 0.84,
+          ),
+        ),
+        WaypointSection(
+          number: 6,
           rect: const StrokeStartRect(
             minX: 0.00,
             maxX: 0.50,
@@ -319,7 +339,7 @@ void main() {
           ),
         ),
         WaypointSection(
-          number: 5,
+          number: 7,
           rect: const StrokeStartRect(
             minX: 0.50,
             maxX: 1.00,
