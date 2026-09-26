@@ -3,7 +3,6 @@ import 'dart:ui' show Offset, Rect;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
-import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_matcher.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 
@@ -75,14 +74,8 @@ void main() {
 
     test('compound strokes pair positionally too', () {
       final expected = [
-        ExpectedStroke(
-          startRect: someRect,
-          waypoints: const [WaypointRegion.topLeft],
-        ),
-        ExpectedStroke(
-          startRect: someRect,
-          waypoints: const [WaypointRegion.bottomRight],
-        ),
+        expectedStroke(),
+        expectedStroke(),
       ];
       final observed = [
         nonEmptyStrokeAt(250, 250),

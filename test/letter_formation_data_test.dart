@@ -38,52 +38,6 @@ void main() {
   // ---------------------------------------------------------------------------
 
   group('ExpectedStroke', () {
-    test('can be created with non-empty waypoints', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 0.0,
-          maxY: 1.0 / 3.0,
-        ),
-        waypoints: [
-          WaypointRegion.top,
-          WaypointRegion.bottomLeft,
-          WaypointRegion.top,
-        ],
-      );
-      expect(stroke.waypoints, [
-        WaypointRegion.top,
-        WaypointRegion.bottomLeft,
-        WaypointRegion.top,
-      ]);
-    });
-
-    test('defaults waypoints to empty list', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 0.0,
-          maxY: 1.0 / 3.0,
-        ),
-      );
-      expect(stroke.waypoints, isEmpty);
-    });
-
-    test('allows explicitly empty waypoints', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 1.0 / 3.0,
-          maxY: 2.0 / 3.0,
-        ),
-        waypoints: [],
-      );
-      expect(stroke.waypoints, isEmpty);
-    });
-
     test('defaults sections to empty list', () {
       final stroke = ExpectedStroke(
         startRect: const StrokeStartRect(
@@ -128,40 +82,6 @@ void main() {
       expect(stroke.sections.length, 2);
       expect(stroke.sections[0].number, 1);
       expect(stroke.sections[1].number, 2);
-    });
-
-    test('can have both waypoints and sections simultaneously', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 0.0,
-          maxY: 1.0 / 3.0,
-        ),
-        waypoints: [WaypointRegion.top, WaypointRegion.bottom],
-        sections: [
-          WaypointSection(
-            number: 1,
-            rect: const StrokeStartRect(
-              minX: 0.0,
-              maxX: 1.0,
-              minY: 0.0,
-              maxY: 0.5,
-            ),
-          ),
-          WaypointSection(
-            number: 2,
-            rect: const StrokeStartRect(
-              minX: 0.0,
-              maxX: 1.0,
-              minY: 0.5,
-              maxY: 1.0,
-            ),
-          ),
-        ],
-      );
-      expect(stroke.waypoints, [WaypointRegion.top, WaypointRegion.bottom]);
-      expect(stroke.sections.length, 2);
     });
   });
 

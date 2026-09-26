@@ -1,6 +1,5 @@
 import 'dart:ui' show Offset, Rect;
 
-import 'compound_stroke_scorer.dart';
 import 'coverage_scorer.dart';
 import 'efficiency_scorer.dart';
 import 'formation_score.dart';
@@ -35,7 +34,7 @@ class ScoreIntegrator {
   /// `bounds.height.ceil()` × `bounds.width.ceil()`.
   ///
   /// [formationBounds] is the bounding rect passed to the formation scorers
-  /// ([StrokeStartScorer], [CompoundStrokeScorer]).
+  /// ([StrokeStartScorer], [WaypointSectionScorer]).
   /// If not supplied, it defaults to [bounds].
   static ScoreResult score({
     required List<List<bool>> referenceMask,
@@ -110,24 +109,13 @@ class ScoreIntegrator {
           bounds: formationBounds,
         ).score(strokes);
 
-        // Path scoring: route a letter to the bespoke section scorer once it
-        // has been migrated to carry `sections`; otherwise use the legacy 3×3
-        // WaypointRegion grid scorer. Both produce a FormationScore, so the
-        // ScoreResult.compoundStroke field and the UI are unaffected.
-        // NOTE: the section branch gets real integration coverage in Phase D,
-        // when the first letter is migrated to use `sections`.
-        final usesSections = data.strokes.any((s) => s.sections.isNotEmpty);
-        compoundStroke = usesSections
-            ? WaypointSectionScorer(
-                letter: letter,
-                data: data,
-                bounds: formationBounds,
-              ).score(strokes)
-            : CompoundStrokeScorer(
-                letter: letter,
-                data: data,
-                bounds: formationBounds,
-              ).score(strokes);
+        // Path scoring: every letter carries bespoke numbered `sections`, so
+        // the bespoke section scorer always applies.
+        compoundStroke = WaypointSectionScorer(
+          letter: letter,
+          data: data,
+          bounds: formationBounds,
+        ).score(strokes);
 
         strokeBreak = StrokeBreakCounter(
           letter: letter,
