@@ -1,0 +1,63 @@
+{
+ "_letter": "a",
+ "_sequence": "Start at the top of the round part, sweep anticlockwise round it, then up the stem and down again.",
+ "_grid": "approved: 7 zones, reviewed and approved by Andrew 26 Sept 2026; supersedes candidates/a.json",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.38,
+   "maxX": 0.72,
+   "minY": 0.0,
+   "maxY": 0.5
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.38,
+   "minY": 0.0,
+   "maxY": 0.5
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.38,
+   "minY": 0.5,
+   "maxY": 1.0
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.38,
+   "maxX": 0.72,
+   "minY": 0.5,
+   "maxY": 1.0
+  },
+  {
+   "n": 5,
+   "stroke": 0,
+   "minX": 0.72,
+   "maxX": 1.0,
+   "minY": 0.0,
+   "maxY": 0.5
+  },
+  {
+   "n": 6,
+   "stroke": 0,
+   "minX": 0.72,
+   "maxX": 1.0,
+   "minY": 0.5,
+   "maxY": 0.8
+  },
+  {
+   "n": 7,
+   "stroke": 0,
+   "minX": 0.72,
+   "maxX": 1.0,
+   "minY": 0.8,
+   "maxY": 1.0
+  }
+ ]
+}

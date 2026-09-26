@@ -1,0 +1,71 @@
+{
+ "_letter": "g",
+ "_sequence": "Single continuous stroke: bowl anticlockwise, up the right side, down the descender, hook left.",
+ "_grid": "approved: 8 zones, reviewed and approved by Andrew 26 Sept 2026; supersedes candidates/g.json",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.39,
+   "maxX": 0.78,
+   "minY": 0.0,
+   "maxY": 0.33
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.39,
+   "minY": 0.0,
+   "maxY": 0.33
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.39,
+   "minY": 0.33,
+   "maxY": 0.7
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.39,
+   "maxX": 0.78,
+   "minY": 0.33,
+   "maxY": 0.7
+  },
+  {
+   "n": 5,
+   "stroke": 0,
+   "minX": 0.78,
+   "maxX": 1.0,
+   "minY": 0.12,
+   "maxY": 0.33
+  },
+  {
+   "n": 6,
+   "stroke": 0,
+   "minX": 0.78,
+   "maxX": 1.0,
+   "minY": 0.33,
+   "maxY": 0.7
+  },
+  {
+   "n": 7,
+   "stroke": 0,
+   "minX": 0.39,
+   "maxX": 1.0,
+   "minY": 0.7,
+   "maxY": 1.0
+  },
+  {
+   "n": 8,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.39,
+   "minY": 0.7,
+   "maxY": 1.0
+  }
+ ]
+}

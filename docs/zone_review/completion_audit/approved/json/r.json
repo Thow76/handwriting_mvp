@@ -1,0 +1,47 @@
+{
+ "_letter": "r",
+ "_sequence": "Stroke one: down the stem. Stroke two: the shoulder, up out of the stem and over to the right.",
+ "_grid": "approved: 5 zones, reviewed and approved by Andrew 26 Sept 2026; supersedes candidates/r.json",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.32,
+   "minY": 0.0,
+   "maxY": 0.4
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.32,
+   "minY": 0.4,
+   "maxY": 0.8
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.32,
+   "minY": 0.8,
+   "maxY": 1.0
+  },
+  {
+   "n": 4,
+   "stroke": 1,
+   "minX": 0.32,
+   "maxX": 0.8,
+   "minY": 0.0,
+   "maxY": 0.4
+  },
+  {
+   "n": 5,
+   "stroke": 1,
+   "minX": 0.8,
+   "maxX": 1.0,
+   "minY": 0.0,
+   "maxY": 0.4
+  }
+ ]
+}
