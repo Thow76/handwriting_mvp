@@ -1,0 +1,63 @@
+{
+ "_letter": "o",
+ "_sequence": "anticlockwise from the top",
+ "_grid": "approved: 7 zones, reviewed and approved by Andrew 26 Sept 2026; supersedes candidates/o.json",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.33,
+   "maxX": 0.67,
+   "minY": 0.0,
+   "maxY": 0.5
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.33,
+   "minY": 0.0,
+   "maxY": 0.5
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.33,
+   "minY": 0.5,
+   "maxY": 1.0
+  },
+  {
+   "n": 4,
+   "stroke": 0,
+   "minX": 0.33,
+   "maxX": 0.67,
+   "minY": 0.5,
+   "maxY": 1.0
+  },
+  {
+   "n": 5,
+   "stroke": 0,
+   "minX": 0.67,
+   "maxX": 1.0,
+   "minY": 0.5,
+   "maxY": 1.0
+  },
+  {
+   "n": 6,
+   "stroke": 0,
+   "minX": 0.67,
+   "maxX": 1.0,
+   "minY": 0.2,
+   "maxY": 0.5
+  },
+  {
+   "n": 7,
+   "stroke": 0,
+   "minX": 0.67,
+   "maxX": 1.0,
+   "minY": 0.0,
+   "maxY": 0.2
+  }
+ ]
+}

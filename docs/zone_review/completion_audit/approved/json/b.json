@@ -1,0 +1,63 @@
+{
+ "_letter": "b",
+ "_sequence": "Stroke one: straight down the stem. Stroke two: from the middle of the stem, out across the top of the bowl, down the right-hand side, and back along the bottom to the stem.",
+ "_grid": "approved: 7 zones, reviewed and approved by Andrew 26 Sept 2026; supersedes candidates/b.json",
+ "sections": [
+  {
+   "n": 1,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.25,
+   "minY": 0.0,
+   "maxY": 0.35
+  },
+  {
+   "n": 2,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.25,
+   "minY": 0.35,
+   "maxY": 0.8
+  },
+  {
+   "n": 3,
+   "stroke": 0,
+   "minX": 0.0,
+   "maxX": 0.25,
+   "minY": 0.8,
+   "maxY": 1.0
+  },
+  {
+   "n": 4,
+   "stroke": 1,
+   "minX": 0.25,
+   "maxX": 0.62,
+   "minY": 0.35,
+   "maxY": 0.67
+  },
+  {
+   "n": 5,
+   "stroke": 1,
+   "minX": 0.62,
+   "maxX": 1.0,
+   "minY": 0.35,
+   "maxY": 0.67
+  },
+  {
+   "n": 6,
+   "stroke": 1,
+   "minX": 0.45,
+   "maxX": 1.0,
+   "minY": 0.67,
+   "maxY": 1.0
+  },
+  {
+   "n": 7,
+   "stroke": 1,
+   "minX": 0.25,
+   "maxX": 0.45,
+   "minY": 0.67,
+   "maxY": 1.0
+  }
+ ]
+}
