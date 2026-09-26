@@ -38,24 +38,82 @@ void main() {
     // see docs/zone_review/REVIEW.md. Each replaces its former waypoints
     // list with a bespoke numbered sections list on its single stroke.
 
-    test('v: sections are 4 bespoke rectangles covering the diagonal V', () {
+    test('v: sections are 8 bespoke rectangles covering the diagonal V, each '
+        'side split into a body and a cap so the final upstroke must reach '
+        'the top', () {
       final sections = letterFormationRegistry['v']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
-          rect: const StrokeStartRect(minX: 0, maxX: 0.5, minY: 0, maxY: 0.5),
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
         WaypointSection(
           number: 2,
-          rect: const StrokeStartRect(minX: 0, maxX: 0.5, minY: 0.5, maxY: 1),
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
         ),
         WaypointSection(
           number: 3,
-          rect: const StrokeStartRect(minX: 0.5, maxX: 1, minY: 0.5, maxY: 1),
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.50,
+            maxY: 0.76,
+          ),
         ),
         WaypointSection(
           number: 4,
-          rect: const StrokeStartRect(minX: 0.5, maxX: 1, minY: 0, maxY: 0.5),
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.76,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.76,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.50,
+            maxY: 0.76,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
+        ),
+        WaypointSection(
+          number: 8,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
       ]);
     });
@@ -64,34 +122,154 @@ void main() {
       expect(letterFormationRegistry['v']!.strokes[0].waypoints, isEmpty);
     });
 
-    test('w: sections are 5 bespoke rectangles covering the double diagonal',
-        () {
+    test('w: sections are 16 bespoke rectangles covering the double diagonal '
+        '— every valley, the peak, and the final ascent split into a body '
+        'and a cap so the zigzag must actually be formed, not just grazed', () {
       final sections = letterFormationRegistry['w']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
-          rect:
-              const StrokeStartRect(minX: 0, maxX: 0.2, minY: 0, maxY: 0.5),
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.27,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0.2, maxX: 0.4, minY: 0.5, maxY: 1),
+            minX: 0.00,
+            maxX: 0.27,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0.4, maxX: 0.6, minY: 0, maxY: 0.5),
+            minX: 0.00,
+            maxX: 0.27,
+            minY: 0.50,
+            maxY: 0.72,
+          ),
         ),
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.6, maxX: 0.8, minY: 0.5, maxY: 1),
+            minX: 0.00,
+            maxX: 0.27,
+            minY: 0.72,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 5,
-          rect:
-              const StrokeStartRect(minX: 0.8, maxX: 1, minY: 0, maxY: 0.5),
+          rect: const StrokeStartRect(
+            minX: 0.27,
+            maxX: 0.50,
+            minY: 0.72,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.27,
+            maxX: 0.50,
+            minY: 0.50,
+            maxY: 0.72,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
+            minX: 0.27,
+            maxX: 0.50,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
+        ),
+        WaypointSection(
+          number: 8,
+          rect: const StrokeStartRect(
+            minX: 0.27,
+            maxX: 0.50,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
+        ),
+        WaypointSection(
+          number: 9,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 0.73,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
+        ),
+        WaypointSection(
+          number: 10,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 0.73,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
+        ),
+        WaypointSection(
+          number: 11,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 0.73,
+            minY: 0.50,
+            maxY: 0.72,
+          ),
+        ),
+        WaypointSection(
+          number: 12,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 0.73,
+            minY: 0.72,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 13,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.72,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 14,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.50,
+            maxY: 0.72,
+          ),
+        ),
+        WaypointSection(
+          number: 15,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
+        ),
+        WaypointSection(
+          number: 16,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
       ]);
     });
@@ -100,34 +278,54 @@ void main() {
       expect(letterFormationRegistry['w']!.strokes[0].waypoints, isEmpty);
     });
 
-    test('z: sections are 5 bespoke rectangles (top bar → diagonal → base bar)',
-        () {
+    test('z: sections are 5 bespoke rectangles (top bar → diagonal → base '
+        'bar, with the base bar reaching the true bottom-right corner)', () {
       final sections = letterFormationRegistry['z']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1 / 3, minY: 0, maxY: 1 / 3),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.00,
+            maxY: 0.17,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 2 / 3, maxX: 1, minY: 0, maxY: 1 / 3),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.17,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 1 / 3, maxX: 2 / 3, minY: 1 / 3, maxY: 2 / 3),
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.17,
+            maxY: 0.84,
+          ),
         ),
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1 / 3, minY: 2 / 3, maxY: 1),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.84,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 2 / 3, maxX: 1, minY: 2 / 3, maxY: 1),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.84,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -136,40 +334,64 @@ void main() {
       expect(letterFormationRegistry['z']!.strokes[0].waypoints, isEmpty);
     });
 
-    test(
-        's: sections are 6 bespoke rectangles (2 columns x 3 rows quadrant '
-        'grid; interim placeholder)', () {
+    test('s: sections are 6 bespoke rectangles (2 columns x 3 rows quadrant '
+        'grid, with the final row split into a body and a left-hand cap so '
+        'the last stroke must reach the true bottom-left)', () {
       final sections = letterFormationRegistry['s']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0.5, maxX: 1, minY: 0, maxY: 0.35),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.5, minY: 0, maxY: 0.35),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.5, minY: 0.35, maxY: 0.65),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.35,
+            maxY: 0.65,
+          ),
         ),
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.5, maxX: 1, minY: 0.35, maxY: 0.65),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.65,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0.5, maxX: 1, minY: 0.65, maxY: 1),
+            minX: 0.35,
+            maxX: 1.00,
+            minY: 0.65,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 6,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.5, minY: 0.65, maxY: 1),
+            minX: 0.00,
+            maxX: 0.35,
+            minY: 0.65,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -234,9 +456,10 @@ void main() {
       expect(letterFormationRegistry['a']!.strokes[0].sections, isNotEmpty);
     });
 
-    test(
-        'a: sections are 6 bespoke rectangles covering the anticlockwise '
-        'oval and stem (3 columns x 2 rows)', () {
+    test('a: sections are 7 bespoke rectangles covering the anticlockwise '
+        'oval and stem (3 columns x 2 rows), with the closing stroke\'s '
+        'final column split into a body and a bottom cap so it must reach '
+        'the true foot', () {
       final sections = letterFormationRegistry['a']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
@@ -244,26 +467,26 @@ void main() {
           rect: const StrokeStartRect(
             minX: 0.38,
             maxX: 0.72,
-            minY: 0,
-            maxY: 0.5,
+            minY: 0.00,
+            maxY: 0.50,
           ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-            minX: 0,
+            minX: 0.00,
             maxX: 0.38,
-            minY: 0,
-            maxY: 0.5,
+            minY: 0.00,
+            maxY: 0.50,
           ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-            minX: 0,
+            minX: 0.00,
             maxX: 0.38,
-            minY: 0.5,
-            maxY: 1,
+            minY: 0.50,
+            maxY: 1.00,
           ),
         ),
         WaypointSection(
@@ -271,26 +494,35 @@ void main() {
           rect: const StrokeStartRect(
             minX: 0.38,
             maxX: 0.72,
-            minY: 0.5,
-            maxY: 1,
+            minY: 0.50,
+            maxY: 1.00,
           ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
             minX: 0.72,
-            maxX: 1,
-            minY: 0,
-            maxY: 0.5,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.50,
           ),
         ),
         WaypointSection(
           number: 6,
           rect: const StrokeStartRect(
             minX: 0.72,
-            maxX: 1,
-            minY: 0.5,
-            maxY: 1,
+            maxX: 1.00,
+            minY: 0.50,
+            maxY: 0.80,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
+            minX: 0.72,
+            maxX: 1.00,
+            minY: 0.80,
+            maxY: 1.00,
           ),
         ),
       ]);
@@ -309,30 +541,56 @@ void main() {
       expect(letterFormationRegistry['c']!.strokes[0].sections, isNotEmpty);
     });
 
-    test('c: sections are 5 bespoke rectangles covering the open anticlockwise arc '
-        '(2 columns x 3 rows)', () {
+    test('c: sections are 5 bespoke rectangles covering the open '
+        'anticlockwise arc (2 columns x 3 rows), with the bottom row split '
+        'into a wide body and a right-hand cap so the curve must reach the '
+        'true bottom-right', () {
       final sections = letterFormationRegistry['c']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
-          rect: const StrokeStartRect(minX: 0.5, maxX: 1, minY: 0, maxY: 0.3),
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.30,
+          ),
         ),
         WaypointSection(
           number: 2,
-          rect: const StrokeStartRect(minX: 0, maxX: 0.5, minY: 0, maxY: 0.3),
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.00,
+            maxY: 0.30,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.5, minY: 0.3, maxY: 0.7),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.30,
+            maxY: 0.70,
+          ),
         ),
         WaypointSection(
           number: 4,
-          rect: const StrokeStartRect(minX: 0, maxX: 0.5, minY: 0.7, maxY: 1),
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.80,
+            minY: 0.70,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 5,
-          rect: const StrokeStartRect(minX: 0.5, maxX: 1, minY: 0.7, maxY: 1),
+          rect: const StrokeStartRect(
+            minX: 0.80,
+            maxX: 1.00,
+            minY: 0.70,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -356,55 +614,70 @@ void main() {
       expect(letterFormationRegistry['e']!.strokes[0].sections, isNotEmpty);
     });
 
-    test(
-        'e: sections are 9 bespoke rectangles (3 columns x 3 rows — '
+    test('e: sections are 9 bespoke rectangles (3 columns x 3 rows — '
         'crossbar row, top sweep, bottom curve)', () {
       final sections = letterFormationRegistry['e']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.33, minY: 0.37, maxY: 0.52),
+            minX: 0,
+            maxX: 0.33,
+            minY: 0.37,
+            maxY: 0.52,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0.33, maxX: 0.67, minY: 0.37, maxY: 0.52),
+            minX: 0.33,
+            maxX: 0.67,
+            minY: 0.37,
+            maxY: 0.52,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0.67, maxX: 1, minY: 0.37, maxY: 0.52),
+            minX: 0.67,
+            maxX: 1,
+            minY: 0.37,
+            maxY: 0.52,
+          ),
         ),
         WaypointSection(
           number: 4,
-          rect: const StrokeStartRect(
-              minX: 0.67, maxX: 1, minY: 0, maxY: 0.37),
+          rect: const StrokeStartRect(minX: 0.67, maxX: 1, minY: 0, maxY: 0.37),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0.33, maxX: 0.67, minY: 0, maxY: 0.37),
+            minX: 0.33,
+            maxX: 0.67,
+            minY: 0,
+            maxY: 0.37,
+          ),
         ),
         WaypointSection(
           number: 6,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.33, minY: 0, maxY: 0.37),
+          rect: const StrokeStartRect(minX: 0, maxX: 0.33, minY: 0, maxY: 0.37),
         ),
         WaypointSection(
           number: 7,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.33, minY: 0.52, maxY: 1),
+          rect: const StrokeStartRect(minX: 0, maxX: 0.33, minY: 0.52, maxY: 1),
         ),
         WaypointSection(
           number: 8,
           rect: const StrokeStartRect(
-              minX: 0.33, maxX: 0.67, minY: 0.52, maxY: 1),
+            minX: 0.33,
+            maxX: 0.67,
+            minY: 0.52,
+            maxY: 1,
+          ),
         ),
         WaypointSection(
           number: 9,
-          rect: const StrokeStartRect(
-              minX: 0.67, maxX: 1, minY: 0.52, maxY: 1),
+          rect: const StrokeStartRect(minX: 0.67, maxX: 1, minY: 0.52, maxY: 1),
         ),
       ]);
     });
@@ -415,96 +688,164 @@ void main() {
 
     // o: single oval stroke, 6 bespoke sections (3 columns x 2 rows,
     // anticlockwise from the top).
-    test('o[0]: sections are 6 bespoke rectangles (anticlockwise oval)', () {
+    test('o[0]: sections are 7 bespoke rectangles (anticlockwise oval), with '
+        'the final column split into a body and a top cap so the closing '
+        'stroke must reach the true top', () {
       final sections = letterFormationRegistry['o']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0.33, maxX: 0.67, minY: 0, maxY: 0.5),
+            minX: 0.33,
+            maxX: 0.67,
+            minY: 0.00,
+            maxY: 0.50,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.33, minY: 0, maxY: 0.5),
+            minX: 0.00,
+            maxX: 0.33,
+            minY: 0.00,
+            maxY: 0.50,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.33, minY: 0.5, maxY: 1),
+            minX: 0.00,
+            maxX: 0.33,
+            minY: 0.50,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.33, maxX: 0.67, minY: 0.5, maxY: 1),
+            minX: 0.33,
+            maxX: 0.67,
+            minY: 0.50,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0.67, maxX: 1, minY: 0.5, maxY: 1),
+            minX: 0.67,
+            maxX: 1.00,
+            minY: 0.50,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 6,
           rect: const StrokeStartRect(
-              minX: 0.67, maxX: 1, minY: 0, maxY: 0.5),
+            minX: 0.67,
+            maxX: 1.00,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
+            minX: 0.67,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
       ]);
     });
 
     // q[0]: oval — 4 bespoke sections (top-right → top-left → bottom-left →
     // bottom-right); q[1] (descender) is covered in the compound-stroke group.
-    test('q[0]: sections are 4 bespoke rectangles (anticlockwise oval)', () {
+    test('q[0]: sections are 4 bespoke rectangles (anticlockwise oval), with '
+        'the bottom row widened so the oval must reach the stem', () {
       final sections = letterFormationRegistry['q']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0.38, maxX: 0.75, minY: 0, maxY: 0.35),
+            minX: 0.38,
+            maxX: 0.75,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.38, minY: 0, maxY: 0.35),
+            minX: 0.00,
+            maxX: 0.38,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.38, minY: 0.35, maxY: 0.7),
+            minX: 0.00,
+            maxX: 0.55,
+            minY: 0.35,
+            maxY: 0.70,
+          ),
         ),
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.38, maxX: 0.75, minY: 0.35, maxY: 0.7),
+            minX: 0.55,
+            maxX: 0.75,
+            minY: 0.35,
+            maxY: 0.70,
+          ),
         ),
       ]);
     });
 
     // p[1]: bowl — 4 bespoke sections numbered 4-7, continuing the letter
     // path after the stem (p[0]).
-    test(
-        'p[1]: bowl sections are 4 bespoke rectangles numbered 4-7 '
-        '(clockwise right-opening)', () {
+    test('p[1]: bowl sections are 4 bespoke rectangles numbered 4-7 '
+        '(clockwise right-opening), with the closing curve widened so it '
+        'must reach the stem', () {
       final sections = letterFormationRegistry['p']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.25, maxX: 0.62, minY: 0, maxY: 0.35),
+            minX: 0.25,
+            maxX: 0.62,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0.62, maxX: 1, minY: 0, maxY: 0.35),
+            minX: 0.62,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 6,
           rect: const StrokeStartRect(
-              minX: 0.62, maxX: 1, minY: 0.35, maxY: 0.7),
+            minX: 0.45,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.70,
+          ),
         ),
         WaypointSection(
           number: 7,
           rect: const StrokeStartRect(
-              minX: 0.25, maxX: 0.62, minY: 0.35, maxY: 0.7),
+            minX: 0.25,
+            maxX: 0.45,
+            minY: 0.35,
+            maxY: 0.70,
+          ),
         ),
       ]);
     });
@@ -516,41 +857,81 @@ void main() {
       expect(letterFormationRegistry['y']!.strokes, hasLength(2));
     });
 
-    test('y: stroke 1 sections are 2 bespoke rectangles (short arm)', () {
+    test('y: stroke 1 sections are 3 bespoke rectangles (short arm, down to '
+        'the join)', () {
       final sections = letterFormationRegistry['y']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1 / 3, minY: 0, maxY: 0.35),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 1 / 3, maxX: 2 / 3, minY: 0.35, maxY: 0.65),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.20,
+            maxY: 0.55,
+          ),
+        ),
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.55,
+            maxY: 0.75,
+          ),
         ),
       ]);
     });
 
-    test(
-        'y: stroke 2 sections are 3 bespoke rectangles numbered 3-5 (tail, '
-        'continuing the letter path after the short arm)', () {
+    test('y: stroke 2 sections are 4 bespoke rectangles numbered 4-7 (tail, '
+        'continuing the letter path after the short arm), with the tail '
+        'curl split into a body and a left-hand cap so it must reach the '
+        'left edge', () {
       final sections = letterFormationRegistry['y']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
-          number: 3,
-          rect: const StrokeStartRect(
-              minX: 2 / 3, maxX: 1, minY: 0, maxY: 0.35),
-        ),
-        WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 1 / 3, maxX: 2 / 3, minY: 0.65, maxY: 1),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1 / 3, minY: 0.65, maxY: 1),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.20,
+            maxY: 0.55,
+          ),
+        ),
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.35,
+            maxX: 1.00,
+            minY: 0.75,
+            maxY: 1.00,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.35,
+            minY: 0.75,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -570,52 +951,87 @@ void main() {
     });
 
     test(
-        'g: sections are 8 bespoke rectangles, all on the first stroke '
-        '(bowl → up the right side → descender → hook)', () {
-      final sections = letterFormationRegistry['g']!.strokes[0].sections;
-      expect(sections, [
-        WaypointSection(
-          number: 1,
-          rect: const StrokeStartRect(
-              minX: 0.39, maxX: 0.72, minY: 0, maxY: 0.33),
-        ),
-        WaypointSection(
-          number: 2,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.39, minY: 0, maxY: 0.33),
-        ),
-        WaypointSection(
-          number: 3,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.39, minY: 0.33, maxY: 0.65),
-        ),
-        WaypointSection(
-          number: 4,
-          rect: const StrokeStartRect(
-              minX: 0.39, maxX: 0.72, minY: 0.33, maxY: 0.65),
-        ),
-        WaypointSection(
-          number: 5,
-          rect: const StrokeStartRect(
-              minX: 0.72, maxX: 1, minY: 0.12, maxY: 0.33),
-        ),
-        WaypointSection(
-          number: 6,
-          rect: const StrokeStartRect(
-              minX: 0.72, maxX: 1, minY: 0.33, maxY: 0.65),
-        ),
-        WaypointSection(
-          number: 7,
-          rect: const StrokeStartRect(
-              minX: 0.39, maxX: 1, minY: 0.65, maxY: 1),
-        ),
-        WaypointSection(
-          number: 8,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.39, minY: 0.65, maxY: 1),
-        ),
-      ]);
-    });
+      'g: sections are 8 bespoke rectangles, all on the first stroke '
+      '(bowl → up the right side → descender → hook), with the bowl '
+      'widened and the closing hook curling all the way to the left edge',
+      () {
+        final sections = letterFormationRegistry['g']!.strokes[0].sections;
+        expect(sections, [
+          WaypointSection(
+            number: 1,
+            rect: const StrokeStartRect(
+              minX: 0.39,
+              maxX: 0.78,
+              minY: 0.00,
+              maxY: 0.33,
+            ),
+          ),
+          WaypointSection(
+            number: 2,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.39,
+              minY: 0.00,
+              maxY: 0.33,
+            ),
+          ),
+          WaypointSection(
+            number: 3,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.39,
+              minY: 0.33,
+              maxY: 0.70,
+            ),
+          ),
+          WaypointSection(
+            number: 4,
+            rect: const StrokeStartRect(
+              minX: 0.39,
+              maxX: 0.78,
+              minY: 0.33,
+              maxY: 0.70,
+            ),
+          ),
+          WaypointSection(
+            number: 5,
+            rect: const StrokeStartRect(
+              minX: 0.78,
+              maxX: 1.00,
+              minY: 0.12,
+              maxY: 0.33,
+            ),
+          ),
+          WaypointSection(
+            number: 6,
+            rect: const StrokeStartRect(
+              minX: 0.78,
+              maxX: 1.00,
+              minY: 0.33,
+              maxY: 0.70,
+            ),
+          ),
+          WaypointSection(
+            number: 7,
+            rect: const StrokeStartRect(
+              minX: 0.39,
+              maxX: 1.00,
+              minY: 0.70,
+              maxY: 1.00,
+            ),
+          ),
+          WaypointSection(
+            number: 8,
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.39,
+              minY: 0.70,
+              maxY: 1.00,
+            ),
+          ),
+        ]);
+      },
+    );
 
     test('g: second stroke has no sections (all zones are on the first)', () {
       expect(letterFormationRegistry['g']!.strokes[1].sections, isEmpty);
@@ -632,13 +1048,24 @@ void main() {
     // review (docs/zone_review/REVIEW.md). Every stroke here still has an
     // empty waypoints list.
 
-    for (final entry in {'i': 0, 'j': 0, 'k': 0, 'l': 0, 'p': 0, 'q': 1, 'r': 0, 't': 0}
-        .entries) {
-      test('${entry.key}[${entry.value}]: waypoints list is empty (migrated to sections)',
-          () {
-        final stroke = letterFormationRegistry[entry.key]!.strokes[entry.value];
-        expect(stroke.waypoints, isEmpty);
-      });
+    for (final entry in {
+      'i': 0,
+      'j': 0,
+      'k': 0,
+      'l': 0,
+      'p': 0,
+      'q': 1,
+      'r': 0,
+      't': 0,
+    }.entries) {
+      test(
+        '${entry.key}[${entry.value}]: waypoints list is empty (migrated to sections)',
+        () {
+          final stroke =
+              letterFormationRegistry[entry.key]!.strokes[entry.value];
+          expect(stroke.waypoints, isEmpty);
+        },
+      );
     }
 
     test('i[0]: sections are 2 bespoke rectangles (stem, top to bottom)', () {
@@ -647,35 +1074,44 @@ void main() {
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1, minY: 0.24, maxY: 0.62),
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.24,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1, minY: 0.62, maxY: 1),
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
 
-    test(
-        'j[0]: sections are 3 bespoke rectangles (stem, then the hook '
+    test('j[0]: sections are 3 bespoke rectangles (stem, then the hook '
         'curling left at the bottom)', () {
       final sections = letterFormationRegistry['j']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0.45, maxX: 1, minY: 0.18, maxY: 0.65),
+            minX: 0.45,
+            maxX: 1,
+            minY: 0.18,
+            maxY: 0.65,
+          ),
         ),
         WaypointSection(
           number: 2,
-          rect: const StrokeStartRect(
-              minX: 0.45, maxX: 1, minY: 0.65, maxY: 1),
+          rect: const StrokeStartRect(minX: 0.45, maxX: 1, minY: 0.65, maxY: 1),
         ),
         WaypointSection(
           number: 3,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.45, minY: 0.65, maxY: 1),
+          rect: const StrokeStartRect(minX: 0, maxX: 0.45, minY: 0.65, maxY: 1),
         ),
       ]);
     });
@@ -686,17 +1122,29 @@ void main() {
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.28, minY: 0, maxY: 0.35),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.28, minY: 0.35, maxY: 0.68),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.35,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.28, minY: 0.68, maxY: 1),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -707,17 +1155,29 @@ void main() {
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1, minY: 0, maxY: 0.35),
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1, minY: 0.35, maxY: 0.7),
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1, minY: 0.7, maxY: 1),
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -728,84 +1188,136 @@ void main() {
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.25, minY: 0, maxY: 0.35),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.25, minY: 0.35, maxY: 0.7),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.35,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.25, minY: 0.7, maxY: 1),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
 
-    test(
-        'q[1]: sections are 3 bespoke rectangles numbered 5-7 (descender, '
+    test('q[1]: sections are 3 bespoke rectangles numbered 5-7 (descender, '
         'continuing the letter path after the oval)', () {
       final sections = letterFormationRegistry['q']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0.75, maxX: 1, minY: 0, maxY: 0.35),
+            minX: 0.75,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 6,
           rect: const StrokeStartRect(
-              minX: 0.75, maxX: 1, minY: 0.35, maxY: 0.7),
+            minX: 0.75,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 7,
           rect: const StrokeStartRect(
-              minX: 0.75, maxX: 1, minY: 0.7, maxY: 1),
+            minX: 0.75,
+            maxX: 1.00,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
 
-    test('r[0]: sections are 2 bespoke rectangles (stem, top to bottom)', () {
+    test('r[0]: sections are 3 bespoke rectangles (stem, top to bottom), '
+        'split into a body and a bottom cap so the stem must reach the '
+        'baseline', () {
       final sections = letterFormationRegistry['r']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.32, minY: 0, maxY: 0.4),
+            minX: 0.00,
+            maxX: 0.32,
+            minY: 0.00,
+            maxY: 0.40,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.32, minY: 0.4, maxY: 1),
+            minX: 0.00,
+            maxX: 0.32,
+            minY: 0.40,
+            maxY: 0.80,
+          ),
+        ),
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.32,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
 
-    test(
-        't[0]: sections are 4 bespoke rectangles (stem, curving right at '
+    test('t[0]: sections are 4 bespoke rectangles (stem, curving right at '
         'the foot)', () {
       final sections = letterFormationRegistry['t']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0.28, maxX: 0.58, minY: 0, maxY: 0.4),
+            minX: 0.28,
+            maxX: 0.58,
+            minY: 0,
+            maxY: 0.4,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0.28, maxX: 0.58, minY: 0.4, maxY: 0.78),
+            minX: 0.28,
+            maxX: 0.58,
+            minY: 0.4,
+            maxY: 0.78,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0.28, maxX: 0.58, minY: 0.78, maxY: 1),
+            minX: 0.28,
+            maxX: 0.58,
+            minY: 0.78,
+            maxY: 1,
+          ),
         ),
         WaypointSection(
           number: 4,
-          rect: const StrokeStartRect(
-              minX: 0.58, maxX: 1, minY: 0.78, maxY: 1),
+          rect: const StrokeStartRect(minX: 0.58, maxX: 1, minY: 0.78, maxY: 1),
         ),
       ]);
     });
@@ -855,20 +1367,17 @@ void main() {
       expect(data.strokes[1].waypoints, isEmpty);
     });
 
-    test(
-        't: stroke 2 (crossbar) sections are 2 bespoke rectangles numbered '
+    test('t: stroke 2 (crossbar) sections are 2 bespoke rectangles numbered '
         '5-6, continuing the letter path after the stem', () {
       final sections = letterFormationRegistry['t']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
           number: 5,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.28, minY: 0, maxY: 0.4),
+          rect: const StrokeStartRect(minX: 0, maxX: 0.28, minY: 0, maxY: 0.4),
         ),
         WaypointSection(
           number: 6,
-          rect: const StrokeStartRect(
-              minX: 0.58, maxX: 1, minY: 0, maxY: 0.4),
+          rect: const StrokeStartRect(minX: 0.58, maxX: 1, minY: 0, maxY: 0.4),
         ),
       ]);
     });
@@ -883,15 +1392,15 @@ void main() {
       expect(letterFormationRegistry['f']!.strokes[0].waypoints, isEmpty);
     });
 
-    test(
-        'f: stem sections are 3 bespoke rectangles (hook top-right → hook '
-        'meets stem → stem body)', () {
+    test('f: stem sections are 4 bespoke rectangles (hook top-right → hook '
+        'meets stem → stem body), with the stem body split into a body and '
+        'a bottom cap so the descender must reach the baseline', () {
       final sections = letterFormationRegistry['f']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-            minX: 0.46,
+            minX: 0.57,
             maxX: 1.00,
             minY: 0.00,
             maxY: 0.30,
@@ -900,8 +1409,8 @@ void main() {
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-            minX: 0.26,
-            maxX: 0.46,
+            minX: 0.29,
+            maxX: 0.57,
             minY: 0.00,
             maxY: 0.30,
           ),
@@ -909,9 +1418,18 @@ void main() {
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-            minX: 0.26,
-            maxX: 0.46,
+            minX: 0.29,
+            maxX: 0.57,
             minY: 0.30,
+            maxY: 0.80,
+          ),
+        ),
+        WaypointSection(
+          number: 4,
+          rect: const StrokeStartRect(
+            minX: 0.29,
+            maxX: 0.57,
+            minY: 0.80,
             maxY: 1.00,
           ),
         ),
@@ -926,24 +1444,23 @@ void main() {
       expect(letterFormationRegistry['f']!.strokes[1].waypoints, isEmpty);
     });
 
-    test(
-        'f: crossbar sections are 2 bespoke rectangles numbered 4–5 (left → '
+    test('f: crossbar sections are 2 bespoke rectangles numbered 5–6 (left → '
         'right, continuing the letter path after the stem)', () {
       final sections = letterFormationRegistry['f']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
-          number: 4,
+          number: 5,
           rect: const StrokeStartRect(
             minX: 0.00,
-            maxX: 0.26,
+            maxX: 0.29,
             minY: 0.30,
             maxY: 1.00,
           ),
         ),
         WaypointSection(
-          number: 5,
+          number: 6,
           rect: const StrokeStartRect(
-            minX: 0.46,
+            minX: 0.57,
             maxX: 1.00,
             minY: 0.30,
             maxY: 1.00,
@@ -952,50 +1469,108 @@ void main() {
       ]);
     });
 
-    test('x: waypoints lists are empty on both strokes (migrated to sections)',
-        () {
-      final data = letterFormationRegistry['x']!;
-      expect(data.strokes[0].waypoints, isEmpty);
-      expect(data.strokes[1].waypoints, isEmpty);
-    });
-
     test(
-        'x: stroke 1 sections are 3 bespoke rectangles (top-left through '
-        'the middle to bottom-right)', () {
+      'x: waypoints lists are empty on both strokes (migrated to sections)',
+      () {
+        final data = letterFormationRegistry['x']!;
+        expect(data.strokes[0].waypoints, isEmpty);
+        expect(data.strokes[1].waypoints, isEmpty);
+      },
+    );
+
+    test('x: stroke 1 sections are 5 bespoke rectangles (top-left through '
+        'the middle to bottom-right), with the bottom-right corner split '
+        'into a body and a cap so the diagonal must reach the true corner', () {
       final sections = letterFormationRegistry['x']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1 / 3, minY: 0, maxY: 1 / 3),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 1 / 3, maxX: 2 / 3, minY: 1 / 3, maxY: 2 / 3),
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.20,
+            maxY: 0.36,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 2 / 3, maxX: 1, minY: 2 / 3, maxY: 1),
+            minX: 0.00,
+            maxX: 1.00,
+            minY: 0.36,
+            maxY: 0.64,
+          ),
         ),
-      ]);
-    });
-
-    test(
-        'x: stroke 2 sections are 2 bespoke rectangles numbered 4-5 '
-        '(top-right to bottom-left)', () {
-      final sections = letterFormationRegistry['x']!.strokes[1].sections;
-      expect(sections, [
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 2 / 3, maxX: 1, minY: 0, maxY: 1 / 3),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.64,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 1 / 3, minY: 2 / 3, maxY: 1),
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
+        ),
+      ]);
+    });
+
+    test('x: stroke 2 sections are 4 bespoke rectangles numbered 6-9 '
+        '(top-right to bottom-left), with the bottom-left corner split '
+        'into a body and a cap so the diagonal must reach the true corner', () {
+      final sections = letterFormationRegistry['x']!.strokes[1].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
+            minX: 0.50,
+            maxX: 1.00,
+            minY: 0.20,
+            maxY: 0.36,
+          ),
+        ),
+        WaypointSection(
+          number: 8,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.64,
+            maxY: 0.80,
+          ),
+        ),
+        WaypointSection(
+          number: 9,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.50,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -1095,25 +1670,36 @@ void main() {
       expect(letterFormationRegistry['b']!.strokes[0].waypoints, isEmpty);
     });
 
-    test(
-        'b: stem sections are 3 bespoke rectangles (top → middle → bottom '
+    test('b: stem sections are 3 bespoke rectangles (top → middle → bottom '
         'of the stem)', () {
       final sections = letterFormationRegistry['b']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.25, minY: 0, maxY: 0.35),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.25, minY: 0.35, maxY: 0.67),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.35,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0, maxX: 0.25, minY: 0.67, maxY: 1),
+            minX: 0.00,
+            maxX: 0.25,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -1127,28 +1713,45 @@ void main() {
     });
 
     test('b: bowl sections are 4 bespoke rectangles numbered 4–7 (clockwise '
-        'right-opening, continuing the letter path after the stem)', () {
+        'right-opening, continuing the letter path after the stem), with '
+        'the closing curve widened so it must reach the stem', () {
       final sections = letterFormationRegistry['b']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.25, maxX: 0.62, minY: 0.35, maxY: 0.67),
+            minX: 0.25,
+            maxX: 0.62,
+            minY: 0.35,
+            maxY: 0.67,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0.62, maxX: 1, minY: 0.35, maxY: 0.67),
+            minX: 0.62,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.67,
+          ),
         ),
         WaypointSection(
           number: 6,
           rect: const StrokeStartRect(
-              minX: 0.62, maxX: 1, minY: 0.67, maxY: 1),
+            minX: 0.45,
+            maxX: 1.00,
+            minY: 0.67,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 7,
           rect: const StrokeStartRect(
-              minX: 0.25, maxX: 0.62, minY: 0.67, maxY: 1),
+            minX: 0.25,
+            maxX: 0.45,
+            minY: 0.67,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -1164,25 +1767,36 @@ void main() {
       expect(letterFormationRegistry['d']!.strokes[0].waypoints, isEmpty);
     });
 
-    test(
-        'd: stem sections are 3 bespoke rectangles (top → middle → bottom '
+    test('d: stem sections are 3 bespoke rectangles (top → middle → bottom '
         'of the stem)', () {
       final sections = letterFormationRegistry['d']!.strokes[0].sections;
       expect(sections, [
         WaypointSection(
           number: 1,
           rect: const StrokeStartRect(
-              minX: 0.72, maxX: 1, minY: 0, maxY: 0.35),
+            minX: 0.72,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.35,
+          ),
         ),
         WaypointSection(
           number: 2,
           rect: const StrokeStartRect(
-              minX: 0.72, maxX: 1, minY: 0.35, maxY: 0.67),
+            minX: 0.72,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.80,
+          ),
         ),
         WaypointSection(
           number: 3,
           rect: const StrokeStartRect(
-              minX: 0.72, maxX: 1, minY: 0.67, maxY: 1),
+            minX: 0.72,
+            maxX: 1.00,
+            minY: 0.80,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -1195,32 +1809,51 @@ void main() {
       expect(letterFormationRegistry['d']!.strokes[1].waypoints, isEmpty);
     });
 
-    test('d: bowl sections are 4 bespoke rectangles numbered 4–7 (anticlockwise '
-        'left-opening, continuing the letter path after the stem)', () {
-      final sections = letterFormationRegistry['d']!.strokes[1].sections;
-      expect(sections, [
-        WaypointSection(
-          number: 4,
-          rect: const StrokeStartRect(
-              minX: 0.38, maxX: 0.72, minY: 0.35, maxY: 0.67),
-        ),
-        WaypointSection(
-          number: 5,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.38, minY: 0.35, maxY: 0.67),
-        ),
-        WaypointSection(
-          number: 6,
-          rect: const StrokeStartRect(
-              minX: 0, maxX: 0.38, minY: 0.67, maxY: 1),
-        ),
-        WaypointSection(
-          number: 7,
-          rect: const StrokeStartRect(
-              minX: 0.38, maxX: 0.72, minY: 0.67, maxY: 1),
-        ),
-      ]);
-    });
+    test(
+      'd: bowl sections are 4 bespoke rectangles numbered 4–7 (anticlockwise '
+      'left-opening, continuing the letter path after the stem)',
+      () {
+        final sections = letterFormationRegistry['d']!.strokes[1].sections;
+        expect(sections, [
+          WaypointSection(
+            number: 4,
+            rect: const StrokeStartRect(
+              minX: 0.38,
+              maxX: 0.72,
+              minY: 0.35,
+              maxY: 0.67,
+            ),
+          ),
+          WaypointSection(
+            number: 5,
+            rect: const StrokeStartRect(
+              minX: 0,
+              maxX: 0.38,
+              minY: 0.35,
+              maxY: 0.67,
+            ),
+          ),
+          WaypointSection(
+            number: 6,
+            rect: const StrokeStartRect(
+              minX: 0,
+              maxX: 0.38,
+              minY: 0.67,
+              maxY: 1,
+            ),
+          ),
+          WaypointSection(
+            number: 7,
+            rect: const StrokeStartRect(
+              minX: 0.38,
+              maxX: 0.72,
+              minY: 0.67,
+              maxY: 1,
+            ),
+          ),
+        ]);
+      },
+    );
 
     // -------------------------------------------------------------------------
     // m — single compound stroke
@@ -1246,40 +1879,92 @@ void main() {
     });
 
     test(
-      'm: sections are 6 bespoke rectangles (down, up-and-over first arch, '
-      'down, up-and-over second arch, down)',
+      'm: sections are 9 bespoke rectangles (down, up-and-over first arch, '
+      'down, up-and-over second arch, down), each of the three legs split '
+      'into a body and a bottom cap so every leg must reach the baseline',
       () {
         final sections = letterFormationRegistry['m']!.strokes[0].sections;
         expect(sections, [
           WaypointSection(
             number: 1,
-            rect:
-                const StrokeStartRect(minX: 0, maxX: 0.3, minY: 0, maxY: 0.4),
+            rect: const StrokeStartRect(
+              minX: 0.00,
+              maxX: 0.30,
+              minY: 0.00,
+              maxY: 0.40,
+            ),
           ),
           WaypointSection(
             number: 2,
             rect: const StrokeStartRect(
-                minX: 0, maxX: 0.3, minY: 0.4, maxY: 1),
+              minX: 0.00,
+              maxX: 0.30,
+              minY: 0.40,
+              maxY: 0.80,
+            ),
           ),
           WaypointSection(
             number: 3,
             rect: const StrokeStartRect(
-                minX: 0.3, maxX: 0.68, minY: 0, maxY: 0.4),
+              minX: 0.00,
+              maxX: 0.30,
+              minY: 0.80,
+              maxY: 1.00,
+            ),
           ),
           WaypointSection(
             number: 4,
             rect: const StrokeStartRect(
-                minX: 0.3, maxX: 0.68, minY: 0.4, maxY: 1),
+              minX: 0.30,
+              maxX: 0.68,
+              minY: 0.00,
+              maxY: 0.40,
+            ),
           ),
           WaypointSection(
             number: 5,
             rect: const StrokeStartRect(
-                minX: 0.68, maxX: 1, minY: 0, maxY: 0.4),
+              minX: 0.30,
+              maxX: 0.68,
+              minY: 0.40,
+              maxY: 0.80,
+            ),
           ),
           WaypointSection(
             number: 6,
             rect: const StrokeStartRect(
-                minX: 0.68, maxX: 1, minY: 0.4, maxY: 1),
+              minX: 0.30,
+              maxX: 0.68,
+              minY: 0.80,
+              maxY: 1.00,
+            ),
+          ),
+          WaypointSection(
+            number: 7,
+            rect: const StrokeStartRect(
+              minX: 0.68,
+              maxX: 1.00,
+              minY: 0.00,
+              maxY: 0.40,
+            ),
+          ),
+          WaypointSection(
+            number: 8,
+            rect: const StrokeStartRect(
+              minX: 0.68,
+              maxX: 1.00,
+              minY: 0.40,
+              maxY: 0.80,
+            ),
+          ),
+          WaypointSection(
+            number: 9,
+            rect: const StrokeStartRect(
+              minX: 0.68,
+              maxX: 1.00,
+              minY: 0.80,
+              maxY: 1.00,
+            ),
           ),
         ]);
       },
@@ -1308,40 +1993,85 @@ void main() {
       expect(letterFormationRegistry['u']!.strokes[0].waypoints, isEmpty);
     });
 
-    test(
-      'u: sections are 5 bespoke rectangles (down the left, round the '
-      'bottom, up the right)',
-      () {
-        final sections = letterFormationRegistry['u']!.strokes[0].sections;
-        expect(sections, [
-          WaypointSection(
-            number: 1,
-            rect:
-                const StrokeStartRect(minX: 0, maxX: 0.3, minY: 0, maxY: 0.5),
+    test('u: sections are 8 bespoke rectangles (down the left, round the '
+        'bottom, up the right), with the final upstroke split into a body '
+        'and a top cap so it must reach the true top', () {
+      final sections = letterFormationRegistry['u']!.strokes[0].sections;
+      expect(sections, [
+        WaypointSection(
+          number: 1,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.30,
+            minY: 0.00,
+            maxY: 0.20,
           ),
-          WaypointSection(
-            number: 2,
-            rect: const StrokeStartRect(
-                minX: 0, maxX: 0.3, minY: 0.5, maxY: 1),
+        ),
+        WaypointSection(
+          number: 2,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.30,
+            minY: 0.20,
+            maxY: 0.50,
           ),
-          WaypointSection(
-            number: 3,
-            rect: const StrokeStartRect(
-                minX: 0.3, maxX: 0.68, minY: 0.5, maxY: 1),
+        ),
+        WaypointSection(
+          number: 3,
+          rect: const StrokeStartRect(
+            minX: 0.00,
+            maxX: 0.30,
+            minY: 0.50,
+            maxY: 1.00,
           ),
-          WaypointSection(
-            number: 4,
-            rect: const StrokeStartRect(
-                minX: 0.68, maxX: 1, minY: 0.5, maxY: 1),
+        ),
+        WaypointSection(
+          number: 4,
+          rect: const StrokeStartRect(
+            minX: 0.30,
+            maxX: 0.73,
+            minY: 0.50,
+            maxY: 1.00,
           ),
-          WaypointSection(
-            number: 5,
-            rect: const StrokeStartRect(
-                minX: 0.68, maxX: 1, minY: 0, maxY: 0.5),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.50,
+            maxY: 0.83,
           ),
-        ]);
-      },
-    );
+        ),
+        WaypointSection(
+          number: 6,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.20,
+            maxY: 0.50,
+          ),
+        ),
+        WaypointSection(
+          number: 7,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.20,
+          ),
+        ),
+        WaypointSection(
+          number: 8,
+          rect: const StrokeStartRect(
+            minX: 0.73,
+            maxX: 1.00,
+            minY: 0.83,
+            maxY: 1.00,
+          ),
+        ),
+      ]);
+    });
 
     // -------------------------------------------------------------------------
     // h — two section-scored strokes (stem + arch)
@@ -1366,8 +2096,7 @@ void main() {
       expect(letterFormationRegistry['h']!.strokes[0].waypoints, isEmpty);
     });
 
-    test(
-        'h: stem sections are 2 bespoke rectangles (top → bottom), with a '
+    test('h: stem sections are 2 bespoke rectangles (top → bottom), with a '
         'short bottom row forcing the stem to reach the baseline', () {
       final sections = letterFormationRegistry['h']!.strokes[0].sections;
       expect(sections, [
@@ -1400,8 +2129,7 @@ void main() {
       expect(letterFormationRegistry['h']!.strokes[1].waypoints, isEmpty);
     });
 
-    test(
-        'h: arch sections are 3 bespoke rectangles numbered 3-5 (peak, right '
+    test('h: arch sections are 3 bespoke rectangles numbered 3-5 (peak, right '
         'leg, then a short bottom row forcing the right leg to reach the '
         'baseline)', () {
       final sections = letterFormationRegistry['h']!.strokes[1].sections;
@@ -1455,30 +2183,45 @@ void main() {
       expect(letterFormationRegistry['k']!.strokes[1].waypoints, isEmpty);
     });
 
-    test(
-        'k: stroke 2 sections are 4 bespoke rectangles numbered 4-7 (in from '
+    test('k: stroke 2 sections are 4 bespoke rectangles numbered 4-7 (in from '
         'the upper right to the stem, then out to the lower right)', () {
       final sections = letterFormationRegistry['k']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.62, maxX: 1, minY: 0.35, maxY: 0.68),
+            minX: 0.62,
+            maxX: 1.00,
+            minY: 0.35,
+            maxY: 0.68,
+          ),
         ),
         WaypointSection(
           number: 5,
           rect: const StrokeStartRect(
-              minX: 0.28, maxX: 0.62, minY: 0.35, maxY: 0.68),
+            minX: 0.25,
+            maxX: 0.62,
+            minY: 0.35,
+            maxY: 0.68,
+          ),
         ),
         WaypointSection(
           number: 6,
           rect: const StrokeStartRect(
-              minX: 0.28, maxX: 0.62, minY: 0.68, maxY: 1),
+            minX: 0.25,
+            maxX: 0.62,
+            minY: 0.68,
+            maxY: 1.00,
+          ),
         ),
         WaypointSection(
           number: 7,
           rect: const StrokeStartRect(
-              minX: 0.62, maxX: 1, minY: 0.68, maxY: 1),
+            minX: 0.62,
+            maxX: 1.00,
+            minY: 0.68,
+            maxY: 1.00,
+          ),
         ),
       ]);
     });
@@ -1502,20 +2245,28 @@ void main() {
       expect(letterFormationRegistry['r']!.strokes[1].waypoints, isEmpty);
     });
 
-    test(
-        'r: stroke 2 sections are 2 bespoke rectangles numbered 3-4 (the '
-        'shoulder, up out of the stem and over to the right)', () {
+    test('r: stroke 2 sections are 2 bespoke rectangles numbered 4-5 (the '
+        'shoulder, up out of the stem and over to the right), renumbered '
+        'after the stem gained a bottom cap', () {
       final sections = letterFormationRegistry['r']!.strokes[1].sections;
       expect(sections, [
         WaypointSection(
-          number: 3,
-          rect: const StrokeStartRect(
-              minX: 0.32, maxX: 0.68, minY: 0, maxY: 0.4),
-        ),
-        WaypointSection(
           number: 4,
           rect: const StrokeStartRect(
-              minX: 0.68, maxX: 1, minY: 0, maxY: 0.4),
+            minX: 0.32,
+            maxX: 0.80,
+            minY: 0.00,
+            maxY: 0.40,
+          ),
+        ),
+        WaypointSection(
+          number: 5,
+          rect: const StrokeStartRect(
+            minX: 0.80,
+            maxX: 1.00,
+            minY: 0.00,
+            maxY: 0.40,
+          ),
         ),
       ]);
     });
