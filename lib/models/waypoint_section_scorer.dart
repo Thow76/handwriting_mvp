@@ -8,9 +8,8 @@ import 'stroke.dart';
 /// Scores whether the learner's pen travelled through the letter's expected
 /// [WaypointSection] rectangles in the correct sequential order.
 ///
-/// This is the section-based counterpart to [CompoundStrokeScorer] (which uses
-/// the shared 3×3 [WaypointRegion] grid). It evaluates the bespoke per-letter
-/// rectangles introduced by the `WaypointSection` migration.
+/// It evaluates the bespoke per-letter rectangles introduced by the
+/// `WaypointSection` migration.
 ///
 /// ## One path per letter
 ///

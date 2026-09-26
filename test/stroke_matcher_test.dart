@@ -3,9 +3,9 @@ import 'dart:ui' show Offset, Rect;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_data.dart';
 import 'package:handwriting_mvp/models/stroke.dart';
-import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_matcher.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
+import 'package:handwriting_mvp/models/waypoint_section.dart';
 
 void main() {
   // matchStrokes pairs by stroke order (index), not spatial position, so the
@@ -77,11 +77,11 @@ void main() {
       final expected = [
         ExpectedStroke(
           startRect: someRect,
-          waypoints: const [WaypointRegion.topLeft],
+          sections: [WaypointSection(number: 1, rect: someRect)],
         ),
         ExpectedStroke(
           startRect: someRect,
-          waypoints: const [WaypointRegion.bottomRight],
+          sections: [WaypointSection(number: 1, rect: someRect)],
         ),
       ];
       final observed = [

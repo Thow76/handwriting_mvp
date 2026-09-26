@@ -1,89 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/letter_formation_data.dart';
-import 'package:handwriting_mvp/models/stroke_formation_enums.dart';
 import 'package:handwriting_mvp/models/stroke_start_rect.dart';
 import 'package:handwriting_mvp/models/waypoint_section.dart';
 
 void main() {
-  group('WaypointRegion serialisation', () {
-    const cases = {
-      'topLeft': WaypointRegion.topLeft,
-      'top': WaypointRegion.top,
-      'topRight': WaypointRegion.topRight,
-      'left': WaypointRegion.left,
-      'middle': WaypointRegion.middle,
-      'right': WaypointRegion.right,
-      'bottomLeft': WaypointRegion.bottomLeft,
-      'bottom': WaypointRegion.bottom,
-      'bottomRight': WaypointRegion.bottomRight,
-    };
-
-    for (final entry in cases.entries) {
-      test('${entry.key} round-trips through .name / byName()', () {
-        expect(entry.value.name, entry.key);
-        expect(WaypointRegion.values.byName(entry.key), entry.value);
-      });
-    }
-
-    test('byName() throws ArgumentError for unknown string', () {
-      expect(
-        () => WaypointRegion.values.byName('unknown'),
-        throwsA(isA<ArgumentError>()),
-      );
-    });
-  });
-
   // ---------------------------------------------------------------------------
   // ExpectedStroke
   // ---------------------------------------------------------------------------
 
   group('ExpectedStroke', () {
-    test('can be created with non-empty waypoints', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 0.0,
-          maxY: 1.0 / 3.0,
-        ),
-        waypoints: [
-          WaypointRegion.top,
-          WaypointRegion.bottomLeft,
-          WaypointRegion.top,
-        ],
-      );
-      expect(stroke.waypoints, [
-        WaypointRegion.top,
-        WaypointRegion.bottomLeft,
-        WaypointRegion.top,
-      ]);
-    });
-
-    test('defaults waypoints to empty list', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 0.0,
-          maxY: 1.0 / 3.0,
-        ),
-      );
-      expect(stroke.waypoints, isEmpty);
-    });
-
-    test('allows explicitly empty waypoints', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 1.0 / 3.0,
-          maxY: 2.0 / 3.0,
-        ),
-        waypoints: [],
-      );
-      expect(stroke.waypoints, isEmpty);
-    });
-
     test('defaults sections to empty list', () {
       final stroke = ExpectedStroke(
         startRect: const StrokeStartRect(
@@ -128,40 +53,6 @@ void main() {
       expect(stroke.sections.length, 2);
       expect(stroke.sections[0].number, 1);
       expect(stroke.sections[1].number, 2);
-    });
-
-    test('can have both waypoints and sections simultaneously', () {
-      final stroke = ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.0,
-          maxX: 1.0,
-          minY: 0.0,
-          maxY: 1.0 / 3.0,
-        ),
-        waypoints: [WaypointRegion.top, WaypointRegion.bottom],
-        sections: [
-          WaypointSection(
-            number: 1,
-            rect: const StrokeStartRect(
-              minX: 0.0,
-              maxX: 1.0,
-              minY: 0.0,
-              maxY: 0.5,
-            ),
-          ),
-          WaypointSection(
-            number: 2,
-            rect: const StrokeStartRect(
-              minX: 0.0,
-              maxX: 1.0,
-              minY: 0.5,
-              maxY: 1.0,
-            ),
-          ),
-        ],
-      );
-      expect(stroke.waypoints, [WaypointRegion.top, WaypointRegion.bottom]);
-      expect(stroke.sections.length, 2);
     });
   });
 

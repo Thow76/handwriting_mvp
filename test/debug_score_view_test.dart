@@ -62,7 +62,7 @@ void main() {
       await tester.pumpWidget(_app(const DebugScoreView(result: result)));
 
       expect(find.textContaining('StrokeStartScorer — (not applicable)'), findsOneWidget);
-      expect(find.textContaining('CompoundStrokeScorer — (not applicable)'), findsOneWidget);
+      expect(find.textContaining('WaypointSectionScorer — (not applicable)'), findsOneWidget);
       expect(find.textContaining('StrokeBreakCounter — (not applicable)'), findsOneWidget);
     });
 
@@ -81,7 +81,7 @@ void main() {
       await tester.pumpWidget(_app(DebugScoreView(result: result)));
 
       expect(find.textContaining('StrokeStartScorer — 80%'), findsOneWidget);
-      expect(find.textContaining('CompoundStrokeScorer — (not applicable)'), findsOneWidget);
+      expect(find.textContaining('WaypointSectionScorer — (not applicable)'), findsOneWidget);
       expect(find.textContaining('StrokeBreakCounter — (not applicable)'), findsOneWidget);
     });
   });
@@ -171,7 +171,7 @@ void main() {
       );
     });
 
-    testWidgets('renders CompoundStrokeScorer panel with both columns',
+    testWidgets('renders WaypointSectionScorer panel with both columns',
         (tester) async {
       final result = ScoreResult(
         coverage: 1.0,
@@ -186,21 +186,24 @@ void main() {
               expected: 'top → bottom',
               observed: 'top → bottom',
               score: 1.0,
-              note: 'Waypoints matched correctly.',
+              note: 'Section sequence matched correctly.',
             ),
           ],
-          summary: 'All waypoints matched.',
+          summary: 'The letter path followed the correct section sequence.',
         ),
       );
       await tester.pumpWidget(_app(DebugScoreView(result: result)));
 
-      expect(find.textContaining('CompoundStrokeScorer — 100%'), findsOneWidget);
-      expect(find.textContaining('All waypoints matched.'), findsOneWidget);
+      expect(find.textContaining('WaypointSectionScorer — 100%'), findsOneWidget);
+      expect(
+        find.textContaining('The letter path followed the correct section sequence.'),
+        findsOneWidget,
+      );
     });
 
     testWidgets(
-        'labels the path-scoring panel WaypointSectionScorer for a '
-        'sections-based letter', (tester) async {
+        'labels the path-scoring panel WaypointSectionScorer regardless of '
+        'the letter supplied', (tester) async {
       final result = ScoreResult(
         coverage: 1.0,
         precision: 1.0,
@@ -218,31 +221,6 @@ void main() {
 
       expect(find.textContaining('WaypointSectionScorer — 100%'), findsOneWidget);
       expect(find.textContaining('CompoundStrokeScorer'), findsNothing);
-    });
-
-    testWidgets(
-        'keeps the CompoundStrokeScorer label for a letter with no section '
-        'data (unknown to the registry)', (tester) async {
-      final result = ScoreResult(
-        coverage: 1.0,
-        precision: 1.0,
-        placement: 1.0,
-        efficiency: 1.0,
-        compoundStroke: const FormationScore(
-          overallScore: 1.0,
-          observations: [],
-          summary: 'All waypoints matched.',
-        ),
-      );
-      // Every authored letter has now been migrated to sections (see
-      // letter_formation_registry.dart), so an unauthored letter key is used
-      // here to exercise the CompoundStrokeScorer fallback label.
-      await tester.pumpWidget(
-        _app(DebugScoreView(result: result, letter: 'zz')),
-      );
-
-      expect(find.textContaining('CompoundStrokeScorer — 100%'), findsOneWidget);
-      expect(find.textContaining('WaypointSectionScorer'), findsNothing);
     });
 
     testWidgets('renders StrokeBreakCounter panel with both columns',
@@ -305,7 +283,7 @@ void main() {
   group('DebugScoreView — skipped strokes', () {
     testWidgets('renders skipped compound stroke with em-dash in score column',
         (tester) async {
-      const skippedNote = 'skipped — handled by CompoundStrokeScorer';
+      const skippedNote = 'skipped — handled by WaypointSectionScorer';
       final result = ScoreResult(
         coverage: 1.0,
         precision: 1.0,
