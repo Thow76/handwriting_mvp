@@ -22,14 +22,26 @@ Decisions taken for the MVP (Andrew can override by editing this file):
   "Overall" = the mean of the scores permitted at the current level.
 
 ## Phase 0 — in flight (not for the build routine)
-- [ ] 0.1 Transcribe the 24 approved zone designs into the registry (Andrew's own routine).
-- [ ] 0.2 `g` registry tidy: remove the second ExpectedStroke that has a startRect but no
-      sections (design is one stroke). Do this AFTER 0.1 has merged.
+- [x] 0.1 Transcribe the 24 approved zone designs into the registry (Andrew's own routine).
 
 ## Phase 1 — clean-up
-- [~] 1.1 Remove legacy waypoint scoring (compound_stroke_scorer, match_waypoints, the
+- [x] 1.1 Remove legacy waypoint scoring (compound_stroke_scorer, match_waypoints, the
       `waypoints` field, the scorer switch in ScoreIntegrator, the scorer-name switch in
       debug_score_view) and the four old scripts. Registry file: zero diff.
+- [ ] 1.2 `g` registry tidy: remove the second ExpectedStroke that has a startRect but no
+      sections (design is one stroke). Do this AFTER 0.1 has merged. Registry may change
+      ONLY in g's entry.
+
+## Visual tokens (apply from 3.1 onward)
+- Font: Manrope (weights 500/700/800) for all UI text, bundled in `fonts/` and declared
+  in `pubspec.yaml`. Andika stays for every letter the learner sees.
+- Colours: ground `#e8f5f2`, surface `#ffffff`, border `#c6e3dd`, ink `#0f2e2b`,
+  muted `#5b7773`, practice accent `#0f8f84`, good `#0f8f84`, okay `#e39b2b`
+  (text `#a86f12`), more-practice `#d9365a`, guidelines `#bfddd7` dashed with baseline
+  `#86b5ad`, letter ghost `#d9ece8`.
+- Put these in `lib/theme/app_theme.dart` as a `ThemeData` + a small `AppColors` class
+  in step 3.1; every later screen uses them and nothing hard-codes a colour.
+- Shapes: letter card 24px radius; buttons 58px tall, 16px radius; progress bar 10px.
 
 ## Phase 2 — scoring levels (independent of Phase 3; can run in parallel)
 - [ ] 2.1 `ScoringLevel` enum {shapeOnly, shapeAndStart, shapeStartAndPath, full} in
@@ -45,6 +57,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       home, levelSelect, guide, feedback, sessionComplete. main.dart starts at Home.
       Placeholder screens (title text only) for each route so the app runs end to end.
       Dev link on Home opens the existing DrawingCanvas. Tests for PracticeSession.
+      Also add fonts/Manrope-*.ttf (OFL) and the pubspec entry.
 - [ ] 3.2 Home screen: "Alphabet a–z" card; "Choose your own" card with a 7-column a–z
       multi-select grid and a Practice button (disabled when nothing is selected);
       "By letter shape" card with three fixed groups (sits on the line: a c e m n o r s u
