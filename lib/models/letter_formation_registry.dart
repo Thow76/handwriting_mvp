@@ -42,7 +42,6 @@ import 'waypoint_section.dart';
 /// | b      | 1      | 0.00–0.30  | 0.40–0.60  | Mid-left bowl at x-height                        |
 /// | p      | 1      | 0.00–0.30  | 0.00–0.15  | Bowl starts at top of bounds (descender bounds)  |
 /// | g      | 0      | 0.65–0.85  | 0.00–0.15  | Top-right of bowl, top edge at tight-bounds top  |
-/// | g      | 1      | 0.74–0.99  | 0.02–0.17  | Top-right shoulder, widened toward right edge    |
 /// | q      | 0      | 0.68–0.95  | 0.00–0.15  | Oval start — tighter than standard oval group    |
 /// | q      | 1      | 0.87–1.00  | 0.00–0.15  | Far-right descender at top of bounds             |
 /// | r      | 1      | 0.00–0.30  | 0.40–0.60  | Arch mid-left at x-height (same zone as h[1])    |
@@ -75,11 +74,14 @@ import 'waypoint_section.dart';
 /// separated (multi-stroke) formations are both pedagogically correct; the
 /// scoring floor is 1, not the canonical count.
 ///
-/// For b, d, g, p, q the strokes list contains two [ExpectedStroke]s
+/// For b, d, p, q the strokes list contains two [ExpectedStroke]s
 /// representing the canonical separated form (stem + bowl/oval). This gives
 /// the scorers the correct structure without requiring a lift.
 /// `strokes.length` is the canonical count; `minRequiredStrokes` is the
-/// scoring floor — these are intentionally different for these five letters.
+/// scoring floor — these are intentionally different for these four letters.
+/// `g` is authored as a single [ExpectedStroke] whose `sections` cover the
+/// whole letter (bowl, up the right side, descender, hook) — its design is
+/// one continuous stroke, not a separated stem + bowl pair.
 ///
 /// All of a, b, d, g, p, q, y are section-scored — see
 /// `docs/zone_review/REVIEW.md` for the approved zone designs.
@@ -91,8 +93,7 @@ import 'waypoint_section.dart';
 /// | b      | 2      | clockwise       | Right-opening bowl |
 /// | d      | 1      | topToBottom     | Vertical stem (written first) |
 /// | d      | 2      | anticlockwise   | Left-opening oval (written second) |
-/// | g      | 1      | anticlockwise   | Left-opening oval (section-scored) |
-/// | g      | 2      | topToBottom     | Descending stem with bottom-left hook (section-scored; see `docs/waypoint_section_definitions.md`) |
+/// | g      | 1      | anticlockwise   | Left-opening oval into descending stem with bottom-left hook (single stroke, section-scored; see `docs/waypoint_section_definitions.md`) |
 /// | p      | 1      | topToBottom     | Vertical stem |
 /// | p      | 2      | clockwise       | Right-opening bowl |
 /// | q      | 1      | anticlockwise   | Left-opening oval |
@@ -1126,14 +1127,6 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
             ),
           ),
         ],
-      ),
-      ExpectedStroke(
-        startRect: const StrokeStartRect(
-          minX: 0.74,
-          maxX: 0.99,
-          minY: 0.02,
-          maxY: 0.17,
-        ),
       ),
     ],
   ),
