@@ -19,9 +19,10 @@ import 'package:handwriting_mvp/models/template_rasterizer.dart';
 /// The traces are positioned where each stroke actually sits, so these tests
 /// also guard against any reintroduction of spatial (nearest-centroid)
 /// matching: under that scheme the stem-first letters (f, t, i, b, d, h, k)
-/// mis-pair to `[1, 0]`, and the remaining letters (j, x, g, p, q) only paired
+/// mis-pair to `[1, 0]`, and the remaining letters (j, x, p, q) only paired
 /// correctly by coincidence — all are pinned here so a future pairing
-/// regression is caught.
+/// regression is caught. `g` is authored as a single stroke and so has no
+/// pairing to test here.
 void main() {
   const fontFamily = 'Andika';
   const fontSize = 120.0;
@@ -88,11 +89,6 @@ void main() {
     'x': [
       [[0.05, 0.05], [0.50, 0.50], [0.95, 0.95]],
       [[0.95, 0.05], [0.50, 0.50], [0.05, 0.95]],
-    ],
-    // left-opening oval then descending tail
-    'g': [
-      [[0.85, 0.10], [0.40, 0.10], [0.40, 0.55], [0.85, 0.55]],
-      [[0.85, 0.10], [0.85, 0.70], [0.40, 0.98]],
     ],
     // stem (top → descender) then right-opening bowl
     'p': [

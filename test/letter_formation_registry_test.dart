@@ -412,11 +412,13 @@ void main() {
   // separated (multi-stroke) formations are both correct; the scoring floor
   // is 1, not the canonical stroke count.
   //
-  // For b, d, g, p, q the strokes list has two entries (canonical separated
+  // For b, d, p, q the strokes list has two entries (canonical separated
   // form) so the scorers have the right structure while minRequiredStrokes
   // stays at 1.  The strokes.length == 2 assertions below are the regression
   // guard for this architectural distinction from the scope's revised
-  // stroke-count treatment.
+  // stroke-count treatment. g is authored as a single ExpectedStroke whose
+  // sections cover the whole letter path (see the single-stroke design note
+  // below).
   // ---------------------------------------------------------------------------
 
   const optionalLiftLetters = ['a', 'b', 'd', 'g', 'p', 'q', 'y'];
@@ -439,17 +441,26 @@ void main() {
       );
     }
 
-    // Canonical-count guard: b, d, g, p, q must have exactly two strokes in
+    // Canonical-count guard: b, d, p, q must have exactly two strokes in
     // their strokes list even though minRequiredStrokes == 1.  This is the
     // architectural distinction: strokes.length is the canonical count;
     // minRequiredStrokes is the scoring floor.
-    for (final letter in ['b', 'd', 'g', 'p', 'q']) {
+    for (final letter in ['b', 'd', 'p', 'q']) {
       test('$letter: strokes.length == 2 (canonical-count guard)', () {
         final data = letterFormationRegistry[letter]!;
         expect(data.strokes, hasLength(2));
         expect(data.canonicalStrokeCount, 2);
       });
     }
+
+    // g is authored as a single ExpectedStroke whose sections cover the
+    // whole letter path; unlike b, d, p, q it has no second, separated-form
+    // stroke entry.
+    test('g: strokes.length == 1 (single-stroke design)', () {
+      final data = letterFormationRegistry['g']!;
+      expect(data.strokes, hasLength(1));
+      expect(data.canonicalStrokeCount, 1);
+    });
 
     // a: single oval stroke with sections (migrated from waypoints).
     test('a: has exactly one stroke', () {
@@ -930,9 +941,7 @@ void main() {
 
     // g: single continuous stroke reading (bowl anticlockwise, up the right
     // side, down the descender, hook left) — all 8 sections are numbered on
-    // the first ExpectedStroke (stroke 0); the second ExpectedStroke exists
-    // only to give the scorer the canonical separated (stem + bowl) start
-    // rect and carries no sections of its own. See
+    // the letter's one and only ExpectedStroke (stroke 0). See
     // docs/zone_review/REVIEW.md for the approved design.
     test('g: bowl+descender stroke has non-empty sections', () {
       expect(letterFormationRegistry['g']!.strokes[0].sections, isNotEmpty);
@@ -1020,10 +1029,6 @@ void main() {
         ]);
       },
     );
-
-    test('g: second stroke has no sections (all zones are on the first)', () {
-      expect(letterFormationRegistry['g']!.strokes[1].sections, isEmpty);
-    });
   });
 
   group('letterFormationRegistry — top-to-bottom stem section migration', () {
@@ -2397,11 +2402,12 @@ void main() {
       );
     });
 
-    // ── Confirmed second strokes (b[1], p[1], g[1], q[1]) ───────────────────
+    // ── Confirmed second strokes (b[1], p[1], q[1]) ──────────────────────────
     // Design-review-confirmed rectangles (see issue #87). These replaced the
     // PR #86 placeholders (stem-first / upper-right defaults) once the
     // pedagogical start zones for the bowl/link/tail second strokes were
-    // agreed.
+    // agreed. (g has no second stroke — see the single-stroke design note
+    // above.)
 
     test('b[1]: mid-left bowl at x-height (0.00–0.30, 0.40–0.60)', () {
       expect(
@@ -2416,16 +2422,6 @@ void main() {
         const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.00, maxY: 0.15),
       );
     });
-
-    test(
-      'g[1]: tail start at top-right shoulder, widened right (0.74–0.99, 0.02–0.17)',
-      () {
-        expect(
-          rect('g', 1),
-          const StrokeStartRect(minX: 0.74, maxX: 0.99, minY: 0.02, maxY: 0.17),
-        );
-      },
-    );
 
     test(
       'q[1]: far-right descender at top of bounds (0.87–1.00, 0.00–0.15)',

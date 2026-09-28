@@ -1320,13 +1320,12 @@ void main() {
     // -------------------------------------------------------------------------
     // g — section-based scoring integration tests
     // -------------------------------------------------------------------------
-    // g uses WaypointSectionScorer. All 8 sections are numbered on the first
+    // g uses WaypointSectionScorer. All 8 sections are numbered on g's one
     // ExpectedStroke (the single continuous letter reading: bowl
     // anticlockwise, up the right side, down the descender, hook left) — see
-    // docs/zone_review/REVIEW.md for the approved design. The second
-    // ExpectedStroke carries no sections; the scorer concatenates whatever
-    // strokes are observed, so a two-stroke (lifted) drawing scores the same
-    // as one continuous stroke.
+    // docs/zone_review/REVIEW.md for the approved design. The scorer
+    // concatenates whatever strokes are observed, so a two-stroke (lifted)
+    // drawing scores the same as one continuous stroke.
     // In a 90×90 grid:
     //   section 1 (bowl top-right):     x[35.1, 64.8) y[0, 29.7)
     //   section 2 (bowl top-left):      x[0, 35.1) y[0, 29.7)
