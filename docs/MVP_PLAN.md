@@ -28,7 +28,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
 - [x] 1.1 Remove legacy waypoint scoring (compound_stroke_scorer, match_waypoints, the
       `waypoints` field, the scorer switch in ScoreIntegrator, the scorer-name switch in
       debug_score_view) and the four old scripts. Registry file: zero diff.
-- [~] 1.2 `g` registry tidy: remove the second ExpectedStroke that has a startRect but no
+- [x] 1.2 `g` registry tidy: remove the second ExpectedStroke that has a startRect but no
       sections (design is one stroke). Do this AFTER 0.1 has merged. Registry may change
       ONLY in g's entry.
 
