@@ -50,6 +50,21 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       Unit tests for the helper. No UI change.
 - [ ] 2.2 `ScoreDisplay` takes an optional `ScoringLevel` and hides rows the level does not
       permit. Default (null) = show everything, so the dev screen is unchanged. Widget test.
+- [ ] 2.3 Widen the second-stroke `startRect` of the optional-lift letters so a learner who
+      lifts the pen is not marked down on Start (issue #199; background: project doc
+      `claude/lift_start_rect_issue_2026-09-29.md`). Change ONLY the second stroke's startRect
+      of these five entries, x unchanged: b, d, h, r → y 0.15–0.70; k → y 0.15–0.60.
+      No scorer change. Update test/letter_formation_registry_test.dart. Render overlay PNGs
+      for the five letters showing sections AND the new startRects (scripts/glyph_sections.py
+      draws sections only today — add a small `--start-rects` option) to build/start_rects/
+      and attach them to the PR — Andrew eyeballs them before merging. Must merge before 3.4.
+- [ ] BLOCKED (Andrew) 2.4 h, k, r `minRequiredStrokes`: keep 2 (lift mandatory, as the
+      registry says) or 1 (optional lift, as docs/stroke_formation_scope.md says)?
+      Answer: ___ . If 1: change the three values + tests only.
+- [ ] BLOCKED (Andrew) 2.5 d formation: stem-first only (as stored) or also accept oval-first
+      ("c, then up and down")? Answer: ___ . If both: needs a design pass on d's sections —
+      becomes a new plan step, not a one-liner.
+      The build routine skips BLOCKED lines until the Answer is filled in and moves on.
 
 ## Phase 3 — Practice flow screens
 - [ ] 3.1 Session model + navigation shell. `PracticeSession` {List<String> letters,
