@@ -48,7 +48,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       lib/models/scoring_level.dart, with a pure helper that says which of the seven scores
       are visible at each level: L1 bitmap four; L2 + start; L3 + path; L4 + strokes.
       Unit tests for the helper. No UI change.
-- [ ] 2.2 `ScoreDisplay` takes an optional `ScoringLevel` and hides rows the level does not
+- [~] 2.2 `ScoreDisplay` takes an optional `ScoringLevel` and hides rows the level does not
       permit. Default (null) = show everything, so the dev screen is unchanged. Widget test.
 - [ ] 2.3 Widen the second-stroke `startRect` of the optional-lift letters so a learner who
       lifts the pen is not marked down on Start (issue #199; background: project doc

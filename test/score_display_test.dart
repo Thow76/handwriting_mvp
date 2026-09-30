@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/formation_score.dart';
 import 'package:handwriting_mvp/models/score_result.dart';
+import 'package:handwriting_mvp/models/scoring_level.dart';
 import 'package:handwriting_mvp/widgets/score_display.dart';
 
 /// Wraps a widget in a MaterialApp for testing.
@@ -212,5 +213,26 @@ void main() {
 
       expect(find.text('Strokes'), findsOneWidget);
     });
+  });
+
+  group('ScoreDisplay — scoring level', () {
+    const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
+    const rows = ['Coverage', 'Precision', 'Placement', 'Efficiency', 'Start', 'Path', 'Strokes'];
+
+    Future<void> check(WidgetTester tester, ScoringLevel? level, Set<String> shown) async {
+      await tester.pumpWidget(_app(ScoreDisplay(result: result, level: level)));
+      for (final row in rows) {
+        expect(find.text(row), shown.contains(row) ? findsOneWidget : findsNothing, reason: row);
+      }
+    }
+
+    testWidgets('null level shows every row', (tester) => check(tester, null, rows.toSet()));
+    testWidgets('shapeOnly shows the four bitmap rows', (tester) =>
+        check(tester, ScoringLevel.shapeOnly, {'Coverage', 'Precision', 'Placement', 'Efficiency'}));
+    testWidgets('shapeAndStart adds Start', (tester) => check(tester, ScoringLevel.shapeAndStart,
+        {'Coverage', 'Precision', 'Placement', 'Efficiency', 'Start'}));
+    testWidgets('shapeStartAndPath adds Path', (tester) => check(tester, ScoringLevel.shapeStartAndPath,
+        {'Coverage', 'Precision', 'Placement', 'Efficiency', 'Start', 'Path'}));
+    testWidgets('full shows every row', (tester) => check(tester, ScoringLevel.full, rows.toSet()));
   });
 }
