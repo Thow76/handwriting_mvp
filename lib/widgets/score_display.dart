@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/score_result.dart';
+import '../models/scoring_level.dart';
 
 /// Displays coverage and precision scores for the current handwriting attempt.
 ///
@@ -16,11 +17,25 @@ class ScoreDisplay extends StatelessWidget {
   /// "Strokes" row is hidden; when `null` or greater than 1 it is shown.
   final int? minRequiredStrokes;
 
-  const ScoreDisplay({super.key, this.result, this.minRequiredStrokes});
+  /// Which scores to show. `null` (the default) shows everything, so the
+  /// developer screen is unchanged. Otherwise rows the level does not permit
+  /// are hidden (see [visibleScores]).
+  final ScoringLevel? level;
+
+  const ScoreDisplay({
+    super.key,
+    this.result,
+    this.minRequiredStrokes,
+    this.level,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final showStrokes = minRequiredStrokes != 1;
+    bool visible(ScoreKind kind) =>
+        level == null || isScoreVisible(level!, kind);
+    final showStrokes = minRequiredStrokes != 1 && visible(ScoreKind.strokes);
+    final showStart = visible(ScoreKind.start);
+    final showPath = visible(ScoreKind.path);
     return Opacity(
       opacity: result == null ? 0.0 : 1.0,
       child: Column(
@@ -35,15 +50,27 @@ class ScoreDisplay extends StatelessWidget {
               _ScoreItem(label: 'Efficiency', value: result?.efficiency ?? 0),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _FormationScoreItem(label: 'Start', value: result?.strokeStart?.overallScore),
-              _FormationScoreItem(label: 'Path', value: result?.compoundStroke?.overallScore),
-              if (showStrokes)
-                _FormationScoreItem(label: 'Strokes', value: result?.strokeBreak?.overallScore),
-            ],
-          ),
+          if (showStart || showPath || showStrokes)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (showStart)
+                  _FormationScoreItem(
+                    label: 'Start',
+                    value: result?.strokeStart?.overallScore,
+                  ),
+                if (showPath)
+                  _FormationScoreItem(
+                    label: 'Path',
+                    value: result?.compoundStroke?.overallScore,
+                  ),
+                if (showStrokes)
+                  _FormationScoreItem(
+                    label: 'Strokes',
+                    value: result?.strokeBreak?.overallScore,
+                  ),
+              ],
+            ),
         ],
       ),
     );
@@ -63,7 +90,10 @@ class _ScoreItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(label, style: const TextStyle(fontSize: 14)),
-        Text('$percentage%', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text(
+          '$percentage%',
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -82,7 +112,10 @@ class _FormationScoreItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(label, style: const TextStyle(fontSize: 14)),
-        Text(display, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text(
+          display,
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
