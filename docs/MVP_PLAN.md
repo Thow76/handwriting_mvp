@@ -44,7 +44,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
 - Shapes: letter card 24px radius; buttons 58px tall, 16px radius; progress bar 10px.
 
 ## Phase 2 — scoring levels (independent of Phase 3; can run in parallel)
-- [~] 2.1 `ScoringLevel` enum {shapeOnly, shapeAndStart, shapeStartAndPath, full} in
+- [x] 2.1 `ScoringLevel` enum {shapeOnly, shapeAndStart, shapeStartAndPath, full} in
       lib/models/scoring_level.dart, with a pure helper that says which of the seven scores
       are visible at each level: L1 bitmap four; L2 + start; L3 + path; L4 + strokes.
       Unit tests for the helper. No UI change.
