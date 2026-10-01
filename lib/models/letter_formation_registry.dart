@@ -911,8 +911,8 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
-          minY: 0.40,
-          maxY: 0.60,
+          minY: 0.15,
+          maxY: 0.70,
         ),
         sections: [
           WaypointSection(
@@ -999,8 +999,8 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         startRect: const StrokeStartRect(
           minX: 0.70,
           maxX: 1.00,
-          minY: 0.40,
-          maxY: 0.60,
+          minY: 0.15,
+          maxY: 0.70,
         ),
         sections: [
           WaypointSection(
@@ -1350,8 +1350,8 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
-          minY: 0.40,
-          maxY: 0.60,
+          minY: 0.15,
+          maxY: 0.70,
         ),
         sections: [
           WaypointSection(
@@ -1857,8 +1857,8 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         startRect: const StrokeStartRect(
           minX: 0.00,
           maxX: 0.30,
-          minY: 0.40,
-          maxY: 0.60,
+          minY: 0.15,
+          maxY: 0.70,
         ),
         sections: [
           WaypointSection(
@@ -1936,8 +1936,8 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
         startRect: const StrokeStartRect(
           minX: 0.60,
           maxX: 0.90,
-          minY: 0.35,
-          maxY: 0.55,
+          minY: 0.15,
+          maxY: 0.60,
         ),
         sections: [
           WaypointSection(

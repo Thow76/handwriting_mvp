@@ -2286,10 +2286,10 @@ void main() {
       );
     });
 
-    test('d[1]: mid-right bowl (0.70–1.00, 0.40–0.60)', () {
+    test('d[1]: tall bowl zone (0.70–1.00, 0.15–0.70)', () {
       expect(
         rect('d', 1),
-        const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.40, maxY: 0.60),
+        const StrokeStartRect(minX: 0.70, maxX: 1.00, minY: 0.15, maxY: 0.70),
       );
     });
 
@@ -2324,24 +2324,24 @@ void main() {
       );
     });
 
-    test('h[1]: arch mid-left at x-height (0.00–0.30, 0.40–0.60)', () {
+    test('h[1]: arch left, widened for lifts (0.00–0.30, 0.15–0.70)', () {
       expect(
         rect('h', 1),
-        const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60),
+        const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.15, maxY: 0.70),
       );
     });
 
-    test('k[1]: kick mid-right above 2/3 junction (0.60–0.90, 0.35–0.55)', () {
+    test('k[1]: kick right, widened for lifts (0.60–0.90, 0.15–0.60)', () {
       expect(
         rect('k', 1),
-        const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.35, maxY: 0.55),
+        const StrokeStartRect(minX: 0.60, maxX: 0.90, minY: 0.15, maxY: 0.60),
       );
     });
 
-    test('r[1]: arch mid-left at x-height (0.00–0.30, 0.40–0.60)', () {
+    test('r[1]: arch left, widened for lifts (0.00–0.30, 0.15–0.70)', () {
       expect(
         rect('r', 1),
-        const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60),
+        const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.15, maxY: 0.70),
       );
     });
 
@@ -2409,10 +2409,10 @@ void main() {
     // agreed. (g has no second stroke — see the single-stroke design note
     // above.)
 
-    test('b[1]: mid-left bowl at x-height (0.00–0.30, 0.40–0.60)', () {
+    test('b[1]: left bowl, widened for lifts (0.00–0.30, 0.15–0.70)', () {
       expect(
         rect('b', 1),
-        const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.40, maxY: 0.60),
+        const StrokeStartRect(minX: 0.00, maxX: 0.30, minY: 0.15, maxY: 0.70),
       );
     });
 
