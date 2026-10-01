@@ -13,6 +13,7 @@ Usage:
     python3 scripts/glyph_sections.py g
     python3 scripts/glyph_sections.py g --spec proposals/g.json
     python3 scripts/glyph_sections.py --all
+    python3 scripts/glyph_sections.py b --start-rects   # also outline startRects
     python3 scripts/glyph_sections.py g --spec proposals/g.json --check-only
 
 Output goes to artifacts/<letter>_sections.png.
@@ -52,6 +53,7 @@ HATCH = (222, 42, 32, 90)
 LABEL_BG = (20, 20, 20, 235)
 LABEL_FG = (255, 255, 255, 255)
 WARN = (214, 124, 0, 255)
+START = (20, 90, 220, 255)   # start-rect outlines (--start-rects)
 
 
 # ---------------------------------------------------------------------------
@@ -125,6 +127,33 @@ def sections_from_registry(letter):
             "minY": float(m.group("minY")), "maxY": float(m.group("maxY")),
         })
     return sorted(out, key=lambda s: s["n"])
+
+
+START_RECT_RE = re.compile(
+    r"startRect:\s*const\s+StrokeStartRect\(\s*"
+    r"minX:\s*(?P<minX>[\d.]+),\s*maxX:\s*(?P<maxX>[\d.]+),\s*"
+    r"minY:\s*(?P<minY>[\d.]+),\s*maxY:\s*(?P<maxY>[\d.]+)"
+)
+
+
+def start_rects_from_registry(letter):
+    """Pull `letter`'s per-stroke startRects out of the Dart registry."""
+    src = open(REGISTRY_PATH).read()
+    blocks = list(re.finditer(LETTER_RE, src, re.M))
+    for i, m in enumerate(blocks):
+        if m.group("letter") == letter:
+            end = blocks[i + 1].start() if i + 1 < len(blocks) else len(src)
+            block = src[m.start():end]
+            break
+    else:
+        raise SystemExit(f"Letter {letter!r} not found in the registry.")
+    stroke_starts = [m.start() for m in re.finditer(r"ExpectedStroke\(", block)]
+    out = []
+    for m in START_RECT_RE.finditer(block):
+        stroke = sum(1 for s in stroke_starts if s < m.start()) - 1
+        out.append({"stroke": max(stroke, 0),
+                    **{k: float(m.group(k)) for k in ("minX", "maxX", "minY", "maxY")}})
+    return out
 
 
 def sections_from_spec(path):
@@ -371,7 +400,7 @@ def ascii_view(letter, mask, box, cols=40, rows=34):
 # Drawing
 # ---------------------------------------------------------------------------
 
-def draw(letter, img, mask, box, sections, out_path):
+def draw(letter, img, mask, box, sections, out_path, start_rects=()):
     """Draw the numbered zones over the real glyph.
 
     Zone rectangles are outlined in red. Anything inside the letter's box that
@@ -419,6 +448,13 @@ def draw(letter, img, mask, box, sections, out_path):
         d.rectangle([X(s["minX"]), Y(s["minY"]), X(s["maxX"]), Y(s["maxY"])],
                     outline=GRID, width=3)
     d.rectangle([X(0), Y(0), X(1), Y(1)], outline=GRID, width=4)
+
+    # --- start rects (only with --start-rects): blue, labelled S1, S2 ... ----
+    for r in start_rects:
+        d.rectangle([X(r["minX"]), Y(r["minY"]), X(r["maxX"]), Y(r["maxY"])],
+                    outline=START, width=4)
+        d.text((X(r["minX"]) + 6, Y(r["minY"]) + 4), f"S{r['stroke'] + 1}",
+               font=ImageFont.truetype(FONT_PATH, size=26), fill=START)
 
     try:
         lf = ImageFont.truetype(FONT_PATH, size=32)
@@ -471,6 +507,9 @@ def main():
     ap.add_argument("--all", action="store_true",
                     help="render every letter that already has sections")
     ap.add_argument("--suffix", default="sections", help="output filename suffix")
+    ap.add_argument("--start-rects", action="store_true",
+                    help="also outline each stroke's startRect (blue, S1/S2...) "
+                         "and write to build/start_rects/<letter>.png")
     ap.add_argument("--ascii", action="store_true", help="print the glyph as text and exit")
     ap.add_argument("--check-only", action="store_true",
                     help="validate the design(s) without drawing anything")
@@ -504,8 +543,15 @@ def main():
             failed.append(letter)
 
         if not args.check_only:
-            out = os.path.join(OUT_DIR, f"{letter}_{args.suffix}.png")
-            draw(letter, img, mask, box, sections, out)
+            if args.start_rects:
+                out_dir = os.path.join(PROJECT_DIR, "build", "start_rects")
+                os.makedirs(out_dir, exist_ok=True)
+                out = os.path.join(out_dir, f"{letter}.png")
+                draw(letter, img, mask, box, sections, out,
+                     start_rects=start_rects_from_registry(letter))
+            else:
+                out = os.path.join(OUT_DIR, f"{letter}_{args.suffix}.png")
+                draw(letter, img, mask, box, sections, out)
         print()
 
     if failed:
