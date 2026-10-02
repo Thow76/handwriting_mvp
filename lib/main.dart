@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'drawing_canvas.dart';
+
+import 'routes.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,11 +14,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Handwriting MVP',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const DrawingCanvas(),
+      theme: buildAppTheme(),
+      initialRoute: AppRoutes.home,
+      routes: AppRoutes.table,
     );
   }
 }
