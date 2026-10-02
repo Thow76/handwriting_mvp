@@ -50,7 +50,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       Unit tests for the helper. No UI change.
 - [x] 2.2 `ScoreDisplay` takes an optional `ScoringLevel` and hides rows the level does not
       permit. Default (null) = show everything, so the dev screen is unchanged. Widget test.
-- [~] 2.3 Widen the second-stroke `startRect` of the optional-lift letters so a learner who
+- [x] 2.3 Widen the second-stroke `startRect` of the optional-lift letters so a learner who
       lifts the pen is not marked down on Start (issue #199; background: project doc
       `claude/lift_start_rect_issue_2026-09-29.md`). Change ONLY the second stroke's startRect
       of these five entries, x unchanged: b, d, h, r → y 0.15–0.70; k → y 0.15–0.60.
