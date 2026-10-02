@@ -82,3 +82,11 @@ flutter:
     - family: Andika
       fonts:
         - asset: fonts/Andika-Regular.ttf
+    - family: Manrope
+      fonts:
+        - asset: fonts/Manrope-Variable.ttf
+          weight: 500
+        - asset: fonts/Manrope-Variable.ttf
+          weight: 700
+        - asset: fonts/Manrope-Variable.ttf
+          weight: 800
