@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Games — timed draw window</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Andika:wght@400;700&display=swap">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>body{margin:0;font-family:'Manrope',-apple-system,"Segoe UI",sans-serif;background:#e8f5f2}</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#e8f5f2;display:flex;flex-direction:column">
+  <div style="padding:22px 20px 0;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:11px;font-weight:800;letter-spacing:0.1em;padding:7px 13px;border-radius:999px;background:#d9365a;color:#ffffff">GAMES</span>
+    <span style="font-size:12px;font-weight:700;padding:7px 13px;border-radius:999px;border:1.5px solid #bfddd7;background:#ffffff;color:#5b7773">Level 3 · Draw (timed)</span>
+  </div>
+  <div style="padding:6px 20px 0;display:flex;align-items:center;gap:10px">
+    <span style="font-size:12px;color:#5b7773;white-space:nowrap">Time left</span>
+    <div style="flex-grow:1;height:10px;background:#c6e3dd;border-radius:5px;overflow:hidden">
+      <div style="width:35%;height:100%;background:#e39b2b"></div>
+    </div>
+    <span style="font-size:13px;color:#a86f12;font-weight:700;white-space:nowrap">4s</span>
+  </div>
+
+  <div style="flex-grow:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px">
+    <div style="width:300px;height:300px;background:#ffffff;border:1px solid #c6e3dd;border-radius:24px;display:flex;align-items:center;justify-content:center">
+      <svg width="300" height="300" viewBox="0 0 260 260">
+        <line x1="20" y1="40" x2="240" y2="40" stroke="#bfddd7" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <line x1="20" y1="130" x2="240" y2="130" stroke="#bfddd7" stroke-width="1.5" stroke-dasharray="3 4"/>
+        <line x1="20" y1="210" x2="240" y2="210" stroke="#86b5ad" stroke-width="2"/>
+        <path d="M 168 98 C 188 108 188 158 168 178" fill="none" stroke="#0f2e2b" stroke-width="8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="font-size:13px;color:#5b7773;text-align:center;max-width:260px">The model is hidden now — drawing from memory, against the clock</div>
+  </div>
+
+  <div style="padding:0 20px 28px">
+    <div style="font-size:14px;font-weight:500;color:#5b7773;text-align:center;margin-bottom:14px">Finish early, or the timer decides for you</div>
+    <div style="display:flex;gap:12px">
+      <button aria-label="Undo" style="flex:1;padding:16px 0;border-radius:12px;border:1px solid #c6e3dd;background:#ffffff;display:flex;align-items:center;justify-content:center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M7 7L3 11L7 15" stroke="#0f2e2b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 11H14.5C18.09 11 21 13.91 21 17.5C21 19.02 20.48 20.42 19.61 21.53" stroke="#0f2e2b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button style="flex:2;height:58px;border-radius:16px;border:none;background:#d9365a;color:#ffffff;font-family:inherit;font-size:17px;font-weight:800">Finish</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

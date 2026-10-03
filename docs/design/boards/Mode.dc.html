@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Mode — Practice or Games</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Andika:wght@400;700&display=swap">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>body{margin:0;font-family:'Manrope',-apple-system,"Segoe UI",sans-serif;background:#e8f5f2}</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#e8f5f2;display:flex;flex-direction:column">
+  <div style="padding:24px 20px 4px">
+    <h1 style="margin:0 0 4px;font-size:26px;font-weight:800;color:#0f2e2b">Handwriting practice</h1>
+    <div style="font-size:14px;color:#5b7773">Choose how you'd like to practice today</div>
+  </div>
+
+  <div style="flex-grow:1;padding:20px;display:flex;flex-direction:column;gap:16px;justify-content:center">
+
+    <!-- Practice card -->
+    <div style="background:#ffffff;border:1px solid #c6e3dd;border-radius:24px;padding:20px;display:flex;align-items:center;gap:16px">
+      <div style="width:56px;height:56px;border-radius:14px;background:#e8f5f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path d="M2 12C2 12 5.5 5.5 12 5.5C18.5 5.5 22 12 22 12C22 12 18.5 18.5 12 18.5C5.5 18.5 2 12 2 12Z" stroke="#0f2e2b" stroke-width="1.8" stroke-linejoin="round"/>
+          <circle cx="12" cy="12" r="3.2" stroke="#0f2e2b" stroke-width="1.8"/>
+        </svg>
+      </div>
+      <div style="flex-grow:1">
+        <div style="font-size:17px;font-weight:700;color:#0f2e2b;margin-bottom:2px">Practice</div>
+        <div style="font-size:13px;color:#5b7773;line-height:1.4">The model stays on screen. Work at your own pace, no clock.</div>
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
+        <path d="M9 6L15 12L9 18" stroke="#86b5ad" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <!-- Games card -->
+    <div style="background:#ffffff;border:1px solid #c6e3dd;border-radius:24px;padding:20px;display:flex;align-items:center;gap:16px">
+      <div style="width:56px;height:56px;border-radius:14px;background:#e8f5f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <div style="width:32px;height:32px;border-radius:50%;background:conic-gradient(#d9365a 0deg 230deg,#c6e3dd 230deg 360deg)"></div>
+      </div>
+      <div style="flex-grow:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px"><span style="font-size:17px;font-weight:700;color:#0f2e2b">Games</span><span style="font-size:10px;font-weight:800;letter-spacing:0.08em;padding:4px 8px;border-radius:999px;background:#ffffff;border:1.5px solid #bfddd7;color:#5b7773">COMING SOON</span></div>
+        <div style="font-size:13px;color:#5b7773;line-height:1.4">The letter appears, then hides. Draw it from memory before time runs out.</div>
+      </div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
+        <path d="M9 6L15 12L9 18" stroke="#86b5ad" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

@@ -7,6 +7,14 @@ Steps must be done in order unless a step says otherwise.
 Sources of truth (read these, do not re-decide them):
 - Screens and flow: project doc `figma_interactive_prototype_spec.md` (Practice) and the
   "Handwriting App — MVP screens" design canvas. Games screens are NOT part of this plan.
+- **Look of every screen: the design boards, not the words in this file.** Each Phase 3
+  step names its board, a snapshot of the canvas kept in `docs/design/boards/<Board>.dc.html`
+  (plain HTML + inline styles at 390×844; read the file, the px values and hex colours in
+  it are the spec). Match the board's layout, spacing, wording, type sizes and colours; the
+  words in a step only say what the screen does. If a board and a step disagree, the board
+  wins and the step gets a BLOCKED line. The editable original is the "Handwriting App —
+  MVP screens" canvas; the snapshots were taken 3 Oct 2026 after the Option C repaint, so
+  they match the Visual tokens below exactly.
 - Scoring: bitmap scorers + StrokeStartScorer, WaypointSectionScorer, StrokeBreakCounter.
   Path scoring is strict pass/fail. Never change scoring behaviour in this plan.
 - Levels: `claude/stroke_formation_post_mvp_roadmap.md` Stream B (B1, B2).
@@ -67,34 +75,54 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       The build routine skips BLOCKED lines until the Answer is filled in and moves on.
 
 ## Phase 3 — Practice flow screens
-- [x] 3.1 Session model + navigation shell. `PracticeSession` {List<String> letters,
+- [~] 3.1 Session model + navigation shell. `PracticeSession` {List<String> letters,
       ScoringLevel level, int index} with next()/isLast/current. Named routes for
       home, levelSelect, guide, feedback, sessionComplete. main.dart starts at Home.
       Placeholder screens (title text only) for each route so the app runs end to end.
       Dev link on Home opens the existing DrawingCanvas. Tests for PracticeSession.
       Also add fonts/Manrope-*.ttf (OFL) and the pubspec entry.
-- [~] 3.2 Home screen: "Alphabet a–z" card; "Choose your own" card with a 7-column a–z
+- [ ] 3.2 Home screen: "Alphabet a–z" card; "Choose your own" card with a 7-column a–z
       multi-select grid and a Practice button (disabled when nothing is selected);
       "By letter shape" card with three fixed groups (sits on the line: a c e m n o r s u
       v w x z; reaches up: b d f h k l t i; drops below: g j p q y). Each leads to Level
       select with the set chosen. Level select: four tiles 1–4, tap = choose and go to
       Guide for letter 1. Widget tests for grid selection and disabled button.
+      Boards: `Home.dc.html` (build the a–z tile only; no A–Z tile) and `Difficulty.dc.html`.
+- [ ] 3.2b Re-align Home and Level select to their boards (the first 3.2 PR was built
+      from the words above, before the boards were the source of truth). Home: title
+      "Practice" + subtitle; Alphabet card with ONE big a–z tile (Andika); "Choose your
+      own" as a 7-column tile grid with the picked tiles tinted; "By letter shape" as
+      three small guideline diagrams (a / b / g with the zone band tinted), not text
+      buttons; 20px side padding; cards 24px radius. Level select: title "Level",
+      subtitle "Each level checks one more thing", a 2×2 grid of ring tiles with the big
+      numeral and the caption from the board (Shape only / + where you start / + the
+      path / + pen lifts), tile 4 filled teal. Keep the existing tests passing; add none.
 - [ ] 3.3 Guide screen: hosts the drawing canvas widget for the current letter (extract
       the canvas painting/input from DrawingCanvas into a reusable widget if needed; the
       dev screen must keep working). Shows guidelines + ghost model letter. Eye toggle
       hides the model. Undo clears the attempt. Finish runs scoring; at level 1 goes
       straight to the next letter (or Session complete); at levels 2–4 goes to Feedback.
       Progress "X of N" + bar when set size > 1. No level markers yet (that is Phase 4).
+      Board: `LevelDemo1_Guide.dc.html` (header pill PRACTICE + outlined level chip, 10px
+      progress bar, 300px letter card, round eye button, caption, Undo + Finish row with
+      58px buttons). Every screen has 20px side padding and 28px bottom padding — no
+      edge-to-edge buttons.
 - [ ] 3.4 Feedback screen: ring + one word (thresholds above), never a numeral. One-line
       note naming the weakest thing checked at this level (start / path / strokes) using a
       small string table in lib/feedback/feedback_strings.dart; no note when the weakest
       score is a bitmap score. Buttons: below Good = outline "Try again" (same letter,
       attempt cleared, model visible) + solid "Next letter"; at Good = "Next letter" only.
       Records each letter's result in the session. Widget tests for the three bands and
-      the button rule.
+      the button rule. Boards: `LevelDemo2_Feedback.dc.html` (Okay, two buttons) and
+      `LevelDemo4_Feedback.dc.html` (Good, one button); ring 170px, word in Andika 34px.
 - [ ] 3.5 Session complete screen: completion message; per-letter list (letter, small
       ring, word) when set size > 1; "Practice again" (same set, same level, solid) and
-      "Home" (outline). Widget test.
+      "Home" (outline). Widget test. Board: `SessionComplete_Practice.dc.html`.
+- [ ] 3.6 First screen (board `Mode.dc.html`): title "Handwriting practice", two cards.
+      "Practice" opens Home (3.2). "Games" shows the COMING SOON chip and does nothing
+      when tapped. main.dart starts here; Session complete's "Home" button still returns
+      to Home (3.2), not to this screen. Widget test: Practice card navigates, Games does
+      not.
 
 ## Phase 4 — guide markers for levels 2–4
 - [ ] 4.1 Prepare the template letter on letter load, not only after drawing (tight
