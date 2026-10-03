@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Session Complete — Games</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Andika:wght@400;700&display=swap">
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>body{margin:0;font-family:'Manrope',-apple-system,"Segoe UI",sans-serif;background:#e8f5f2}</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#e8f5f2;display:flex;flex-direction:column">
+  <div style="padding:24px 20px 4px">
+    <h1 style="margin:0 0 4px;font-size:26px;font-weight:800;color:#0f2e2b">Session complete</h1>
+    <div style="font-size:14px;color:#5b7773">You played 6 letters</div>
+  </div>
+
+  <div style="flex-grow:1;padding:16px 20px;overflow-y:auto">
+    <div style="background:#ffffff;border:1px solid #c6e3dd;border-radius:16px;overflow:hidden">
+      <sc-for list="{{letters}}" as="l" hint-placeholder-count="6">
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #e8f5f2">
+          <div style="width:36px;height:36px;border-radius:9px;background:#e8f5f2;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <span style="font-family:'Andika',sans-serif;font-size:18px;color:#0f2e2b">{{l.ch}}</span>
+          </div>
+          <sc-if value="{{l.timedOut}}" hint-placeholder-val="{{false}}">
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#d9365a" stroke-width="2.4"/><path d="M12 7V12L15.5 14" stroke="#d9365a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-size:11px;color:#d9365a">Timed out</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{l.finished}}" hint-placeholder-val="{{true}}">
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M4 12.5L9.5 18L20 6.5" stroke="#0f8f84" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span style="font-size:11px;color:#0f8f84">Finished</span>
+            </div>
+          </sc-if>
+          <div style="flex-grow:1"></div>
+          <div style="width:30px;height:30px;border-radius:50%;background:{{l.ring}};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <div style="width:22px;height:22px;border-radius:50%;background:#e8f5f2"></div>
+          </div>
+          <span style="font-size:13px;font-weight:700;color:{{l.color}};width:84px;text-align:right;flex-shrink:0">{{l.word}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:20px;display:flex;gap:12px">
+    <button style="flex:1;height:58px;border-radius:16px;border:none;background:#d9365a;color:#ffffff;font-family:inherit;font-size:17px;font-weight:800">Practice again</button>
+    <button style="flex:1;height:58px;border-radius:16px;border:1.5px solid #bfddd7;background:#ffffff;color:#0f2e2b;font-family:inherit;font-size:17px;font-weight:800">Home</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const bands = {
+      good: { word: 'Good', color: '#0f8f84' },
+      okay: { word: 'Okay', color: '#e39b2b' },
+      more: { word: 'More practice', color: '#d9365a' }
+    };
+    const data = [
+      { ch: 'a', pct: 92, band: 'good', timedOut: false },
+      { ch: 'b', pct: 38, band: 'more', timedOut: true },
+      { ch: 'c', pct: 70, band: 'okay', timedOut: false },
+      { ch: 'd', pct: 85, band: 'good', timedOut: false },
+      { ch: 'e', pct: 30, band: 'more', timedOut: true },
+      { ch: 'f', pct: 62, band: 'okay', timedOut: false }
+    ];
+    return {
+      letters: data.map((d) => {
+        const b = bands[d.band];
+        const deg = d.pct * 3.6;
+        return {
+          ch: d.ch,
+          word: b.word,
+          color: b.color,
+          ring: `conic-gradient(${b.color} 0deg ${deg}deg, #c6e3dd ${deg}deg 360deg)`,
+          timedOut: d.timedOut,
+          finished: !d.timedOut
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
