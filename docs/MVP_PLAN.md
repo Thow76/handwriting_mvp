@@ -73,7 +73,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       Placeholder screens (title text only) for each route so the app runs end to end.
       Dev link on Home opens the existing DrawingCanvas. Tests for PracticeSession.
       Also add fonts/Manrope-*.ttf (OFL) and the pubspec entry.
-- [ ] 3.2 Home screen: "Alphabet a–z" card; "Choose your own" card with a 7-column a–z
+- [~] 3.2 Home screen: "Alphabet a–z" card; "Choose your own" card with a 7-column a–z
       multi-select grid and a Practice button (disabled when nothing is selected);
       "By letter shape" card with three fixed groups (sits on the line: a c e m n o r s u
       v w x z; reaches up: b d f h k l t i; drops below: g j p q y). Each leads to Level
