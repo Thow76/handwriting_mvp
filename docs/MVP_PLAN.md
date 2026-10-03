@@ -67,7 +67,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       The build routine skips BLOCKED lines until the Answer is filled in and moves on.
 
 ## Phase 3 — Practice flow screens
-- [~] 3.1 Session model + navigation shell. `PracticeSession` {List<String> letters,
+- [x] 3.1 Session model + navigation shell. `PracticeSession` {List<String> letters,
       ScoringLevel level, int index} with next()/isLast/current. Named routes for
       home, levelSelect, guide, feedback, sessionComplete. main.dart starts at Home.
       Placeholder screens (title text only) for each route so the app runs end to end.
