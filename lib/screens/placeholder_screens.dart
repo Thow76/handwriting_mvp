@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../models/practice_session.dart';
 import '../routes.dart';
 
 class _Placeholder extends StatelessWidget {
-  const _Placeholder(
-    this.title, {
-    this.next,
-    this.nextLabel,
-  });
+  const _Placeholder(this.title, {this.next, this.nextLabel});
 
   final String title;
   final String? next;
@@ -35,55 +32,19 @@ class _Placeholder extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Home', style: Theme.of(context).textTheme.headlineMedium),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, AppRoutes.levelSelect),
-              child: const Text('Practice'),
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: () => Navigator.pushNamed(context, AppRoutes.dev),
-              child: const Text('Dev'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class LevelSelectScreen extends StatelessWidget {
-  const LevelSelectScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) => const _Placeholder(
-    'Level select',
-    next: AppRoutes.guide,
-    nextLabel: 'Start',
-  );
-}
-
 class GuideScreen extends StatelessWidget {
   const GuideScreen({super.key});
 
   @override
-  Widget build(BuildContext context) => const _Placeholder(
-    'Guide',
-    next: AppRoutes.feedback,
-    nextLabel: 'Finish',
-  );
+  Widget build(BuildContext context) {
+    final session = ModalRoute.of(context)?.settings.arguments;
+    final letter = session is PracticeSession ? ' – ${session.current}' : '';
+    return _Placeholder(
+      'Guide$letter',
+      next: AppRoutes.feedback,
+      nextLabel: 'Finish',
+    );
+  }
 }
 
 class FeedbackScreen extends StatelessWidget {
