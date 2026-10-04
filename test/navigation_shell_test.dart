@@ -12,7 +12,7 @@ void main() {
 
     await tester.tap(find.byKey(const Key('practiceAlphabet')));
     await tester.pumpAndSettle();
-    expect(find.text('Level select'), findsOneWidget);
+    expect(find.text('Level'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('level_1')));
     await tester.pumpAndSettle();

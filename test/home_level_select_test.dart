@@ -52,8 +52,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const MyApp());
-    await _scrollTo(tester, find.text('Drops below'));
-    await tester.tap(find.text('Drops below'));
+    await _scrollTo(tester, find.byKey(const Key('shape_dropsBelow')));
+    await tester.tap(find.byKey(const Key('shape_dropsBelow')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('level_2')));
     await tester.pumpAndSettle();

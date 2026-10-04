@@ -18,6 +18,7 @@ class AppColors {
   static const guideline = Color(0xFFBFDDD7);
   static const baseline = Color(0xFF86B5AD);
   static const letterGhost = Color(0xFFD9ECE8);
+  static const pickedTile = Color(0xFFDDF0EE);
 }
 
 /// Shape tokens from docs/MVP_PLAN.md.
