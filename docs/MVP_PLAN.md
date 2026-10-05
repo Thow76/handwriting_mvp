@@ -97,7 +97,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       subtitle "Each level checks one more thing", a 2×2 grid of ring tiles with the big
       numeral and the caption from the board (Shape only / + where you start / + the
       path / + pen lifts), tile 4 filled teal. Keep the existing tests passing; add none.
-- [ ] 3.3 Guide screen: hosts the drawing canvas widget for the current letter (extract
+- [~] 3.3 Guide screen: hosts the drawing canvas widget for the current letter (extract
       the canvas painting/input from DrawingCanvas into a reusable widget if needed; the
       dev screen must keep working). Shows guidelines + ghost model letter. Eye toggle
       hides the model. Undo clears the attempt. Finish runs scoring; at level 1 goes

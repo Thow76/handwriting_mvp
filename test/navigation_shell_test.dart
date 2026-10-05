@@ -16,15 +16,20 @@ void main() {
 
     await tester.tap(find.byKey(const Key('level_1')));
     await tester.pumpAndSettle();
-    expect(find.text('Guide – a'), findsOneWidget);
+    expect(find.byKey(const Key('letterCanvas')), findsOneWidget);
 
-    await tester.tap(find.text('Finish'));
+    await tester.drag(
+      find.byKey(const Key('letterCanvas')),
+      const Offset(60, 60),
+    );
+    await tester.pump();
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const Key('finishButton')));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+    });
     await tester.pumpAndSettle();
-    expect(find.text('Feedback'), findsOneWidget);
-
-    await tester.tap(find.text('Next letter'));
-    await tester.pumpAndSettle();
-    expect(find.text('Session complete'), findsOneWidget);
+    // Level 1 goes straight to the next letter (b of 26).
+    expect(find.text('2 of 26'), findsOneWidget);
   });
 
   testWidgets('Dev link opens the existing DrawingCanvas', (tester) async {
