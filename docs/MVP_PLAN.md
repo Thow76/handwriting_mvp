@@ -88,7 +88,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       select with the set chosen. Level select: four tiles 1–4, tap = choose and go to
       Guide for letter 1. Widget tests for grid selection and disabled button.
       Boards: `Home.dc.html` (build the a–z tile only; no A–Z tile) and `Difficulty.dc.html`.
-- [~] 3.2b Re-align Home and Level select to their boards (the first 3.2 PR was built
+- [x] 3.2b Re-align Home and Level select to their boards (the first 3.2 PR was built
       from the words above, before the boards were the source of truth). Home: title
       "Practice" + subtitle; Alphabet card with ONE big a–z tile (Andika); "Choose your
       own" as a 7-column tile grid with the picked tiles tinted; "By letter shape" as
