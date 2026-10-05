@@ -1,3 +1,4 @@
+import 'score_result.dart';
 import 'scoring_level.dart';
 
 /// A run of practice: a set of one or more letters at one scoring level.
@@ -18,6 +19,9 @@ class PracticeSession {
   final List<String> letters;
   final ScoringLevel level;
   int index;
+
+  /// The score of the most recently finished attempt, for the Feedback screen.
+  ScoreResult? lastResult;
 
   /// The letter being practised now.
   String get current => letters[index];

@@ -45,7 +45,7 @@ void main() {
     expect(find.byKey(const Key('level_4')), findsOneWidget);
     await tester.tap(find.byKey(const Key('level_3')));
     await tester.pumpAndSettle();
-    expect(find.text('Guide – b'), findsOneWidget);
+    expect(find.bySemanticsLabel('Letter b'), findsOneWidget);
   });
 
   testWidgets('shape groups lead to level select with the group', (
@@ -57,7 +57,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('level_2')));
     await tester.pumpAndSettle();
-    expect(find.text('Guide – g'), findsOneWidget);
+    expect(find.bySemanticsLabel('Letter g'), findsOneWidget);
   });
 
   test('letter sets cover a–z exactly once', () {

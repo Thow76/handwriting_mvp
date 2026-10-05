@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../models/practice_session.dart';
 import '../routes.dart';
 
 class _Placeholder extends StatelessWidget {
@@ -28,21 +27,6 @@ class _Placeholder extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class GuideScreen extends StatelessWidget {
-  const GuideScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final session = ModalRoute.of(context)?.settings.arguments;
-    final letter = session is PracticeSession ? ' – ${session.current}' : '';
-    return _Placeholder(
-      'Guide$letter',
-      next: AppRoutes.feedback,
-      nextLabel: 'Finish',
     );
   }
 }
