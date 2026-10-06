@@ -23,6 +23,11 @@ class PracticeSession {
   /// The score of the most recently finished attempt, for the Feedback screen.
   ScoreResult? lastResult;
 
+  late final List<ScoreResult?> results = List.filled(letters.length, null);
+
+  /// Stores [result] as the outcome for the letter being practised now.
+  void record(ScoreResult result) => results[index] = result;
+
   /// The letter being practised now.
   String get current => letters[index];
 
