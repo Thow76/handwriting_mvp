@@ -141,6 +141,6 @@ void main() {
     await _open(tester, letters: ['a', 'b'], level: ScoringLevel.shapeAndStart);
     await _draw(tester);
     await _finish(tester);
-    expect(find.text('Feedback'), findsOneWidget);
+    expect(find.byKey(const Key('scoreRing')), findsOneWidget);
   });
 }

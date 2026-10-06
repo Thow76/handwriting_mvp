@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/practice_session.dart';
+import 'package:handwriting_mvp/models/score_result.dart';
 import 'package:handwriting_mvp/models/scoring_level.dart';
 
 void main() {
@@ -52,5 +53,20 @@ void main() {
     expect(r.index, 0);
     expect(r.letters, s.letters);
     expect(r.level, s.level);
+  });
+
+  test('record() stores the result for the current letter', () {
+    const r = ScoreResult(
+      coverage: 1,
+      precision: 1,
+      placement: 1,
+      efficiency: 1,
+    );
+    final s = make(['a', 'b']);
+    expect(s.results, [null, null]);
+    s.record(r);
+    s.next();
+    expect(s.results[0], same(r));
+    expect(s.results[1], isNull);
   });
 }

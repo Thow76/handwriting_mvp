@@ -31,17 +31,6 @@ class _Placeholder extends StatelessWidget {
   }
 }
 
-class FeedbackScreen extends StatelessWidget {
-  const FeedbackScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) => const _Placeholder(
-    'Feedback',
-    next: AppRoutes.sessionComplete,
-    nextLabel: 'Next letter',
-  );
-}
-
 class SessionCompleteScreen extends StatelessWidget {
   const SessionCompleteScreen({super.key});
 
