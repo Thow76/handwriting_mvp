@@ -107,7 +107,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       progress bar, 300px letter card, round eye button, caption, Undo + Finish row with
       58px buttons). Every screen has 20px side padding and 28px bottom padding — no
       edge-to-edge buttons.
-- [~] 3.4 Feedback screen: ring + one word (thresholds above), never a numeral. One-line
+- [x] 3.4 Feedback screen: ring + one word (thresholds above), never a numeral. One-line
       note naming the weakest thing checked at this level (start / path / strokes) using a
       small string table in lib/feedback/feedback_strings.dart; no note when the weakest
       score is a bitmap score. Buttons: below Good = outline "Try again" (same letter,
