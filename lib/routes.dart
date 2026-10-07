@@ -5,7 +5,7 @@ import 'screens/feedback_screen.dart';
 import 'screens/guide_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/level_select_screen.dart';
-import 'screens/placeholder_screens.dart';
+import 'screens/session_complete_screen.dart';
 
 /// Named routes for the Practice flow.
 class AppRoutes {
