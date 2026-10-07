@@ -68,6 +68,7 @@ class _GuideScreenState extends State<GuideScreen> {
     );
     if (!mounted) return;
     if (session.level == ScoringLevel.shapeOnly) {
+      session.record(session.lastResult!);
       if (session.isLast) {
         Navigator.pushReplacementNamed(
           context,
