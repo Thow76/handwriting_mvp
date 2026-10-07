@@ -68,7 +68,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       and attach them to the PR — Andrew eyeballs them before merging. Must merge before 3.4.
 - [ ] BLOCKED (Andrew) 2.4 h, k, r `minRequiredStrokes`: keep 2 (lift mandatory, as the
       registry says) or 1 (optional lift, as docs/stroke_formation_scope.md says)?
-      Answer: ___ . If 1: change the three values + tests only.
+      Answer: 1 . If 1: change the three values + tests only.
 - [ ] BLOCKED (Andrew) 2.5 d formation: stem-first only (as stored) or also accept oval-first
       ("c, then up and down")? Answer: ___ . If both: needs a design pass on d's sections —
       becomes a new plan step, not a one-liner.
