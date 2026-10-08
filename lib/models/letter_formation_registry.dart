@@ -138,9 +138,9 @@ import 'waypoint_section.dart';
 /// | r      | 2      | compound        |
 /// | u      | 1      | compound        |
 ///
-/// `k` and `r` have `minRequiredStrokes = 2` — the pen-lift between stem and
-/// compound stroke is mandatory. `m` and `u` have `minRequiredStrokes = 1` —
-/// they are drawn in a single continuous compound stroke.
+/// `k`, `r`, `m` and `u` have `minRequiredStrokes = 1` — the pen-lift between
+/// stem and compound stroke (k, r, and likewise h) is optional, matching
+/// `docs/stroke_formation_scope.md`.
 ///
 /// `h` and `n` belong to this same structural family (pen travels through
 /// multiple directional phases) and, like k, m, r, u, are scored via
@@ -1307,7 +1307,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     ],
   ),
   'r': LetterFormationData(
-    minRequiredStrokes: 2,
+    minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
         startRect: const StrokeStartRect(
@@ -1823,7 +1823,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
   // ticket.
   // -------------------------------------------------------------------------
   'h': LetterFormationData(
-    minRequiredStrokes: 2,
+    minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
         startRect: const StrokeStartRect(
@@ -1893,7 +1893,7 @@ final Map<String, LetterFormationData> letterFormationRegistry = {
     ],
   ),
   'k': LetterFormationData(
-    minRequiredStrokes: 2,
+    minRequiredStrokes: 1,
     strokes: [
       ExpectedStroke(
         startRect: const StrokeStartRect(
