@@ -115,7 +115,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       Records each letter's result in the session. Widget tests for the three bands and
       the button rule. Boards: `LevelDemo2_Feedback.dc.html` (Okay, two buttons) and
       `LevelDemo4_Feedback.dc.html` (Good, one button); ring 170px, word in Andika 34px.
-- [~] 3.5 Session complete screen: completion message; per-letter list (letter, small
+- [x] 3.5 Session complete screen: completion message; per-letter list (letter, small
       ring, word) when set size > 1; "Practice again" (same set, same level, solid) and
       "Home" (outline). Widget test. Board: `SessionComplete_Practice.dc.html`.
 - [ ] 3.6 First screen (board `Mode.dc.html`): title "Handwriting practice", two cards.
