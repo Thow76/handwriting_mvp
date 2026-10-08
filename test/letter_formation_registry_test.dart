@@ -1521,7 +1521,7 @@ void main() {
   //
   // Asserts that:
   //   1. Each letter has a non-null entry in the registry.
-  //   2. minRequiredStrokes matches the spec (2 for h/k, 1 for m/n/u).
+  //   2. minRequiredStrokes matches the spec (1 for h/k/m/n/u).
   //   3. Stroke counts are correct.
   //   4. h and n have been migrated to bespoke numbered sections; k, m, and u
   //      still carry a non-empty waypoints list whose sequence matches the
@@ -1996,8 +1996,8 @@ void main() {
       expect(letterFormationRegistry['h'], isNotNull);
     });
 
-    test('h: minRequiredStrokes == 2', () {
-      expect(letterFormationRegistry['h']!.minRequiredStrokes, 2);
+    test('h: minRequiredStrokes == 1 (optional lift)', () {
+      expect(letterFormationRegistry['h']!.minRequiredStrokes, 1);
     });
 
     test('h: has exactly two strokes', () {
@@ -2079,8 +2079,8 @@ void main() {
       expect(letterFormationRegistry['k'], isNotNull);
     });
 
-    test('k: minRequiredStrokes == 2', () {
-      expect(letterFormationRegistry['k']!.minRequiredStrokes, 2);
+    test('k: minRequiredStrokes == 1 (optional lift)', () {
+      expect(letterFormationRegistry['k']!.minRequiredStrokes, 1);
     });
 
     test('k: has exactly two strokes', () {
@@ -2137,8 +2137,8 @@ void main() {
       expect(letterFormationRegistry['r'], isNotNull);
     });
 
-    test('r: minRequiredStrokes == 2', () {
-      expect(letterFormationRegistry['r']!.minRequiredStrokes, 2);
+    test('r: minRequiredStrokes == 1 (optional lift)', () {
+      expect(letterFormationRegistry['r']!.minRequiredStrokes, 1);
     });
 
     test('r: has exactly two strokes', () {

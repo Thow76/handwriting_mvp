@@ -66,7 +66,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       for the five letters showing sections AND the new startRects (scripts/glyph_sections.py
       draws sections only today — add a small `--start-rects` option) to build/start_rects/
       and attach them to the PR — Andrew eyeballs them before merging. Must merge before 3.4.
-- [ ] BLOCKED (Andrew) 2.4 h, k, r `minRequiredStrokes`: keep 2 (lift mandatory, as the
+- [~] 2.4 h, k, r `minRequiredStrokes`: keep 2 (lift mandatory, as the
       registry says) or 1 (optional lift, as docs/stroke_formation_scope.md says)?
       Answer: 1 . If 1: change the three values + tests only.
 - [ ] BLOCKED (Andrew) 2.5 d formation: stem-first only (as stored) or also accept oval-first
