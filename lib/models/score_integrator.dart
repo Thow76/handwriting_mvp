@@ -156,13 +156,17 @@ class ScoreIntegrator {
     required double strokeWidth,
   }) {
     // Convert skeleton pixels to canvas-coordinate stroke points.
-    // Each skeleton pixel becomes a single-point stroke at its cell centre.
+    // Each skeleton pixel becomes a single-point stroke, nudged to +0.75 of
+    // the cell rather than its exact centre (+0.5). A real pen line almost
+    // never lands on a cell centre, so it inks a band 4 cells wide; stamped
+    // at exact centres the ideal would only be 3 wide and real ink would
+    // earn about a third more coverage than the ideal it is divided by.
     final skeletonStrokes = <Stroke>[];
     for (var row = 0; row < skeleton.length; row++) {
       for (var col = 0; col < skeleton[row].length; col++) {
         if (skeleton[row][col]) {
           skeletonStrokes.add(Stroke([
-            Offset(bounds.left + col + 0.5, bounds.top + row + 0.5),
+            Offset(bounds.left + col + 0.75, bounds.top + row + 0.75),
           ]));
         }
       }

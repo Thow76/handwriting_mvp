@@ -6,17 +6,24 @@
 class Skeletonizer {
   /// Returns a new boolean mask containing only the skeleton pixels.
   ///
-  /// Does not modify the input [mask].
+  /// Does not modify the input [mask]. The result has the same dimensions.
   static List<List<bool>> skeletonize(List<List<bool>> mask) {
     if (mask.isEmpty || mask[0].isEmpty) return mask;
 
-    final rows = mask.length;
-    final cols = mask[0].length;
+    final maskRows = mask.length;
+    final maskCols = mask[0].length;
 
     // Deep copy the input — we iterate in-place but never touch the original.
+    // The copy gets a 1-pixel empty border: the thinning passes below skip the
+    // outermost row and column, so without it, ink touching the edge of the
+    // mask (e.g. the top of the stem of b, d, l) is left as a flat bar.
+    final rows = maskRows + 2;
+    final cols = maskCols + 2;
     final grid = List.generate(
       rows,
-      (r) => List<bool>.from(mask[r]),
+      (r) => (r == 0 || r == rows - 1)
+          ? List<bool>.filled(cols, false)
+          : <bool>[false, ...mask[r - 1], false],
     );
 
     var changed = true;
@@ -54,7 +61,10 @@ class Skeletonizer {
       }
     }
 
-    return grid;
+    // Remove the border so the result has the same dimensions as the input.
+    return [
+      for (var r = 1; r <= maskRows; r++) grid[r].sublist(1, maskCols + 1),
+    ];
   }
 
   /// Returns the 8 neighbours of (r, c) in clockwise order starting from top:

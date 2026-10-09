@@ -166,6 +166,34 @@ void main() {
       }
     });
 
+    test(
+      'ink touching the mask edge does not leave a flat bar on that edge',
+      () {
+        // A 9-wide vertical bar running the full height of the mask, so it
+        // touches the top and bottom rows (like the stem of b, d or l).
+        final mask = List.generate(
+          30,
+          (_) => List.generate(21, (c) => c >= 6 && c <= 14),
+        );
+        final skeleton = Skeletonizer.skeletonize(mask);
+
+        expect(skeleton.length, 30);
+        for (final row in skeleton) {
+          expect(row.length, 21);
+        }
+        // Nothing wider than a pixel or two anywhere, including the edge rows.
+        for (var r = 0; r < skeleton.length; r++) {
+          expect(
+            skeleton[r].where((p) => p).length,
+            lessThanOrEqualTo(2),
+            reason: 'Row $r is wider than a thin line',
+          );
+        }
+        // It is still a line down the middle of the bar.
+        expect(skeleton[15][10], true);
+      },
+    );
+
     test('circle-like shape produces thin skeleton', () {
       // Create a rough circle (filled disc) and verify it thins
       final size = 15;
