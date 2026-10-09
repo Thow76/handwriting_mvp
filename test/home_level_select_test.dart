@@ -16,6 +16,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byKey(const Key('modePractice')));
+    await tester.pumpAndSettle();
     await _scrollTo(tester, find.byKey(const Key('practiceChosen')));
     expect(_chosenButton(tester).onPressed, isNull);
 
@@ -33,6 +35,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byKey(const Key('modePractice')));
+    await tester.pumpAndSettle();
     await _scrollTo(tester, find.byKey(const Key('letter_z')));
     await tester.tap(find.byKey(const Key('letter_z')));
     await _scrollTo(tester, find.byKey(const Key('letter_b')));
@@ -52,6 +56,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byKey(const Key('modePractice')));
+    await tester.pumpAndSettle();
     await _scrollTo(tester, find.byKey(const Key('shape_dropsBelow')));
     await tester.tap(find.byKey(const Key('shape_dropsBelow')));
     await tester.pumpAndSettle();

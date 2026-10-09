@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Handwriting MVP',
       theme: buildAppTheme(),
-      initialRoute: AppRoutes.home,
+      initialRoute: AppRoutes.mode,
       routes: AppRoutes.table,
     );
   }
