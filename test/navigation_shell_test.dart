@@ -8,7 +8,10 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(const MyApp());
-    expect(find.text('Practice'), findsWidgets);
+    expect(find.text('Handwriting practice'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('modePractice')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('practiceAlphabet')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('practiceAlphabet')));
     await tester.pumpAndSettle();
@@ -34,6 +37,8 @@ void main() {
 
   testWidgets('Dev link opens the existing DrawingCanvas', (tester) async {
     await tester.pumpWidget(const MyApp());
+    await tester.tap(find.byKey(const Key('modePractice')));
+    await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Dev'));
     await tester.tap(find.text('Dev'));
     await tester.pumpAndSettle();
