@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'drawing_canvas.dart';
+import 'screens/breakdown_screen.dart';
 import 'screens/feedback_screen.dart';
 import 'screens/guide_screen.dart';
 import 'screens/home_screen.dart';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const guide = '/guide';
   static const feedback = '/feedback';
   static const sessionComplete = '/sessionComplete';
+  static const breakdown = '/breakdown';
   static const dev = '/dev';
 
   static Map<String, WidgetBuilder> get table => {
@@ -27,6 +29,7 @@ class AppRoutes {
     guide: (_) => const GuideScreen(),
     feedback: (_) => const FeedbackScreen(),
     sessionComplete: (_) => const SessionCompleteScreen(),
+    breakdown: (_) => const BreakdownScreen(),
     dev: (_) => const DrawingCanvas(),
   };
 }
