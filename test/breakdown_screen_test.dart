@@ -75,7 +75,8 @@ void main() {
     }
     expect(find.text('counts at this level'), findsNWidgets(4));
     expect(find.text('not counted at this level'), findsNWidgets(3));
-    expect(find.text('n/a'), findsNWidgets(3));
+    // Start, Path and Strokes, plus the new Complete row (no completion data).
+    expect(find.text('n/a'), findsNWidgets(4));
   });
 
   testWidgets('level 4: all seven counted', (tester) async {
@@ -115,7 +116,7 @@ void main() {
       copied,
       'b · level 1 · Coverage 45 · Precision 100 · Placement 100 · '
       'Efficiency 44 · Start n/a · Path n/a · Strokes n/a · '
-      'app said Okay (72)',
+      'Complete n/a · app said Okay (72)',
     );
     expect(find.text('Copied'), findsOneWidget);
   });

@@ -27,7 +27,12 @@ Decisions taken for the MVP (Andrew can override by editing this file):
 - The existing `DrawingCanvas` developer screen stays, reachable from a small "Dev" link
   on Home. It keeps its debug panel and full ScoreDisplay. Nothing in this plan removes it.
 - Feedback word thresholds: overall < 0.50 "More practice", 0.50–0.75 "Okay", ≥ 0.75 "Good".
-  "Overall" = the mean of the scores permitted at the current level.
+  The numbers live in `lib/feedback/scoring_rules.dart` (`okayFrom`, `goodFrom`), with the
+  rules that apply them (`judgeAttempt`). "Overall" = the mean of the scores permitted at the
+  current level, leaving Strokes out when the letter needs only one stroke. Two guardrails
+  can lower the word: (1) at every level, a letter with any numbered zone that got no ink is
+  "More practice"; (2) where Start or Path counts, getting either wrong means "Okay" at best.
+  Path itself stays strict pass/fail; the zone check is separate and not part of the average.
 
 ## Phase 0 — in flight (not for the build routine)
 - [x] 0.1 Transcribe the 24 approved zone designs into the registry (Andrew's own routine).

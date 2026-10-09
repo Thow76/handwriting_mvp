@@ -1,14 +1,12 @@
 import '../models/score_result.dart';
 import '../models/scoring_level.dart';
+import 'scoring_rules.dart' show goodFrom, okayFrom;
 
 /// The three words a learner can be told. Never a number.
 enum FeedbackBand { morePractice, okay, good }
 
-const _okayFrom = 0.50;
-const _goodFrom = 0.75;
-
 /// A score at or above this counts as "done well" for the one-line note.
-const _noteGoodFrom = _goodFrom;
+const _noteGoodFrom = goodFrom;
 
 extension FeedbackBandLabel on FeedbackBand {
   String get word => switch (this) {
@@ -18,10 +16,11 @@ extension FeedbackBandLabel on FeedbackBand {
   };
 }
 
-/// Overall < 0.50 "More practice", 0.50–0.75 "Okay", >= 0.75 "Good".
+/// The band for a plain average, using the lines in `scoring_rules.dart`.
+/// Screens use `judgeAttempt` instead, which also applies the guardrails.
 FeedbackBand bandFor(double overall) {
-  if (overall >= _goodFrom) return FeedbackBand.good;
-  if (overall >= _okayFrom) return FeedbackBand.okay;
+  if (overall >= goodFrom) return FeedbackBand.good;
+  if (overall >= okayFrom) return FeedbackBand.okay;
   return FeedbackBand.morePractice;
 }
 

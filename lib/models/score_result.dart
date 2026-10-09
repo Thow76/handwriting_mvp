@@ -1,3 +1,4 @@
+import 'completion_checker.dart';
 import 'formation_score.dart';
 
 /// Holds the coverage, precision and placement scores for a handwriting attempt.
@@ -24,6 +25,10 @@ class ScoreResult {
   /// Formation score for stroke-break count, or null if not applicable.
   final FormationScore? strokeBreak;
 
+  /// Whether ink entered every numbered section of the letter, or null when
+  /// the letter has no formation data. Separate from [compoundStroke] (Path).
+  final CompletionResult? completion;
+
   const ScoreResult({
     required this.coverage,
     required this.precision,
@@ -32,5 +37,6 @@ class ScoreResult {
     this.strokeStart,
     this.compoundStroke,
     this.strokeBreak,
+    this.completion,
   });
 }

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../feedback/feedback_strings.dart';
+import '../feedback/scoring_rules.dart';
 import '../models/practice_session.dart';
 import '../models/score_result.dart';
 import '../models/scoring_level.dart';
@@ -54,8 +55,10 @@ class FeedbackScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final session = _session(context);
     final result = session.lastResult;
-    final overall = result == null ? 0.0 : overallScore(result, session.level);
-    final band = bandFor(overall);
+    final verdict = result == null
+        ? const BandVerdict(band: FeedbackBand.morePractice, average: 0.0)
+        : judgeAttempt(result, session.level, session.current);
+    final band = verdict.band;
     final note = result == null ? null : feedbackNote(result, session.level);
     final (ringColor, wordColor) = switch (band) {
       FeedbackBand.good => (AppColors.good, AppColors.good),
@@ -96,7 +99,7 @@ class FeedbackScreen extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _ScoreRing(
-                        fraction: overall,
+                        fraction: verdict.ringFill,
                         color: ringColor,
                         word: band.word,
                         wordColor: wordColor,

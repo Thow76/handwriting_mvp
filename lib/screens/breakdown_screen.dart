@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../feedback/feedback_strings.dart';
+import '../feedback/scoring_rules.dart';
+import '../models/completion_checker.dart';
 import '../models/formation_score.dart';
 import '../models/practice_session.dart';
 import '../models/score_result.dart';
@@ -52,9 +54,27 @@ String breakdownCopyText({
         return '${_names[kind]} ${v == null ? 'n/a' : _pct(v)}';
       }(),
   ];
-  final overall = overallScore(result, level);
+  final verdict = judgeAttempt(result, level, letter);
+  final completion = result.completion;
+  final complete = completion == null
+      ? 'n/a'
+      : completion.complete
+      ? 'yes'
+      : 'no (${completion.missingSections.join(',')})';
+  final guardrail = verdict.shortReason;
   return '$letter · level ${level.index + 1} · ${parts.join(' · ')}'
-      ' · app said ${bandFor(overall).word} (${_pct(overall)})';
+      ' · Complete $complete'
+      ' · app said ${verdict.band.word} (${_pct(verdict.average)})'
+      '${guardrail == null ? '' : ' · guardrail: $guardrail'}';
+}
+
+/// The value shown on the Breakdown "Complete" row.
+String _completeText(CompletionResult? completion) {
+  if (completion == null) return 'n/a';
+  if (completion.complete) return 'yes';
+  final zones = completion.missingSections.join(', ');
+  final noun = completion.missingSections.length == 1 ? 'zone' : 'zones';
+  return 'no ($noun $zones empty)';
 }
 
 /// Tester-only screen: every score behind an attempt, at every level.
@@ -73,7 +93,7 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
     final args = ModalRoute.of(context)!.settings.arguments as BreakdownArgs;
     final level = args.session.level;
     final result = args.result;
-    final overall = overallScore(result, level);
+    final verdict = judgeAttempt(result, level, args.letter);
     final formation = {
       ScoreKind.start: result.strokeStart,
       ScoreKind.path: result.compoundStroke,
@@ -97,11 +117,23 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Learner would see: ${bandFor(overall).word} '
-                '(${_pct(overall)}%)',
+                'Learner would see: ${verdict.band.word} '
+                '(${_pct(verdict.average)}%)',
                 key: const Key('breakdownBand'),
                 style: const TextStyle(fontSize: 16, color: AppColors.ink),
               ),
+              if (verdict.reason != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    verdict.reason!,
+                    key: const Key('breakdownReason'),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.muted,
+                    ),
+                  ),
+                ),
               const SizedBox(height: 16),
               for (final kind in ScoreKind.values)
                 Padding(
@@ -138,6 +170,28 @@ class _BreakdownScreenState extends State<BreakdownScreen> {
                     ],
                   ),
                 ),
+              Padding(
+                key: const Key('row_Complete'),
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Complete',
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 7,
+                      child: Text(
+                        _completeText(result.completion),
+                        key: const Key('completeValue'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const Divider(height: 28),
               for (final e in formation.entries)
                 _FormationDetail(name: _names[e.key]!, score: e.value),
