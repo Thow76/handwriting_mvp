@@ -48,5 +48,6 @@ ScoreResult buildScoreResult({
     strokeStart: bitmapResult.strokeStart,
     compoundStroke: bitmapResult.compoundStroke,
     strokeBreak: bitmapResult.strokeBreak,
+    completion: bitmapResult.completion,
   );
 }

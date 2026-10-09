@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../feedback/feedback_strings.dart';
+import '../feedback/scoring_rules.dart';
 import '../models/practice_session.dart';
 import '../models/score_result.dart';
 import '../models/scoring_level.dart';
@@ -137,8 +138,9 @@ class _ResultRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = result;
-    final overall = r == null ? null : overallScore(r, level);
-    final band = overall == null ? null : bandFor(overall);
+    final verdict = r == null ? null : judgeAttempt(r, level, letter);
+    final overall = verdict?.ringFill;
+    final band = verdict?.band;
     final color = switch (band) {
       FeedbackBand.good => AppColors.good,
       FeedbackBand.okay => AppColors.okay,

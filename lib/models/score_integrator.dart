@@ -1,5 +1,6 @@
 import 'dart:ui' show Offset, Rect;
 
+import 'completion_checker.dart';
 import 'coverage_scorer.dart';
 import 'efficiency_scorer.dart';
 import 'formation_score.dart';
@@ -99,6 +100,7 @@ class ScoreIntegrator {
     FormationScore? strokeStart;
     FormationScore? compoundStroke;
     FormationScore? strokeBreak;
+    CompletionResult? completion;
 
     if (letter != null) {
       final data = letterFormationRegistry[letter];
@@ -122,6 +124,11 @@ class ScoreIntegrator {
           letter: letter,
           data: data,
         ).score(strokes);
+
+        completion = CompletionChecker(
+          data: data,
+          bounds: formationBounds,
+        ).check(strokes);
       }
     }
 
@@ -139,6 +146,7 @@ class ScoreIntegrator {
       strokeStart: strokeStart,
       compoundStroke: compoundStroke,
       strokeBreak: strokeBreak,
+      completion: completion,
     );
   }
 
