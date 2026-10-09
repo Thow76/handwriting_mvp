@@ -6,8 +6,10 @@ import '../models/scoring_level.dart';
 import '../models/stroke.dart';
 import '../models/template_rasterizer.dart';
 import '../routes.dart';
+import '../tester_mode.dart';
 import '../theme/app_theme.dart';
 import '../widgets/letter_canvas.dart';
+import 'breakdown_screen.dart';
 
 const _levelChips = {
   ScoringLevel.shapeOnly: 'Level 1 · Shape only',
@@ -67,28 +69,33 @@ class _GuideScreenState extends State<GuideScreen> {
       letter: session.current,
     );
     if (!mounted) return;
+    final letter = session.current;
+    final result = session.lastResult!;
+    final String route;
     if (session.level == ScoringLevel.shapeOnly) {
-      session.record(session.lastResult!);
+      session.record(result);
       if (session.isLast) {
-        Navigator.pushReplacementNamed(
-          context,
-          AppRoutes.sessionComplete,
-          arguments: session,
-        );
+        route = AppRoutes.sessionComplete;
       } else {
         session.next();
-        Navigator.pushReplacementNamed(
-          context,
-          AppRoutes.guide,
-          arguments: session,
-        );
+        route = AppRoutes.guide;
       }
     } else {
+      route = AppRoutes.feedback;
+    }
+    if (TesterMode.enabled.value) {
       Navigator.pushReplacementNamed(
         context,
-        AppRoutes.feedback,
-        arguments: session,
+        AppRoutes.breakdown,
+        arguments: BreakdownArgs(
+          session: session,
+          letter: letter,
+          result: result,
+          continueRoute: route,
+        ),
       );
+    } else {
+      Navigator.pushReplacementNamed(context, route, arguments: session);
     }
   }
 

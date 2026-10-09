@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/letter_sets.dart';
 import '../routes.dart';
+import '../tester_mode.dart';
 import '../theme/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -132,12 +133,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: () => Navigator.pushNamed(context, AppRoutes.dev),
-                  child: const Text('Dev'),
-                ),
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () =>
+                        Navigator.pushNamed(context, AppRoutes.dev),
+                    child: const Text('Dev'),
+                  ),
+                  const Spacer(),
+                  const Text('Tester mode'),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: TesterMode.enabled,
+                    builder: (_, on, _) => Switch(
+                      key: const Key('testerModeSwitch'),
+                      value: on,
+                      onChanged: (v) => TesterMode.enabled.value = v,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
