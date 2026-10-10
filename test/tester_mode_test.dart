@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/practice_session.dart';
 import 'package:handwriting_mvp/models/scoring_level.dart';
+import 'package:handwriting_mvp/models/template_cache.dart';
 import 'package:handwriting_mvp/routes.dart';
 import 'package:handwriting_mvp/screens/home_screen.dart';
 import 'package:handwriting_mvp/tester_mode.dart';
@@ -54,6 +55,8 @@ Future<void> _finish(WidgetTester tester) async {
 }
 
 void main() {
+  setUp(TemplateCache.shared.clear);
+
   tearDown(() => TesterMode.enabled.value = false);
 
   testWidgets('home screen switch is off by default and turns it on', (
