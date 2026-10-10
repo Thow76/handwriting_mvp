@@ -128,6 +128,13 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       when tapped. main.dart starts here; Session complete's "Home" button still returns
       to Home (3.2), not to this screen. Widget test: Practice card navigates, Games does
       not.
+- [ ] 3.7 Session complete: show the per-letter list even when the set is one letter
+      (letter, small ring, word), the same as for larger sets. At level 1 there is no
+      score, so the ring/word are omitted: show the letter large (Andika) with a plain
+      tick instead. Levels 2–4 with one letter show letter + ring + word as in 3.5.
+      Keep "Practice again" and "Home". Update the 3.5 widget test (one-letter case) and
+      add one for level 1. Board: SessionComplete_Practice.dc.html — if it has no
+      one-letter layout, add a BLOCKED line asking Andrew to decide the look.
 
 ## Phase 4 — guide markers for levels 2–4
 - [~] 4.1 Prepare the template letter on letter load, not only after drawing (tight
