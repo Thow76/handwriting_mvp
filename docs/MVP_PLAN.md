@@ -123,7 +123,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
 - [x] 3.5 Session complete screen: completion message; per-letter list (letter, small
       ring, word) when set size > 1; "Practice again" (same set, same level, solid) and
       "Home" (outline). Widget test. Board: `SessionComplete_Practice.dc.html`.
-- [~] 3.6 First screen (board `Mode.dc.html`): title "Handwriting practice", two cards.
+- [x] 3.6 First screen (board `Mode.dc.html`): title "Handwriting practice", two cards.
       "Practice" opens Home (3.2). "Games" shows the COMING SOON chip and does nothing
       when tapped. main.dart starts here; Session complete's "Home" button still returns
       to Home (3.2), not to this screen. Widget test: Practice card navigates, Games does
