@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:handwriting_mvp/models/practice_session.dart';
 import 'package:handwriting_mvp/models/scoring_level.dart';
+import 'package:handwriting_mvp/models/template_cache.dart';
 import 'package:handwriting_mvp/routes.dart';
 import 'package:handwriting_mvp/theme/app_theme.dart';
 import 'package:handwriting_mvp/widgets/letter_canvas.dart';
@@ -53,6 +54,8 @@ Future<void> _finish(WidgetTester tester) async {
 }
 
 void main() {
+  setUp(TemplateCache.shared.clear);
+
   testWidgets('shows progress when the set has several letters', (
     tester,
   ) async {
@@ -142,5 +145,13 @@ void main() {
     await _draw(tester);
     await _finish(tester);
     expect(find.byKey(const Key('scoreRing')), findsOneWidget);
+  });
+
+  testWidgets('the model letter is prepared as soon as the screen loads', (
+    tester,
+  ) async {
+    final before = TemplateCache.shared.length;
+    await _open(tester, letters: ['q'], level: ScoringLevel.shapeOnly);
+    expect(TemplateCache.shared.length, before + 1);
   });
 }

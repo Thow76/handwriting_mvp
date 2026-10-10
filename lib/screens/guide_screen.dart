@@ -4,6 +4,7 @@ import '../models/practice_session.dart';
 import '../models/score_builder.dart';
 import '../models/scoring_level.dart';
 import '../models/stroke.dart';
+import '../models/template_cache.dart';
 import '../models/template_rasterizer.dart';
 import '../routes.dart';
 import '../tester_mode.dart';
@@ -32,6 +33,28 @@ class _GuideScreenState extends State<GuideScreen> {
   bool _showModel = true;
   bool _finishing = false;
 
+  String? _preparedFor;
+
+  Future<TemplateRasterResult> _prepareTemplate(String letter) =>
+      TemplateCache.shared.prepare(
+        letter: letter,
+        fontFamily: LetterCanvas.fontFamily,
+        fontSize: LetterCanvas.fontSize,
+        guidelines: LetterCanvas.guidelines,
+        canvasWidth: LetterCanvas.width,
+      );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Rasterize the model letter as soon as it loads, so Finish does not wait.
+    final letter = _session(context).current;
+    if (_preparedFor != letter) {
+      _preparedFor = letter;
+      _prepareTemplate(letter);
+    }
+  }
+
   PracticeSession _session(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments;
     return args is PracticeSession
@@ -56,13 +79,7 @@ class _GuideScreenState extends State<GuideScreen> {
   Future<void> _finish(PracticeSession session) async {
     if (_strokes.isEmpty || _finishing) return;
     setState(() => _finishing = true);
-    final template = await TemplateRasterizer.rasterize(
-      letter: session.current,
-      fontFamily: LetterCanvas.fontFamily,
-      fontSize: LetterCanvas.fontSize,
-      guidelines: LetterCanvas.guidelines,
-      canvasWidth: LetterCanvas.width,
-    );
+    final template = await _prepareTemplate(session.current);
     session.lastResult = buildScoreResult(
       templateResult: template,
       strokes: _strokes,
