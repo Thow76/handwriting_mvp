@@ -137,7 +137,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       one-letter layout, add a BLOCKED line asking Andrew to decide the look.
 
 ## Phase 4 — guide markers for levels 2–4
-- [~] 4.1 Prepare the template letter on letter load, not only after drawing (tight
+- [x] 4.1 Prepare the template letter on letter load, not only after drawing (tight
       bounds + mask cached per letter/canvas size; _runScoring reuses it; scores identical
       before/after — check a, i, k by hand).
 - [ ] 4.2 Anchor builder: pure function giving, per stroke, the start point (centre of
