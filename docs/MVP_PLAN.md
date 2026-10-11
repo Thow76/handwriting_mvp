@@ -135,6 +135,12 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       Keep "Practice again" and "Home". Update the 3.5 widget test (one-letter case) and
       add one for level 1. Board: SessionComplete_Practice.dc.html — if it has no
       one-letter layout, add a BLOCKED line asking Andrew to decide the look.
+      BLOCKED: SessionComplete_Practice.dc.html only shows a six-letter list; it has no one-letter
+      layout and no level-1 (tick instead of ring) layout. Should a one-letter session use the
+      same list card with a single row (36px letter tile, 30px ring, word), and at level 1 the row
+      shows the letter tile plus a plain teal tick on the right (no ring or word)? Or do you want
+      a different, bigger look (e.g. the letter large in the middle of the screen)? Please
+      answer here or add the layouts to the board.
 
 ## Phase 4 — guide markers for levels 2–4
 - [~] 4.1 Prepare the template letter on letter load, not only after drawing (tight
