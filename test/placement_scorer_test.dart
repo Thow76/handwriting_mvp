@@ -102,20 +102,17 @@ void main() {
       expect(score, greaterThan(0.0));
     });
 
-    test(
-      'strokes too tall (extends beyond both edges) scores less than 1.0',
-      () {
-        // Extends 20px above and below: top=80, bottom=220
-        final strokes = strokesInRange(80, 220);
-        final score = PlacementScorer.score(
-          expectedTop: expectedTop,
-          expectedBottom: expectedBottom,
-          strokes: strokes,
-        );
-        expect(score, lessThan(1.0));
-        expect(score, greaterThan(0.0));
-      },
-    );
+    test('strokes too tall (extends beyond both edges) scores less than 1.0', () {
+      // Extends 20px above and below: top=80, bottom=220
+      final strokes = strokesInRange(80, 220);
+      final score = PlacementScorer.score(
+        expectedTop: expectedTop,
+        expectedBottom: expectedBottom,
+        strokes: strokes,
+      );
+      expect(score, lessThan(1.0));
+      expect(score, greaterThan(0.0));
+    });
 
     test('strokes far outside zone clamp to 0.0', () {
       // Completely below the zone: top=300, bottom=400

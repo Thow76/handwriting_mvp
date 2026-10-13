@@ -57,9 +57,7 @@ class DebugScoreView extends StatelessWidget {
           const Divider(),
           _FormationPanel(name: 'StrokeStartScorer', score: r.strokeStart),
           _FormationPanel(
-            name: 'WaypointSectionScorer',
-            score: r.compoundStroke,
-          ),
+              name: 'WaypointSectionScorer', score: r.compoundStroke),
           _FormationPanel(name: 'StrokeBreakCounter', score: r.strokeBreak),
         ],
       ),
@@ -158,19 +156,13 @@ class _FormationPanel extends StatelessWidget {
               const Expanded(
                 child: Text(
                   'Technical',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(decoration: TextDecoration.underline, fontSize: 12),
                 ),
               ),
               const Expanded(
                 child: Text(
                   'Plain English',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(decoration: TextDecoration.underline, fontSize: 12),
                 ),
               ),
             ],
@@ -216,8 +208,7 @@ class _ObservationRow extends StatelessWidget {
       technicalText = 'stroke ${obs.strokeIndex}: — (${obs.note})';
       plainText = obs.note;
     } else {
-      technicalText =
-          'stroke ${obs.strokeIndex}: '
+      technicalText = 'stroke ${obs.strokeIndex}: '
           'expected=${obs.expected} '
           'observed=${obs.observed} '
           'score=${obs.score.toStringAsFixed(2)}';

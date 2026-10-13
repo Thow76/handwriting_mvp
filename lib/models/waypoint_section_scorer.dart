@@ -87,11 +87,9 @@ class WaypointSectionScorer {
 
     final expectedStr = sections.map((s) => 'section ${s.number}').join(' → ');
     final observedStr = result.hits
-        .map(
-          (h) => h.isHit
-              ? 'section ${h.section.number}'
-              : '[missed section ${h.section.number}]',
-        )
+        .map((h) => h.isHit
+            ? 'section ${h.section.number}'
+            : '[missed section ${h.section.number}]')
         .join(' → ');
 
     return FormationScore(

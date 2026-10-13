@@ -26,7 +26,10 @@ class StrokeBreakCounter {
   final LetterFormationData data;
 
   /// Creates a [StrokeBreakCounter].
-  const StrokeBreakCounter({required this.letter, required this.data});
+  const StrokeBreakCounter({
+    required this.letter,
+    required this.data,
+  });
 
   /// Scores [observed] strokes against the minimum required stroke count.
   ///

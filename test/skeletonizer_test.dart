@@ -125,11 +125,8 @@ void main() {
       for (var row = 0; row < mask.length; row++) {
         for (var col = 0; col < mask[row].length; col++) {
           if (skeleton[row][col]) {
-            expect(
-              mask[row][col],
-              true,
-              reason: 'Skeleton pixel at ($row,$col) not in original mask',
-            );
+            expect(mask[row][col], true,
+                reason: 'Skeleton pixel at ($row,$col) not in original mask');
           }
         }
       }
@@ -154,11 +151,8 @@ void main() {
 
       for (var row = 0; row < mask.length; row++) {
         for (var col = 0; col < mask[row].length; col++) {
-          expect(
-            mask[row][col],
-            original[row][col],
-            reason: 'Input mask modified at ($row,$col)',
-          );
+          expect(mask[row][col], original[row][col],
+              reason: 'Input mask modified at ($row,$col)');
         }
       }
     });

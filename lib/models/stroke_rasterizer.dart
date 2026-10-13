@@ -107,7 +107,10 @@ class StrokeRasterizer {
 
     for (var i = 1; i <= steps; i++) {
       final t = i / steps;
-      final point = Offset(from.dx + dx * t, from.dy + dy * t);
+      final point = Offset(
+        from.dx + dx * t,
+        from.dy + dy * t,
+      );
       _stamp(grid, point, bounds, radius);
     }
   }

@@ -11,9 +11,7 @@ import 'package:handwriting_mvp/models/coverage_scorer.dart';
 ///     '..##..',
 ///   ])
 List<List<bool>> grid(List<String> rows) {
-  return rows
-      .map((row) => row.split('').map((c) => c == '#').toList())
-      .toList();
+  return rows.map((row) => row.split('').map((c) => c == '#').toList()).toList();
 }
 
 void main() {
@@ -23,16 +21,25 @@ void main() {
     // ---------------------------------------------------------------
 
     test('identical masks → 100% coverage', () {
-      final mask = grid(['..##..', '.####.', '..##..']);
-      expect(
-        CoverageScorer.calculate(referenceMask: mask, strokeMask: mask),
-        1.0,
-      );
+      final mask = grid([
+        '..##..',
+        '.####.',
+        '..##..',
+      ]);
+      expect(CoverageScorer.calculate(referenceMask: mask, strokeMask: mask), 1.0);
     });
 
     test('no strokes drawn → 0% coverage', () {
-      final reference = grid(['..##..', '.####.', '..##..']);
-      final empty = grid(['......', '......', '......']);
+      final reference = grid([
+        '..##..',
+        '.####.',
+        '..##..',
+      ]);
+      final empty = grid([
+        '......',
+        '......',
+        '......',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: empty),
         0.0,
@@ -40,9 +47,15 @@ void main() {
     });
 
     test('half the reference covered → ~50% coverage', () {
-      final reference = grid(['####', '####']);
+      final reference = grid([
+        '####',
+        '####',
+      ]);
       // Cover only the top row
-      final strokes = grid(['####', '....']);
+      final strokes = grid([
+        '####',
+        '....',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         0.5,
@@ -50,36 +63,48 @@ void main() {
     });
 
     test('strokes completely outside reference → 0% coverage', () {
-      final reference = grid(['##..', '##..']);
-      final strokes = grid(['..##', '..##']);
+      final reference = grid([
+        '##..',
+        '##..',
+      ]);
+      final strokes = grid([
+        '..##',
+        '..##',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         0.0,
       );
     });
 
-    test(
-      'strokes larger than reference but fully covering it → 100% coverage',
-      () {
-        final reference = grid(['.##.', '.##.']);
-        final strokes = grid(['####', '####']);
-        expect(
-          CoverageScorer.calculate(
-            referenceMask: reference,
-            strokeMask: strokes,
-          ),
-          1.0,
-        );
-      },
-    );
+    test('strokes larger than reference but fully covering it → 100% coverage', () {
+      final reference = grid([
+        '.##.',
+        '.##.',
+      ]);
+      final strokes = grid([
+        '####',
+        '####',
+      ]);
+      expect(
+        CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
+        1.0,
+      );
+    });
 
     // ---------------------------------------------------------------
     // Edge cases
     // ---------------------------------------------------------------
 
     test('empty reference (no pixels) → 0% coverage', () {
-      final reference = grid(['....', '....']);
-      final strokes = grid(['####', '####']);
+      final reference = grid([
+        '....',
+        '....',
+      ]);
+      final strokes = grid([
+        '####',
+        '####',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         0.0,
@@ -87,8 +112,12 @@ void main() {
     });
 
     test('single pixel reference, covered → 100%', () {
-      final reference = grid(['.#']);
-      final strokes = grid(['.#']);
+      final reference = grid([
+        '.#',
+      ]);
+      final strokes = grid([
+        '.#',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         1.0,
@@ -96,8 +125,12 @@ void main() {
     });
 
     test('single pixel reference, not covered → 0%', () {
-      final reference = grid(['.#']);
-      final strokes = grid(['#.']);
+      final reference = grid([
+        '.#',
+      ]);
+      final strokes = grid([
+        '#.',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         0.0,
@@ -109,8 +142,14 @@ void main() {
     // ---------------------------------------------------------------
 
     test('one of four reference pixels covered → 25%', () {
-      final reference = grid(['##', '##']);
-      final strokes = grid(['#.', '..']);
+      final reference = grid([
+        '##',
+        '##',
+      ]);
+      final strokes = grid([
+        '#.',
+        '..',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         0.25,
@@ -118,8 +157,14 @@ void main() {
     });
 
     test('three of four reference pixels covered → 75%', () {
-      final reference = grid(['##', '##']);
-      final strokes = grid(['##', '#.']);
+      final reference = grid([
+        '##',
+        '##',
+      ]);
+      final strokes = grid([
+        '##',
+        '#.',
+      ]);
       expect(
         CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         0.75,
@@ -131,25 +176,28 @@ void main() {
     // ---------------------------------------------------------------
 
     test('mismatched row counts throws ArgumentError', () {
-      final reference = grid(['##', '##']);
-      final strokes = grid(['##']);
+      final reference = grid([
+        '##',
+        '##',
+      ]);
+      final strokes = grid([
+        '##',
+      ]);
       expect(
-        () => CoverageScorer.calculate(
-          referenceMask: reference,
-          strokeMask: strokes,
-        ),
+        () => CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         throwsArgumentError,
       );
     });
 
     test('mismatched column counts throws ArgumentError', () {
-      final reference = grid(['###']);
-      final strokes = grid(['##']);
+      final reference = grid([
+        '###',
+      ]);
+      final strokes = grid([
+        '##',
+      ]);
       expect(
-        () => CoverageScorer.calculate(
-          referenceMask: reference,
-          strokeMask: strokes,
-        ),
+        () => CoverageScorer.calculate(referenceMask: reference, strokeMask: strokes),
         throwsArgumentError,
       );
     });

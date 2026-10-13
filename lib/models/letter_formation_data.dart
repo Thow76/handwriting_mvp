@@ -22,7 +22,10 @@ class ExpectedStroke {
 
   /// Creates an [ExpectedStroke].
   ///
-  ExpectedStroke({required this.startRect, this.sections = const []});
+  ExpectedStroke({
+    required this.startRect,
+    this.sections = const [],
+  });
 }
 
 /// The complete formation specification for a single letter.

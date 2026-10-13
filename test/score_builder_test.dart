@@ -57,76 +57,52 @@ void main() {
   // ---------------------------------------------------------------------------
 
   group('buildScoreResult — formation field propagation', () {
-    test(
-      'all four formation fields are non-null for letter n (has formation data)',
-      () {
-        // n has a single compound stroke; these waypoints visit the expected
-        // centroids in a 90×90 grid (3×3 cells of 30 px each).
-        final stroke = Stroke(const [
-          Offset(15, 15), // topLeft centroid
-          Offset(15, 75), // bottomLeft centroid
-          Offset(45, 15), // top centroid
-          Offset(75, 75), // bottomRight centroid
-        ]);
+    test('all four formation fields are non-null for letter n (has formation data)', () {
+      // n has a single compound stroke; these waypoints visit the expected
+      // centroids in a 90×90 grid (3×3 cells of 30 px each).
+      final stroke = Stroke(const [
+        Offset(15, 15), // topLeft centroid
+        Offset(15, 75), // bottomLeft centroid
+        Offset(45, 15), // top centroid
+        Offset(75, 75), // bottomRight centroid
+      ]);
 
-        final result = buildScoreResult(
-          templateResult: template90,
-          strokes: [stroke],
-          letter: 'n',
-        );
+      final result = buildScoreResult(
+        templateResult: template90,
+        strokes: [stroke],
+        letter: 'n',
+      );
 
-        expect(
-          result.strokeStart,
-          isNotNull,
-          reason: 'strokeStart must be propagated from ScoreIntegrator',
-        );
-        expect(
-          result.compoundStroke,
-          isNotNull,
-          reason: 'compoundStroke must be propagated from ScoreIntegrator',
-        );
-        expect(
-          result.strokeBreak,
-          isNotNull,
-          reason: 'strokeBreak must be propagated from ScoreIntegrator',
-        );
-      },
-    );
+      expect(result.strokeStart, isNotNull,
+          reason: 'strokeStart must be propagated from ScoreIntegrator');
+      expect(result.compoundStroke, isNotNull,
+          reason: 'compoundStroke must be propagated from ScoreIntegrator');
+      expect(result.strokeBreak, isNotNull,
+          reason: 'strokeBreak must be propagated from ScoreIntegrator');
+    });
 
-    test(
-      'all three formation fields are non-null for letter o (has formation data)',
-      () {
-        // o expects an anticlockwise stroke.
-        final stroke = Stroke(const [
-          Offset(45, 5), // top
-          Offset(5, 45), // left
-          Offset(45, 85), // bottom
-          Offset(85, 45), // right
-        ]);
+    test('all three formation fields are non-null for letter o (has formation data)', () {
+      // o expects an anticlockwise stroke.
+      final stroke = Stroke(const [
+        Offset(45, 5),  // top
+        Offset(5, 45),  // left
+        Offset(45, 85), // bottom
+        Offset(85, 45), // right
+      ]);
 
-        final result = buildScoreResult(
-          templateResult: template90,
-          strokes: [stroke],
-          letter: 'o',
-        );
+      final result = buildScoreResult(
+        templateResult: template90,
+        strokes: [stroke],
+        letter: 'o',
+      );
 
-        expect(
-          result.strokeStart,
-          isNotNull,
-          reason: 'strokeStart must be propagated from ScoreIntegrator',
-        );
-        expect(
-          result.compoundStroke,
-          isNotNull,
-          reason: 'compoundStroke must be propagated from ScoreIntegrator',
-        );
-        expect(
-          result.strokeBreak,
-          isNotNull,
-          reason: 'strokeBreak must be propagated from ScoreIntegrator',
-        );
-      },
-    );
+      expect(result.strokeStart, isNotNull,
+          reason: 'strokeStart must be propagated from ScoreIntegrator');
+      expect(result.compoundStroke, isNotNull,
+          reason: 'compoundStroke must be propagated from ScoreIntegrator');
+      expect(result.strokeBreak, isNotNull,
+          reason: 'strokeBreak must be propagated from ScoreIntegrator');
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -148,22 +124,19 @@ void main() {
       expect(result.efficiency, inInclusiveRange(0.0, 1.0));
     });
 
-    test(
-      'placement is 0.0 when template has no ink pixels (inkBounds is null)',
-      () {
-        // The all-false mask has no ink → inkBounds returns null → placement
-        // stays at its default value of 0.0.
-        final stroke = Stroke(const [Offset(15, 15)]);
+    test('placement is 0.0 when template has no ink pixels (inkBounds is null)', () {
+      // The all-false mask has no ink → inkBounds returns null → placement
+      // stays at its default value of 0.0.
+      final stroke = Stroke(const [Offset(15, 15)]);
 
-        final result = buildScoreResult(
-          templateResult: template90,
-          strokes: [stroke],
-          letter: 'n',
-        );
+      final result = buildScoreResult(
+        templateResult: template90,
+        strokes: [stroke],
+        letter: 'n',
+      );
 
-        expect(result.placement, 0.0);
-      },
-    );
+      expect(result.placement, 0.0);
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -219,16 +192,12 @@ void main() {
         letter: 'a',
       );
 
-      expect(
-        result.strokeStart,
-        isNotNull,
-        reason: 'strokeStart must be non-null for letter a',
-      );
+      expect(result.strokeStart, isNotNull,
+          reason: 'strokeStart must be non-null for letter a');
       expect(
         result.strokeStart!.overallScore,
         1.0,
-        reason:
-            'stroke starts at tightBounds.top: dy=0 < thirdH=20 → top → score 1.0',
+        reason: 'stroke starts at tightBounds.top: dy=0 < thirdH=20 → top → score 1.0',
       );
     });
 
@@ -247,42 +216,35 @@ void main() {
     //
     // Stroke centroid is kept at (50, 20) (≈ expected top-region centroid) so
     // the stroke is correctly matched to expected stroke 0 by the matcher.
-    test(
-      "tall letter 'b': stroke at bottom of tight bounds → StrokeStartScorer score < 1.0",
-      () {
-        // Ink in all 120 rows; tightBounds equals bounds (top=0, height=120).
-        final template = _inkTemplate(
-          rows: 120,
-          cols: 100,
-          inkFirstRow: 0,
-          inkLastRow: 119,
-        );
+    test("tall letter 'b': stroke at bottom of tight bounds → StrokeStartScorer score < 1.0", () {
+      // Ink in all 120 rows; tightBounds equals bounds (top=0, height=120).
+      final template = _inkTemplate(
+        rows: 120,
+        cols: 100,
+        inkFirstRow: 0,
+        inkLastRow: 119,
+      );
 
-        // First point at y=90 → bottom third.
-        // Centroid: min_y = -50, max_y = 90 → mid = 20.  Centroid = (50, 20).
-        // Expected centroid for 'b' stroke 0 (startRect top-group, tightBounds):
-        //   cy = 0 + 40 * 0.5 = 20.  Distance = 0 → certain match. ✓
-        final stroke = Stroke(const [Offset(50, 90), Offset(50, -50)]);
+      // First point at y=90 → bottom third.
+      // Centroid: min_y = -50, max_y = 90 → mid = 20.  Centroid = (50, 20).
+      // Expected centroid for 'b' stroke 0 (startRect top-group, tightBounds):
+      //   cy = 0 + 40 * 0.5 = 20.  Distance = 0 → certain match. ✓
+      final stroke = Stroke(const [Offset(50, 90), Offset(50, -50)]);
 
-        final result = buildScoreResult(
-          templateResult: template,
-          strokes: [stroke],
-          letter: 'b',
-        );
+      final result = buildScoreResult(
+        templateResult: template,
+        strokes: [stroke],
+        letter: 'b',
+      );
 
-        expect(
-          result.strokeStart,
-          isNotNull,
-          reason: 'strokeStart must be non-null for letter b',
-        );
-        expect(
-          result.strokeStart!.overallScore,
-          lessThan(1.0),
-          reason:
-              'stroke starts in bottom third (dy=90 ≥ 80): '
-              'expected top, observed bottom → score 0.0',
-        );
-      },
-    );
+      expect(result.strokeStart, isNotNull,
+          reason: 'strokeStart must be non-null for letter b');
+      expect(
+        result.strokeStart!.overallScore,
+        lessThan(1.0),
+        reason: 'stroke starts in bottom third (dy=90 ≥ 80): '
+            'expected top, observed bottom → score 0.0',
+      );
+    });
   });
 }

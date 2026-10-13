@@ -104,12 +104,8 @@ void main() {
     });
 
     test('sections with different rects are not equal', () {
-      const otherRect = StrokeStartRect(
-        minX: 0.5,
-        maxX: 1.0,
-        minY: 0.5,
-        maxY: 1.0,
-      );
+      const otherRect =
+          StrokeStartRect(minX: 0.5, maxX: 1.0, minY: 0.5, maxY: 1.0);
       final a = WaypointSection(number: 1, rect: rect);
       final b = WaypointSection(number: 1, rect: otherRect);
       expect(a, isNot(equals(b)));

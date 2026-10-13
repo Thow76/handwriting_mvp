@@ -50,18 +50,14 @@ class ScoreIntegrator {
     final expectedCols = bounds.width.ceil();
 
     if (referenceMask.length != expectedRows) {
-      throw ArgumentError(
-        'Reference mask has ${referenceMask.length} rows, '
-        'but bounds imply $expectedRows',
-      );
+      throw ArgumentError('Reference mask has ${referenceMask.length} rows, '
+          'but bounds imply $expectedRows');
     }
     for (var row = 0; row < referenceMask.length; row++) {
       if (referenceMask[row].length != expectedCols) {
-        throw ArgumentError(
-          'Reference mask row $row has '
-          '${referenceMask[row].length} columns, '
-          'but bounds imply $expectedCols',
-        );
+        throw ArgumentError('Reference mask row $row has '
+            '${referenceMask[row].length} columns, '
+            'but bounds imply $expectedCols');
       }
     }
 
@@ -177,9 +173,9 @@ class ScoreIntegrator {
     for (var row = 0; row < skeleton.length; row++) {
       for (var col = 0; col < skeleton[row].length; col++) {
         if (skeleton[row][col]) {
-          skeletonStrokes.add(
-            Stroke([Offset(bounds.left + col + 0.75, bounds.top + row + 0.75)]),
-          );
+          skeletonStrokes.add(Stroke([
+            Offset(bounds.left + col + 0.75, bounds.top + row + 0.75),
+          ]));
         }
       }
     }

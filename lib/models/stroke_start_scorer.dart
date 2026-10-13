@@ -62,21 +62,19 @@ class StrokeStartScorer {
       final firstPoint = stroke.points.first;
       final startRect = data.strokes[expectedIndex].startRect;
       final strokeScore = startRect.contains(firstPoint, bounds) ? 1.0 : 0.0;
-      observations.add(
-        StrokeObservation(
-          strokeIndex: i,
-          expected: _rectLabel(startRect),
-          observed: _pointLabel(firstPoint, bounds),
-          score: strokeScore,
-          note: _buildNote(startRect, firstPoint, bounds),
-        ),
-      );
+    observations.add(StrokeObservation(
+        strokeIndex: i,
+        expected: _rectLabel(startRect),
+        observed: _pointLabel(firstPoint, bounds),
+        score: strokeScore,
+        note: _buildNote(startRect, firstPoint, bounds),
+      ));
     }
 
     final overallScore = observations.isEmpty
         ? 0.0
         : observations.map((o) => o.score).reduce((a, b) => a + b) /
-              observations.length;
+            observations.length;
 
     return FormationScore(
       overallScore: overallScore,
@@ -112,10 +110,7 @@ class StrokeStartScorer {
   /// On failure: a directional hint such as
   /// `"Started bottom-right; should start in the top-left area."`.
   static String _buildNote(
-    StrokeStartRect rect,
-    Offset firstPoint,
-    Rect bounds,
-  ) {
+      StrokeStartRect rect, Offset firstPoint, Rect bounds) {
     if (rect.contains(firstPoint, bounds)) {
       return 'Started in the right place.';
     }
@@ -131,12 +126,10 @@ class StrokeStartScorer {
     // Direction of the expected rect centre within the template.
     final expectedDir = _directionLabel(cx - 0.5, cy - 0.5);
 
-    final startedPart = startedDir.isEmpty
-        ? 'Started near the centre'
-        : 'Started $startedDir';
-    final expectedPart = expectedDir.isEmpty
-        ? 'the centre'
-        : 'the $expectedDir area';
+    final startedPart =
+        startedDir.isEmpty ? 'Started near the centre' : 'Started $startedDir';
+    final expectedPart =
+        expectedDir.isEmpty ? 'the centre' : 'the $expectedDir area';
 
     return '$startedPart; should start in $expectedPart.';
   }

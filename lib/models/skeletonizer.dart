@@ -77,13 +77,13 @@ class Skeletonizer {
   /// ```
   static List<bool> _neighbors(List<List<bool>> grid, int r, int c) {
     return [
-      grid[r - 1][c], // P2 — top
+      grid[r - 1][c],     // P2 — top
       grid[r - 1][c + 1], // P3 — top-right
-      grid[r][c + 1], // P4 — right
+      grid[r][c + 1],     // P4 — right
       grid[r + 1][c + 1], // P5 — bottom-right
-      grid[r + 1][c], // P6 — bottom
+      grid[r + 1][c],     // P6 — bottom
       grid[r + 1][c - 1], // P7 — bottom-left
-      grid[r][c - 1], // P8 — left
+      grid[r][c - 1],     // P8 — left
       grid[r - 1][c - 1], // P9 — top-left
     ];
   }

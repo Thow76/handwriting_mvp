@@ -1,15 +1,5 @@
 import 'dart:ui' as ui show Image, ImageByteFormat, PictureRecorder;
-import 'dart:ui'
-    show
-        Canvas,
-        Color,
-        Offset,
-        Paint,
-        PaintingStyle,
-        Rect,
-        Size,
-        TextBaseline,
-        TextDirection;
+import 'dart:ui' show Canvas, Color, Offset, Paint, PaintingStyle, Rect, Size, TextBaseline, TextDirection;
 
 import 'package:flutter/painting.dart' show TextPainter, TextSpan, TextStyle;
 
@@ -133,10 +123,7 @@ class TemplateRasterizer {
     final height = bounds.height.ceil();
 
     final recorder = ui.PictureRecorder();
-    final canvas = Canvas(
-      recorder,
-      Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()),
-    );
+    final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()));
 
     // Fill with transparent background.
     canvas.drawRect(
