@@ -146,7 +146,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
 - [x] 4.1 Prepare the template letter on letter load, not only after drawing (tight
       bounds + mask cached per letter/canvas size; _runScoring reuses it; scores identical
       before/after — check a, i, k by hand).
-- [~] 4.2 Anchor builder: pure function giving, per stroke, the start point (centre of
+- [x] 4.2 Anchor builder: pure function giving, per stroke, the start point (centre of
       startRect) and one point per section in number order, snapped to the nearest
       skeleton pixel inside that zone (fallback: zone centre). Strokes with no sections are
       skipped. Tests across all 26 letters (builds without error; point count = section
