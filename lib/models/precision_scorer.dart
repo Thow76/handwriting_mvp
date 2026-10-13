@@ -13,9 +13,11 @@ class PrecisionScorer {
     required List<List<bool>> strokeMask,
   }) {
     if (referenceMask.length != strokeMask.length) {
-      throw ArgumentError('Row count mismatch: '
-          'reference has ${referenceMask.length}, '
-          'strokes has ${strokeMask.length}');
+      throw ArgumentError(
+        'Row count mismatch: '
+        'reference has ${referenceMask.length}, '
+        'strokes has ${strokeMask.length}',
+      );
     }
 
     var strokePixels = 0;
@@ -23,9 +25,11 @@ class PrecisionScorer {
 
     for (var row = 0; row < referenceMask.length; row++) {
       if (referenceMask[row].length != strokeMask[row].length) {
-        throw ArgumentError('Column count mismatch at row $row: '
-            'reference has ${referenceMask[row].length}, '
-            'strokes has ${strokeMask[row].length}');
+        throw ArgumentError(
+          'Column count mismatch at row $row: '
+          'reference has ${referenceMask[row].length}, '
+          'strokes has ${strokeMask[row].length}',
+        );
       }
 
       for (var col = 0; col < referenceMask[row].length; col++) {

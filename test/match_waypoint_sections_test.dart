@@ -35,7 +35,7 @@ void main() {
 
   group('all sections hit in order', () {
     final path = [
-      const Offset(10, 10),   // inside section 1
+      const Offset(10, 10), // inside section 1
       const Offset(150, 150), // inside section 2
       const Offset(250, 250), // inside section 3
     ];
@@ -80,7 +80,7 @@ void main() {
     // IS visited. Strict scoring must stop at section 2 and award no credit
     // for section 3.
     final path = [
-      const Offset(10, 10),   // inside section 1
+      const Offset(10, 10), // inside section 1
       const Offset(250, 250), // inside section 3, NOT section 2
     ];
 
@@ -123,7 +123,7 @@ void main() {
     // index AFTER 1, but its only visit was at index 0 — so it is a miss.
     final path = [
       const Offset(150, 150), // inside section 2
-      const Offset(10, 10),   // inside section 1
+      const Offset(10, 10), // inside section 1
     ];
 
     test('hitCount is 1 (only the in-order prefix counts)', () {
@@ -151,7 +151,7 @@ void main() {
     // Same three sections, but supplied in a shuffled list.
     final shuffled = [section3, section1, section2];
     final path = [
-      const Offset(10, 10),   // inside section 1
+      const Offset(10, 10), // inside section 1
       const Offset(150, 150), // inside section 2
       const Offset(250, 250), // inside section 3
     ];

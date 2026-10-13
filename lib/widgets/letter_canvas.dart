@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../models/anchor_builder.dart';
 import '../models/guidelines.dart';
+import '../models/scoring_level.dart';
 import '../models/stroke.dart';
 import '../theme/app_theme.dart';
+import 'guide_markers.dart';
 
 /// The drawing surface used by the Practice flow's Guide screen: guidelines,
 /// an optional ghost model letter, and the learner's strokes.
@@ -18,6 +21,8 @@ class LetterCanvas extends StatelessWidget {
     required this.onStrokeStart,
     required this.onStrokeUpdate,
     required this.onStrokeEnd,
+    this.anchors = const [],
+    this.level = ScoringLevel.shapeOnly,
   });
 
   static const double size = 300;
@@ -40,6 +45,10 @@ class LetterCanvas extends StatelessWidget {
   final ValueChanged<Offset> onStrokeStart;
   final ValueChanged<Offset> onStrokeUpdate;
   final VoidCallback onStrokeEnd;
+
+  /// Guide-marker anchors for [letter]; drawn only while [showModel] is true.
+  final List<StrokeAnchors> anchors;
+  final ScoringLevel level;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +77,8 @@ class LetterCanvas extends StatelessWidget {
               strokes: strokes,
               letter: letter,
               showModel: showModel,
+              anchors: anchors,
+              level: level,
             ),
           ),
         ),
@@ -81,8 +92,12 @@ class _LetterCanvasPainter extends CustomPainter {
     required this.strokes,
     required this.letter,
     required this.showModel,
+    required this.anchors,
+    required this.level,
   });
 
+  final List<StrokeAnchors> anchors;
+  final ScoringLevel level;
   final List<Stroke> strokes;
   final String letter;
   final bool showModel;
@@ -127,6 +142,7 @@ class _LetterCanvasPainter extends CustomPainter {
         canvas,
         Offset((size.width - painter.width) / 2, g.baseline - baselineOffset),
       );
+      paintGuideMarkers(canvas, anchors, level);
     }
 
     final ink = Paint()

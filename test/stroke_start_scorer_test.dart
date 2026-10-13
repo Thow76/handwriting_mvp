@@ -27,11 +27,7 @@ void main() {
   LetterFormationData singleStrokeData(StrokeStartRect rect) =>
       LetterFormationData(
         minRequiredStrokes: 1,
-        strokes: [
-          ExpectedStroke(
-            startRect: rect,
-          ),
-        ],
+        strokes: [ExpectedStroke(startRect: rect)],
       );
 
   group('StrokeStartScorer', () {
@@ -370,13 +366,15 @@ void main() {
         expect(result.overallScore, 0.0);
       });
 
-      test('first point in completely different quadrant (bottom-right) → 0.0',
-          () {
-        final result = scorer.score([
-          Stroke([const Offset(280, 280), const Offset(50, 50)]),
-        ]);
-        expect(result.overallScore, 0.0);
-      });
+      test(
+        'first point in completely different quadrant (bottom-right) → 0.0',
+        () {
+          final result = scorer.score([
+            Stroke([const Offset(280, 280), const Offset(50, 50)]),
+          ]);
+          expect(result.overallScore, 0.0);
+        },
+      );
     });
 
     // ── Mean across strokes ───────────────────────────────────────────────────
@@ -605,8 +603,14 @@ void main() {
 
       test('both strokes starting in correct rects → overallScore 1.0', () {
         final result = scorer.score([
-          Stroke([const Offset(37, 22), const Offset(40, 80)]), // expected 0, inside top-left
-          Stroke([const Offset(250, 5), const Offset(275, 95)]), // expected 1, inside top-right
+          Stroke([
+            const Offset(37, 22),
+            const Offset(40, 80),
+          ]), // expected 0, inside top-left
+          Stroke([
+            const Offset(250, 5),
+            const Offset(275, 95),
+          ]), // expected 1, inside top-right
         ]);
         expect(result.overallScore, 1.0);
       });
@@ -614,8 +618,14 @@ void main() {
       test('stroke 0 starts outside its rect → overallScore 0.5', () {
         // Centroid (100,30) → expected 0; first (200,10): rx≈67%, outside.
         final result = scorer.score([
-          Stroke([const Offset(200, 10), const Offset(0, 50)]), // expected 0, outside
-          Stroke([const Offset(250, 5), const Offset(275, 95)]), // expected 1, inside
+          Stroke([
+            const Offset(200, 10),
+            const Offset(0, 50),
+          ]), // expected 0, outside
+          Stroke([
+            const Offset(250, 5),
+            const Offset(275, 95),
+          ]), // expected 1, inside
         ]);
         expect(result.overallScore, closeTo(0.5, 1e-9));
       });
@@ -623,16 +633,28 @@ void main() {
       test('stroke 1 starts outside its rect → overallScore 0.5', () {
         // Centroid (197.5,50) → expected 1; first (100,5): rx≈33%, outside.
         final result = scorer.score([
-          Stroke([const Offset(37, 22), const Offset(40, 80)]), // expected 0, inside
-          Stroke([const Offset(100, 5), const Offset(295, 95)]), // expected 1, outside
+          Stroke([
+            const Offset(37, 22),
+            const Offset(40, 80),
+          ]), // expected 0, inside
+          Stroke([
+            const Offset(100, 5),
+            const Offset(295, 95),
+          ]), // expected 1, outside
         ]);
         expect(result.overallScore, closeTo(0.5, 1e-9));
       });
 
       test('both strokes starting outside their rects → overallScore 0.0', () {
         final result = scorer.score([
-          Stroke([const Offset(200, 10), const Offset(0, 50)]), // expected 0, outside
-          Stroke([const Offset(100, 5), const Offset(295, 95)]), // expected 1, outside
+          Stroke([
+            const Offset(200, 10),
+            const Offset(0, 50),
+          ]), // expected 0, outside
+          Stroke([
+            const Offset(100, 5),
+            const Offset(295, 95),
+          ]), // expected 1, outside
         ]);
         expect(result.overallScore, 0.0);
       });
@@ -667,24 +689,42 @@ void main() {
 
       test('stroke 0 starts outside its rect → overallScore 0.5', () {
         final result = scorer.score([
-          Stroke([const Offset(200, 10), const Offset(0, 50)]), // expected 0, outside
-          Stroke([const Offset(250, 5), const Offset(275, 95)]), // expected 1, inside
+          Stroke([
+            const Offset(200, 10),
+            const Offset(0, 50),
+          ]), // expected 0, outside
+          Stroke([
+            const Offset(250, 5),
+            const Offset(275, 95),
+          ]), // expected 1, inside
         ]);
         expect(result.overallScore, closeTo(0.5, 1e-9));
       });
 
       test('stroke 1 starts outside its rect → overallScore 0.5', () {
         final result = scorer.score([
-          Stroke([const Offset(37, 22), const Offset(40, 80)]), // expected 0, inside
-          Stroke([const Offset(100, 5), const Offset(295, 95)]), // expected 1, outside
+          Stroke([
+            const Offset(37, 22),
+            const Offset(40, 80),
+          ]), // expected 0, inside
+          Stroke([
+            const Offset(100, 5),
+            const Offset(295, 95),
+          ]), // expected 1, outside
         ]);
         expect(result.overallScore, closeTo(0.5, 1e-9));
       });
 
       test('both strokes starting outside their rects → overallScore 0.0', () {
         final result = scorer.score([
-          Stroke([const Offset(200, 10), const Offset(0, 50)]), // expected 0, outside
-          Stroke([const Offset(100, 5), const Offset(295, 95)]), // expected 1, outside
+          Stroke([
+            const Offset(200, 10),
+            const Offset(0, 50),
+          ]), // expected 0, outside
+          Stroke([
+            const Offset(100, 5),
+            const Offset(295, 95),
+          ]), // expected 1, outside
         ]);
         expect(result.overallScore, 0.0);
       });
@@ -704,8 +744,7 @@ void main() {
         expect(result.observations, isEmpty);
       });
 
-      test(
-          'extra observed stroke (matchStrokes returns -1) → skipped, '
+      test('extra observed stroke (matchStrokes returns -1) → skipped, '
           'produces only one observation', () {
         // 'n' has 1 expected stroke; providing 2 observed means the 2nd is unmatched.
         final scorer = StrokeStartScorer(
@@ -754,12 +793,14 @@ void main() {
         expect(result.observations[0].expected, 'x 0–30%, y 0–20%');
       });
 
-      test('observed describes the first point in relative percentage coords',
-          () {
-        // (30, 30) in 300×300 → rx = 10%, ry = 10%.
-        final result = scorer.score([strokeWithFirst(const Offset(30, 30))]);
-        expect(result.observations[0].observed, '(10%, 10%)');
-      });
+      test(
+        'observed describes the first point in relative percentage coords',
+        () {
+          // (30, 30) in 300×300 → rx = 10%, ry = 10%.
+          final result = scorer.score([strokeWithFirst(const Offset(30, 30))]);
+          expect(result.observations[0].observed, '(10%, 10%)');
+        },
+      );
 
       test('note is "Started in the right place." when inside rect', () {
         final result = scorer.score([strokeWithFirst(const Offset(30, 30))]);
@@ -789,8 +830,11 @@ void main() {
     //   f[1] crossbar: x 0.00–0.25, y 0.25–0.40
     group('f — flat cliff and two-stroke mean', () {
       final fData = letterFormationRegistry['f']!;
-      final fScorer =
-          StrokeStartScorer(letter: 'f', data: fData, bounds: bounds);
+      final fScorer = StrokeStartScorer(
+        letter: 'f',
+        data: fData,
+        bounds: bounds,
+      );
 
       // Point at the given bounds-relative fraction within the 300×300 bounds.
       Offset rel(double rx, double ry) => Offset(rx * 300, ry * 300);
@@ -803,16 +847,20 @@ void main() {
       final insideCrossbar = rel(0.10, 0.32); // inside f[1], outside f[0]
 
       test('both first points inside → overall 1.0 (100%)', () {
-        final r = fScorer
-            .score([startingAt(insideStem), startingAt(insideCrossbar)]);
+        final r = fScorer.score([
+          startingAt(insideStem),
+          startingAt(insideCrossbar),
+        ]);
         expect(r.observations.map((o) => o.score).toList(), [1.0, 1.0]);
         expect(r.overallScore, 1.0);
       });
 
       test('stem inside, crossbar outside → overall 0.5 (50%)', () {
         // Stroke 1's first point (insideStem) lies outside the crossbar rect.
-        final r =
-            fScorer.score([startingAt(insideStem), startingAt(insideStem)]);
+        final r = fScorer.score([
+          startingAt(insideStem),
+          startingAt(insideStem),
+        ]);
         expect(r.observations.map((o) => o.score).toList(), [1.0, 0.0]);
         expect(r.overallScore, 0.5);
       });
@@ -820,19 +868,25 @@ void main() {
       test('both first points outside → overall 0.0 (0%)', () {
         // Stroke 0 gets the crossbar point (outside the stem rect); stroke 1
         // gets the stem point (outside the crossbar rect).
-        final r = fScorer
-            .score([startingAt(insideCrossbar), startingAt(insideStem)]);
+        final r = fScorer.score([
+          startingAt(insideCrossbar),
+          startingAt(insideStem),
+        ]);
         expect(r.observations.map((o) => o.score).toList(), [0.0, 0.0]);
         expect(r.overallScore, 0.0);
       });
 
       test('no taper: deep-inside and edge-inside both score exactly 1.0', () {
-        final deep = fScorer
-            .score([startingAt(insideStem), startingAt(insideCrossbar)]);
+        final deep = fScorer.score([
+          startingAt(insideStem),
+          startingAt(insideCrossbar),
+        ]);
         // Just inside the stem rect's left edge (x 0.551 > minX 0.55) — a very
         // different distance from centre, yet the same flat 1.0 (no gradient).
-        final edge = fScorer.score(
-            [startingAt(rel(0.551, 0.001)), startingAt(insideCrossbar)]);
+        final edge = fScorer.score([
+          startingAt(rel(0.551, 0.001)),
+          startingAt(insideCrossbar),
+        ]);
         expect(deep.observations[0].score, 1.0);
         expect(edge.observations[0].score, 1.0);
       });
@@ -840,10 +894,14 @@ void main() {
       test('no taper: just-outside and far-outside both score exactly 0.0', () {
         // Just left of the stem rect (x 0.54 < minX 0.55) and far away — both
         // score a flat 0.0, never a partial value.
-        final near = fScorer
-            .score([startingAt(rel(0.54, 0.07)), startingAt(insideCrossbar)]);
-        final far = fScorer
-            .score([startingAt(rel(0.02, 0.95)), startingAt(insideCrossbar)]);
+        final near = fScorer.score([
+          startingAt(rel(0.54, 0.07)),
+          startingAt(insideCrossbar),
+        ]);
+        final far = fScorer.score([
+          startingAt(rel(0.02, 0.95)),
+          startingAt(insideCrossbar),
+        ]);
         expect(near.observations[0].score, 0.0);
         expect(far.observations[0].score, 0.0);
       });

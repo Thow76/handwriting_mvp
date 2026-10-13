@@ -44,10 +44,7 @@ class SectionMatchResult {
   /// Per-section breakdown, one entry per section, in number order.
   final List<SectionHit> hits;
 
-  const SectionMatchResult({
-    required this.hitCount,
-    required this.hits,
-  });
+  const SectionMatchResult({required this.hitCount, required this.hits});
 }
 
 /// Matches an ordered set of numbered [WaypointSection]s against a list of

@@ -71,47 +71,52 @@ void main() {
     });
   });
 
-  testWidgets('builds anchors for all 26 letters; point count = section count', (
-    tester,
-  ) async {
-    await tester.runAsync(() async {
-      final cache = TemplateCache();
-      for (final letter in 'abcdefghijklmnopqrstuvwxyz'.split('')) {
-        final data = letterFormationRegistry[letter]!;
-        final result = await cache.prepare(
-          letter: letter,
-          fontFamily: LetterCanvas.fontFamily,
-          fontSize: LetterCanvas.fontSize,
-          guidelines: LetterCanvas.guidelines,
-          canvasWidth: LetterCanvas.width,
-        );
-        final tight = result.tightBounds!;
-        final anchors = buildAnchors(
-          data: data,
-          skeleton: Skeletonizer.skeletonize(result.mask),
-          maskOrigin: result.bounds.topLeft,
-          tightBounds: tight,
-        );
-        final withSections = [
-          for (var i = 0; i < data.strokes.length; i++)
-            if (data.strokes[i].sections.isNotEmpty) i,
-        ];
-        expect(
-          anchors.map((a) => a.strokeIndex).toList(),
-          withSections,
-          reason: letter,
-        );
-        for (final a in anchors) {
+  testWidgets(
+    'builds anchors for all 26 letters; point count = section count',
+    (tester) async {
+      await tester.runAsync(() async {
+        final cache = TemplateCache();
+        for (final letter in 'abcdefghijklmnopqrstuvwxyz'.split('')) {
+          final data = letterFormationRegistry[letter]!;
+          final result = await cache.prepare(
+            letter: letter,
+            fontFamily: LetterCanvas.fontFamily,
+            fontSize: LetterCanvas.fontSize,
+            guidelines: LetterCanvas.guidelines,
+            canvasWidth: LetterCanvas.width,
+          );
+          final tight = result.tightBounds!;
+          final anchors = buildAnchors(
+            data: data,
+            skeleton: Skeletonizer.skeletonize(result.mask),
+            maskOrigin: result.bounds.topLeft,
+            tightBounds: tight,
+          );
+          final withSections = [
+            for (var i = 0; i < data.strokes.length; i++)
+              if (data.strokes[i].sections.isNotEmpty) i,
+          ];
           expect(
-            a.sectionPoints.length,
-            data.strokes[a.strokeIndex].sections.length,
+            anchors.map((a) => a.strokeIndex).toList(),
+            withSections,
             reason: letter,
           );
-          for (final p in [a.start, ...a.sectionPoints]) {
-            expect(tight.inflate(1).contains(p), isTrue, reason: '$letter $p');
+          for (final a in anchors) {
+            expect(
+              a.sectionPoints.length,
+              data.strokes[a.strokeIndex].sections.length,
+              reason: letter,
+            );
+            for (final p in [a.start, ...a.sectionPoints]) {
+              expect(
+                tight.inflate(1).contains(p),
+                isTrue,
+                reason: '$letter $p',
+              );
+            }
           }
         }
-      }
-    });
-  });
+      });
+    },
+  );
 }

@@ -13,12 +13,14 @@ void main() {
   // They are supplied only because the signature requires them.
   const bounds = Rect.fromLTWH(0, 0, 300, 300);
 
-  const someRect =
-      StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0);
+  const someRect = StrokeStartRect(
+    minX: 0.0,
+    maxX: 1.0,
+    minY: 0.0,
+    maxY: 1.0 / 3.0,
+  );
 
-  ExpectedStroke expectedStroke() => ExpectedStroke(
-        startRect: someRect,
-      );
+  ExpectedStroke expectedStroke() => ExpectedStroke(startRect: someRect);
 
   // A stroke with at least one point, positioned at (cx, cy). Position has no
   // effect on order-based pairing; it only needs to be non-empty.
@@ -28,10 +30,7 @@ void main() {
   group('matchStrokes — order-based (index) pairing', () {
     test('equal-length: observed[i] maps to expected[i]', () {
       final expected = [expectedStroke(), expectedStroke()];
-      final observed = [
-        nonEmptyStrokeAt(150, 50),
-        nonEmptyStrokeAt(150, 250),
-      ];
+      final observed = [nonEmptyStrokeAt(150, 50), nonEmptyStrokeAt(150, 250)];
 
       expect(matchStrokes(observed, expected, bounds), [0, 1]);
     });
@@ -59,14 +58,10 @@ void main() {
       expect(matchStrokes(observed, expected, bounds), [0, 1, -1]);
     });
 
-    test(
-        'fewer observed than expected: trailing expected strokes are left '
+    test('fewer observed than expected: trailing expected strokes are left '
         'unmatched (reported only for observed strokes)', () {
       final expected = [expectedStroke(), expectedStroke(), expectedStroke()];
-      final observed = [
-        nonEmptyStrokeAt(150, 50),
-        nonEmptyStrokeAt(150, 250),
-      ];
+      final observed = [nonEmptyStrokeAt(150, 50), nonEmptyStrokeAt(150, 250)];
 
       // expected[2] has no observed counterpart; the result only spans the two
       // observed strokes, which pair positionally to expected[0] and [1].
@@ -84,10 +79,7 @@ void main() {
           sections: [WaypointSection(number: 1, rect: someRect)],
         ),
       ];
-      final observed = [
-        nonEmptyStrokeAt(250, 250),
-        nonEmptyStrokeAt(50, 50),
-      ];
+      final observed = [nonEmptyStrokeAt(250, 250), nonEmptyStrokeAt(50, 50)];
 
       expect(matchStrokes(observed, expected, bounds), [0, 1]);
     });

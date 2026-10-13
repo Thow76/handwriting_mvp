@@ -65,13 +65,15 @@ void main() {
           final bottomRatio = bottomAboveBaseline / fontSize;
 
           // ignore: avoid_print
-          print('Short "$letter": '
-              'inkTop=${inkTop.toStringAsFixed(1)} '
-              'inkBottom=${inkBottom.toStringAsFixed(1)} '
-              'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
-              'bottomAboveBaseline=${bottomAboveBaseline.toStringAsFixed(1)} '
-              'topRatio=${topRatio.toStringAsFixed(3)} '
-              'bottomRatio=${bottomRatio.toStringAsFixed(3)}');
+          print(
+            'Short "$letter": '
+            'inkTop=${inkTop.toStringAsFixed(1)} '
+            'inkBottom=${inkBottom.toStringAsFixed(1)} '
+            'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
+            'bottomAboveBaseline=${bottomAboveBaseline.toStringAsFixed(1)} '
+            'topRatio=${topRatio.toStringAsFixed(3)} '
+            'bottomRatio=${bottomRatio.toStringAsFixed(3)}',
+          );
 
           // Basic sanity: ink should be above the baseline
           expect(inkTop, lessThan(guidelines.baseline));
@@ -99,13 +101,15 @@ void main() {
           final bottomRatio = bottomAboveBaseline / fontSize;
 
           // ignore: avoid_print
-          print('Tall "$letter": '
-              'inkTop=${inkTop.toStringAsFixed(1)} '
-              'inkBottom=${inkBottom.toStringAsFixed(1)} '
-              'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
-              'bottomAboveBaseline=${bottomAboveBaseline.toStringAsFixed(1)} '
-              'topRatio=${topRatio.toStringAsFixed(3)} '
-              'bottomRatio=${bottomRatio.toStringAsFixed(3)}');
+          print(
+            'Tall "$letter": '
+            'inkTop=${inkTop.toStringAsFixed(1)} '
+            'inkBottom=${inkBottom.toStringAsFixed(1)} '
+            'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
+            'bottomAboveBaseline=${bottomAboveBaseline.toStringAsFixed(1)} '
+            'topRatio=${topRatio.toStringAsFixed(3)} '
+            'bottomRatio=${bottomRatio.toStringAsFixed(3)}',
+          );
 
           expect(inkTop, lessThan(guidelines.baseline));
         });
@@ -132,13 +136,15 @@ void main() {
           final bottomRatio = bottomBelowBaseline / fontSize;
 
           // ignore: avoid_print
-          print('Descender "$letter": '
-              'inkTop=${inkTop.toStringAsFixed(1)} '
-              'inkBottom=${inkBottom.toStringAsFixed(1)} '
-              'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
-              'bottomBelowBaseline=${bottomBelowBaseline.toStringAsFixed(1)} '
-              'topRatio=${topRatio.toStringAsFixed(3)} '
-              'bottomRatio=${bottomRatio.toStringAsFixed(3)}');
+          print(
+            'Descender "$letter": '
+            'inkTop=${inkTop.toStringAsFixed(1)} '
+            'inkBottom=${inkBottom.toStringAsFixed(1)} '
+            'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
+            'bottomBelowBaseline=${bottomBelowBaseline.toStringAsFixed(1)} '
+            'topRatio=${topRatio.toStringAsFixed(3)} '
+            'bottomRatio=${bottomRatio.toStringAsFixed(3)}',
+          );
 
           expect(inkBottom, greaterThan(guidelines.baseline));
         });
@@ -164,13 +170,15 @@ void main() {
         final bottomRatio = bottomBelowBaseline / fontSize;
 
         // ignore: avoid_print
-        print('Tall+Desc "j": '
-            'inkTop=${inkTop.toStringAsFixed(1)} '
-            'inkBottom=${inkBottom.toStringAsFixed(1)} '
-            'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
-            'bottomBelowBaseline=${bottomBelowBaseline.toStringAsFixed(1)} '
-            'topRatio=${topRatio.toStringAsFixed(3)} '
-            'bottomRatio=${bottomRatio.toStringAsFixed(3)}');
+        print(
+          'Tall+Desc "j": '
+          'inkTop=${inkTop.toStringAsFixed(1)} '
+          'inkBottom=${inkBottom.toStringAsFixed(1)} '
+          'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
+          'bottomBelowBaseline=${bottomBelowBaseline.toStringAsFixed(1)} '
+          'topRatio=${topRatio.toStringAsFixed(3)} '
+          'bottomRatio=${bottomRatio.toStringAsFixed(3)}',
+        );
 
         expect(inkTop, lessThan(guidelines.baseline));
         expect(inkBottom, greaterThan(guidelines.baseline));
@@ -196,13 +204,15 @@ void main() {
         final bottomRatio = bottomAboveBaseline / fontSize;
 
         // ignore: avoid_print
-        print('Special "i": '
-            'inkTop=${inkTop.toStringAsFixed(1)} '
-            'inkBottom=${inkBottom.toStringAsFixed(1)} '
-            'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
-            'bottomAboveBaseline=${bottomAboveBaseline.toStringAsFixed(1)} '
-            'topRatio=${topRatio.toStringAsFixed(3)} '
-            'bottomRatio=${bottomRatio.toStringAsFixed(3)}');
+        print(
+          'Special "i": '
+          'inkTop=${inkTop.toStringAsFixed(1)} '
+          'inkBottom=${inkBottom.toStringAsFixed(1)} '
+          'topAboveBaseline=${topAboveBaseline.toStringAsFixed(1)} '
+          'bottomAboveBaseline=${bottomAboveBaseline.toStringAsFixed(1)} '
+          'topRatio=${topRatio.toStringAsFixed(3)} '
+          'bottomRatio=${bottomRatio.toStringAsFixed(3)}',
+        );
 
         expect(inkTop, lessThan(guidelines.baseline));
       });

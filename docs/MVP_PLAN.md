@@ -151,7 +151,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       skeleton pixel inside that zone (fallback: zone centre). Strokes with no sections are
       skipped. Tests across all 26 letters (builds without error; point count = section
       count).
-- [ ] 4.3 Guide markers: L2 a dot at each stroke start; L3 dots + a static arrowed line
+- [~] 4.3 Guide markers: L2 a dot at each stroke start; L3 dots + a static arrowed line
       through the anchors (CatmullRomSpline, built-in); L4 numbered dots ①②… in stroke
       order. Hidden when the eye toggle hides the model. Also a tagged test that renders
       all 26 letters with L3 markers to build/guide_markers/<letter>.png plus a contact

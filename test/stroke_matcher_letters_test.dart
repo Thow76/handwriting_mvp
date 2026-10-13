@@ -47,65 +47,159 @@ void main() {
   final traces = <String, List<List<List<double>>>>{
     // stem/hook (top → baseline) then crossbar (left → right)
     'f': [
-      [[0.86, 0.03], [0.41, 0.13], [0.40, 0.40], [0.40, 0.95]],
-      [[0.02, 0.30], [0.50, 0.31], [0.95, 0.31]],
+      [
+        [0.86, 0.03],
+        [0.41, 0.13],
+        [0.40, 0.40],
+        [0.40, 0.95],
+      ],
+      [
+        [0.02, 0.30],
+        [0.50, 0.31],
+        [0.95, 0.31],
+      ],
     ],
     // stem (top → baseline) then crossbar (left → right)
     't': [
-      [[0.55, 0.02], [0.55, 0.50], [0.55, 0.95]],
-      [[0.05, 0.30], [0.45, 0.30], [0.85, 0.30]],
+      [
+        [0.55, 0.02],
+        [0.55, 0.50],
+        [0.55, 0.95],
+      ],
+      [
+        [0.05, 0.30],
+        [0.45, 0.30],
+        [0.85, 0.30],
+      ],
     ],
     // stem (x-height → baseline) then dot (top)
     'i': [
-      [[0.50, 0.30], [0.50, 0.60], [0.50, 0.98]],
-      [[0.50, 0.02], [0.55, 0.06], [0.50, 0.10]],
+      [
+        [0.50, 0.30],
+        [0.50, 0.60],
+        [0.50, 0.98],
+      ],
+      [
+        [0.50, 0.02],
+        [0.55, 0.06],
+        [0.50, 0.10],
+      ],
     ],
     // stem (x-height → descender) then dot (top)
     'j': [
-      [[0.55, 0.25], [0.55, 0.60], [0.30, 0.98]],
-      [[0.55, 0.02], [0.60, 0.06], [0.55, 0.10]],
+      [
+        [0.55, 0.25],
+        [0.55, 0.60],
+        [0.30, 0.98],
+      ],
+      [
+        [0.55, 0.02],
+        [0.60, 0.06],
+        [0.55, 0.10],
+      ],
     ],
     // stem (top → baseline) then right-opening bowl
     'b': [
-      [[0.10, 0.02], [0.10, 0.50], [0.10, 0.98]],
-      [[0.10, 0.50], [0.55, 0.55], [0.55, 0.98], [0.10, 0.98]],
+      [
+        [0.10, 0.02],
+        [0.10, 0.50],
+        [0.10, 0.98],
+      ],
+      [
+        [0.10, 0.50],
+        [0.55, 0.55],
+        [0.55, 0.98],
+        [0.10, 0.98],
+      ],
     ],
     // stem (top → baseline) then left-opening oval
     'd': [
-      [[0.85, 0.02], [0.85, 0.50], [0.85, 0.98]],
-      [[0.85, 0.50], [0.40, 0.55], [0.40, 0.95], [0.85, 0.90]],
+      [
+        [0.85, 0.02],
+        [0.85, 0.50],
+        [0.85, 0.98],
+      ],
+      [
+        [0.85, 0.50],
+        [0.40, 0.55],
+        [0.40, 0.95],
+        [0.85, 0.90],
+      ],
     ],
     // stem (top → baseline) then compound arch
     'h': [
-      [[0.10, 0.02], [0.10, 0.50], [0.10, 0.98]],
-      [[0.10, 0.50], [0.50, 0.45], [0.85, 0.60], [0.85, 0.98]],
+      [
+        [0.10, 0.02],
+        [0.10, 0.50],
+        [0.10, 0.98],
+      ],
+      [
+        [0.10, 0.50],
+        [0.50, 0.45],
+        [0.85, 0.60],
+        [0.85, 0.98],
+      ],
     ],
     // stem (top → baseline) then compound kick
     'k': [
-      [[0.10, 0.02], [0.10, 0.50], [0.10, 0.98]],
-      [[0.80, 0.45], [0.30, 0.65], [0.85, 0.98]],
+      [
+        [0.10, 0.02],
+        [0.10, 0.50],
+        [0.10, 0.98],
+      ],
+      [
+        [0.80, 0.45],
+        [0.30, 0.65],
+        [0.85, 0.98],
+      ],
     ],
     // diagonal TL → BR then diagonal TR → BL
     'x': [
-      [[0.05, 0.05], [0.50, 0.50], [0.95, 0.95]],
-      [[0.95, 0.05], [0.50, 0.50], [0.05, 0.95]],
+      [
+        [0.05, 0.05],
+        [0.50, 0.50],
+        [0.95, 0.95],
+      ],
+      [
+        [0.95, 0.05],
+        [0.50, 0.50],
+        [0.05, 0.95],
+      ],
     ],
     // stem (top → descender) then right-opening bowl
     'p': [
-      [[0.10, 0.10], [0.10, 0.55], [0.10, 0.98]],
-      [[0.10, 0.10], [0.55, 0.15], [0.55, 0.50], [0.10, 0.55]],
+      [
+        [0.10, 0.10],
+        [0.10, 0.55],
+        [0.10, 0.98],
+      ],
+      [
+        [0.10, 0.10],
+        [0.55, 0.15],
+        [0.55, 0.50],
+        [0.10, 0.55],
+      ],
     ],
     // left-opening oval then descending stem
     'q': [
-      [[0.80, 0.10], [0.40, 0.12], [0.40, 0.45], [0.80, 0.45]],
-      [[0.92, 0.10], [0.92, 0.55], [0.92, 0.98]],
+      [
+        [0.80, 0.10],
+        [0.40, 0.12],
+        [0.40, 0.45],
+        [0.80, 0.45],
+      ],
+      [
+        [0.92, 0.10],
+        [0.92, 0.55],
+        [0.92, 0.98],
+      ],
     ],
   };
 
   Stroke fromRel(Rect tb, List<List<double>> rel) => Stroke([
-        for (final p in rel)
-          Offset(tb.left + p[0] * tb.width, tb.top + p[1] * tb.height),
-      ]);
+    for (final p in rel)
+      Offset(tb.left + p[0] * tb.width, tb.top + p[1] * tb.height),
+  ]);
 
   Future<Rect> tightBoundsFor(String letter) async {
     final result = await TemplateRasterizer.rasterize(
@@ -132,7 +226,8 @@ void main() {
           expect(
             pairing,
             [for (var i = 0; i < strokes.length; i++) i],
-            reason: 'order-based pairing must be the identity for "$letter"; '
+            reason:
+                'order-based pairing must be the identity for "$letter"; '
                 'a non-identity result means spatial matching has crept back in',
           );
         });
@@ -141,8 +236,9 @@ void main() {
   });
 
   group('matchStrokes — swapped order is reflected, not corrected', () {
-    testWidgets('f drawn crossbar-then-stem mis-pairs and lowers Start score',
-        (tester) async {
+    testWidgets('f drawn crossbar-then-stem mis-pairs and lowers Start score', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         final tb = await tightBoundsFor('f');
         final data = letterFormationRegistry['f']!;
@@ -161,21 +257,24 @@ void main() {
           reason: 'swapped strokes must pair positionally, not be corrected',
         );
 
-        final correctScore =
-            StrokeStartScorer(letter: 'f', data: data, bounds: tb)
-                .score(correct)
-                .overallScore;
-        final swappedScore =
-            StrokeStartScorer(letter: 'f', data: data, bounds: tb)
-                .score(swapped)
-                .overallScore;
+        final correctScore = StrokeStartScorer(
+          letter: 'f',
+          data: data,
+          bounds: tb,
+        ).score(correct).overallScore;
+        final swappedScore = StrokeStartScorer(
+          letter: 'f',
+          data: data,
+          bounds: tb,
+        ).score(swapped).overallScore;
 
         // Drawing in the wrong order should cost the learner Start credit,
         // rather than being invisibly fixed up by the matcher.
         expect(
           swappedScore,
           lessThan(correctScore),
-          reason: 'mis-ordered f should score lower on Start than correct order '
+          reason:
+              'mis-ordered f should score lower on Start than correct order '
               '(correct=$correctScore, swapped=$swappedScore)',
         );
       });

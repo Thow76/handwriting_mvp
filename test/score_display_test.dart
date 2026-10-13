@@ -18,7 +18,12 @@ void main() {
     });
 
     testWidgets('displays coverage percentage', (tester) async {
-      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
+      const result = ScoreResult(
+        coverage: 0.85,
+        precision: 0.72,
+        placement: 0.90,
+        efficiency: 0.80,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('Coverage'), findsOneWidget);
@@ -26,7 +31,12 @@ void main() {
     });
 
     testWidgets('displays precision percentage', (tester) async {
-      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
+      const result = ScoreResult(
+        coverage: 0.85,
+        precision: 0.72,
+        placement: 0.90,
+        efficiency: 0.80,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('Precision'), findsOneWidget);
@@ -34,7 +44,12 @@ void main() {
     });
 
     testWidgets('displays placement percentage', (tester) async {
-      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
+      const result = ScoreResult(
+        coverage: 0.85,
+        precision: 0.72,
+        placement: 0.90,
+        efficiency: 0.80,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('Placement'), findsOneWidget);
@@ -42,7 +57,12 @@ void main() {
     });
 
     testWidgets('rounds percentages to nearest integer', (tester) async {
-      const result = ScoreResult(coverage: 0.666, precision: 0.333, placement: 0.555, efficiency: 0.444);
+      const result = ScoreResult(
+        coverage: 0.666,
+        precision: 0.333,
+        placement: 0.555,
+        efficiency: 0.444,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('67%'), findsOneWidget);
@@ -52,7 +72,12 @@ void main() {
     });
 
     testWidgets('displays efficiency percentage', (tester) async {
-      const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
+      const result = ScoreResult(
+        coverage: 0.85,
+        precision: 0.72,
+        placement: 0.90,
+        efficiency: 0.80,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('Efficiency'), findsOneWidget);
@@ -60,14 +85,24 @@ void main() {
     });
 
     testWidgets('displays 0% for zero scores', (tester) async {
-      const result = ScoreResult(coverage: 0.0, precision: 0.0, placement: 0.0, efficiency: 0.0);
+      const result = ScoreResult(
+        coverage: 0.0,
+        precision: 0.0,
+        placement: 0.0,
+        efficiency: 0.0,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('0%'), findsNWidgets(4));
     });
 
     testWidgets('displays 100% for perfect scores', (tester) async {
-      const result = ScoreResult(coverage: 1.0, precision: 1.0, placement: 1.0, efficiency: 1.0);
+      const result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('100%'), findsNWidgets(4));
@@ -76,7 +111,12 @@ void main() {
 
   group('ScoreDisplay — formation scores', () {
     testWidgets('shows em-dash for all null formation scores', (tester) async {
-      const result = ScoreResult(coverage: 1.0, precision: 1.0, placement: 1.0, efficiency: 1.0);
+      const result = ScoreResult(
+        coverage: 1.0,
+        precision: 1.0,
+        placement: 1.0,
+        efficiency: 1.0,
+      );
       await tester.pumpWidget(_app(const ScoreDisplay(result: result)));
 
       expect(find.text('—'), findsNWidgets(3));
@@ -88,7 +128,11 @@ void main() {
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeStart: const FormationScore(overallScore: 0.75, observations: [], summary: ''),
+        strokeStart: const FormationScore(
+          overallScore: 0.75,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
@@ -102,7 +146,11 @@ void main() {
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        compoundStroke: const FormationScore(overallScore: 0.25, observations: [], summary: ''),
+        compoundStroke: const FormationScore(
+          overallScore: 0.25,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
@@ -116,7 +164,11 @@ void main() {
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeBreak: const FormationScore(overallScore: 0.60, observations: [], summary: ''),
+        strokeBreak: const FormationScore(
+          overallScore: 0.60,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
@@ -124,28 +176,41 @@ void main() {
       expect(find.text('60%'), findsOneWidget);
     });
 
-    testWidgets('shows em-dash for absent formation score alongside present ones', (tester) async {
+    testWidgets(
+      'shows em-dash for absent formation score alongside present ones',
+      (tester) async {
+        final result = ScoreResult(
+          coverage: 1.0,
+          precision: 1.0,
+          placement: 1.0,
+          efficiency: 1.0,
+          strokeStart: const FormationScore(
+            overallScore: 0.80,
+            observations: [],
+            summary: '',
+          ),
+          // compoundStroke, strokeBreak are null
+        );
+        await tester.pumpWidget(_app(ScoreDisplay(result: result)));
+
+        expect(find.text('80%'), findsOneWidget);
+        expect(find.text('—'), findsNWidgets(2));
+      },
+    );
+
+    testWidgets('displays 0% for zero formation score (not em-dash)', (
+      tester,
+    ) async {
       final result = ScoreResult(
         coverage: 1.0,
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeStart: const FormationScore(overallScore: 0.80, observations: [], summary: ''),
-        // compoundStroke, strokeBreak are null
-      );
-      await tester.pumpWidget(_app(ScoreDisplay(result: result)));
-
-      expect(find.text('80%'), findsOneWidget);
-      expect(find.text('—'), findsNWidgets(2));
-    });
-
-    testWidgets('displays 0% for zero formation score (not em-dash)', (tester) async {
-      final result = ScoreResult(
-        coverage: 1.0,
-        precision: 1.0,
-        placement: 1.0,
-        efficiency: 1.0,
-        strokeStart: const FormationScore(overallScore: 0.0, observations: [], summary: ''),
+        strokeStart: const FormationScore(
+          overallScore: 0.0,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
@@ -159,9 +224,21 @@ void main() {
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeStart: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
-        compoundStroke: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
-        strokeBreak: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
+        strokeStart: const FormationScore(
+          overallScore: 1.0,
+          observations: [],
+          summary: '',
+        ),
+        compoundStroke: const FormationScore(
+          overallScore: 1.0,
+          observations: [],
+          summary: '',
+        ),
+        strokeBreak: const FormationScore(
+          overallScore: 1.0,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
@@ -170,13 +247,19 @@ void main() {
   });
 
   group('ScoreDisplay — stroke break suppression', () {
-    testWidgets('hides Strokes row when minRequiredStrokes == 1 (e.g. o)', (tester) async {
+    testWidgets('hides Strokes row when minRequiredStrokes == 1 (e.g. o)', (
+      tester,
+    ) async {
       final result = ScoreResult(
         coverage: 1.0,
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeBreak: const FormationScore(overallScore: 1.0, observations: [], summary: ''),
+        strokeBreak: const FormationScore(
+          overallScore: 1.0,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(
         _app(ScoreDisplay(result: result, minRequiredStrokes: 1)),
@@ -185,13 +268,19 @@ void main() {
       expect(find.text('Strokes'), findsNothing);
     });
 
-    testWidgets('shows Strokes row when minRequiredStrokes == 2 (e.g. t)', (tester) async {
+    testWidgets('shows Strokes row when minRequiredStrokes == 2 (e.g. t)', (
+      tester,
+    ) async {
       final result = ScoreResult(
         coverage: 1.0,
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeBreak: const FormationScore(overallScore: 0.80, observations: [], summary: ''),
+        strokeBreak: const FormationScore(
+          overallScore: 0.80,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(
         _app(ScoreDisplay(result: result, minRequiredStrokes: 2)),
@@ -201,13 +290,19 @@ void main() {
       expect(find.text('80%'), findsOneWidget);
     });
 
-    testWidgets('shows Strokes row when minRequiredStrokes is null (default)', (tester) async {
+    testWidgets('shows Strokes row when minRequiredStrokes is null (default)', (
+      tester,
+    ) async {
       final result = ScoreResult(
         coverage: 1.0,
         precision: 1.0,
         placement: 1.0,
         efficiency: 1.0,
-        strokeBreak: const FormationScore(overallScore: 0.60, observations: [], summary: ''),
+        strokeBreak: const FormationScore(
+          overallScore: 0.60,
+          observations: [],
+          summary: '',
+        ),
       );
       await tester.pumpWidget(_app(ScoreDisplay(result: result)));
 
@@ -216,23 +311,74 @@ void main() {
   });
 
   group('ScoreDisplay — scoring level', () {
-    const result = ScoreResult(coverage: 0.85, precision: 0.72, placement: 0.90, efficiency: 0.80);
-    const rows = ['Coverage', 'Precision', 'Placement', 'Efficiency', 'Start', 'Path', 'Strokes'];
+    const result = ScoreResult(
+      coverage: 0.85,
+      precision: 0.72,
+      placement: 0.90,
+      efficiency: 0.80,
+    );
+    const rows = [
+      'Coverage',
+      'Precision',
+      'Placement',
+      'Efficiency',
+      'Start',
+      'Path',
+      'Strokes',
+    ];
 
-    Future<void> check(WidgetTester tester, ScoringLevel? level, Set<String> shown) async {
+    Future<void> check(
+      WidgetTester tester,
+      ScoringLevel? level,
+      Set<String> shown,
+    ) async {
       await tester.pumpWidget(_app(ScoreDisplay(result: result, level: level)));
       for (final row in rows) {
-        expect(find.text(row), shown.contains(row) ? findsOneWidget : findsNothing, reason: row);
+        expect(
+          find.text(row),
+          shown.contains(row) ? findsOneWidget : findsNothing,
+          reason: row,
+        );
       }
     }
 
-    testWidgets('null level shows every row', (tester) => check(tester, null, rows.toSet()));
-    testWidgets('shapeOnly shows the four bitmap rows', (tester) =>
-        check(tester, ScoringLevel.shapeOnly, {'Coverage', 'Precision', 'Placement', 'Efficiency'}));
-    testWidgets('shapeAndStart adds Start', (tester) => check(tester, ScoringLevel.shapeAndStart,
-        {'Coverage', 'Precision', 'Placement', 'Efficiency', 'Start'}));
-    testWidgets('shapeStartAndPath adds Path', (tester) => check(tester, ScoringLevel.shapeStartAndPath,
-        {'Coverage', 'Precision', 'Placement', 'Efficiency', 'Start', 'Path'}));
-    testWidgets('full shows every row', (tester) => check(tester, ScoringLevel.full, rows.toSet()));
+    testWidgets(
+      'null level shows every row',
+      (tester) => check(tester, null, rows.toSet()),
+    );
+    testWidgets(
+      'shapeOnly shows the four bitmap rows',
+      (tester) => check(tester, ScoringLevel.shapeOnly, {
+        'Coverage',
+        'Precision',
+        'Placement',
+        'Efficiency',
+      }),
+    );
+    testWidgets(
+      'shapeAndStart adds Start',
+      (tester) => check(tester, ScoringLevel.shapeAndStart, {
+        'Coverage',
+        'Precision',
+        'Placement',
+        'Efficiency',
+        'Start',
+      }),
+    );
+    testWidgets(
+      'shapeStartAndPath adds Path',
+      (tester) => check(tester, ScoringLevel.shapeStartAndPath, {
+        'Coverage',
+        'Precision',
+        'Placement',
+        'Efficiency',
+        'Start',
+        'Path',
+      }),
+    );
+    testWidgets(
+      'full shows every row',
+      (tester) => check(tester, ScoringLevel.full, rows.toSet()),
+    );
   });
 }

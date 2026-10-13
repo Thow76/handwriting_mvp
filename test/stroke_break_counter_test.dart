@@ -65,11 +65,13 @@ void main() {
       expect(result.observations.first.score, 0.5);
     });
 
-    test('summary asks learner to use at least 2 strokes when below minimum',
-        () {
-      final result = counter.score(strokes(1));
-      expect(result.summary, contains('2'));
-    });
+    test(
+      'summary asks learner to use at least 2 strokes when below minimum',
+      () {
+        final result = counter.score(strokes(1));
+        expect(result.summary, contains('2'));
+      },
+    );
 
     test('summary says correct number when at minimum', () {
       final result = counter.score(strokes(2));
@@ -106,23 +108,27 @@ void main() {
       expect(result.observations.length, 1);
     });
 
-    test('observation note reads "this letter accepts any number of strokes"',
-        () {
-      final result = counter.score(strokes(1));
-      expect(
-        result.observations.first.note,
-        'this letter accepts any number of strokes',
-      );
-    });
+    test(
+      'observation note reads "this letter accepts any number of strokes"',
+      () {
+        final result = counter.score(strokes(1));
+        expect(
+          result.observations.first.note,
+          'this letter accepts any number of strokes',
+        );
+      },
+    );
 
-    test('observation note for five strokes also reads the optional-lift text',
-        () {
-      final result = counter.score(strokes(5));
-      expect(
-        result.observations.first.note,
-        'this letter accepts any number of strokes',
-      );
-    });
+    test(
+      'observation note for five strokes also reads the optional-lift text',
+      () {
+        final result = counter.score(strokes(5));
+        expect(
+          result.observations.first.note,
+          'this letter accepts any number of strokes',
+        );
+      },
+    );
 
     test('summary mentions optional-lift behaviour', () {
       final result = counter.score(strokes(1));
@@ -175,13 +181,28 @@ void main() {
         minRequiredStrokes: 3,
         strokes: [
           ExpectedStroke(
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
           ExpectedStroke(
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
           ExpectedStroke(
-            startRect: const StrokeStartRect(minX: 0.0, maxX: 1.0, minY: 0.0, maxY: 1.0 / 3.0),
+            startRect: const StrokeStartRect(
+              minX: 0.0,
+              maxX: 1.0,
+              minY: 0.0,
+              maxY: 1.0 / 3.0,
+            ),
           ),
         ],
       );

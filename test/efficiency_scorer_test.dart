@@ -85,11 +85,7 @@ void main() {
     test('sums lengths across multiple segments in a stroke', () {
       // Two horizontal segments of length 5 each
       final strokes = [
-        Stroke([
-          const Offset(0, 0),
-          const Offset(5, 0),
-          const Offset(10, 0),
-        ]),
+        Stroke([const Offset(0, 0), const Offset(5, 0), const Offset(10, 0)]),
       ];
       expect(EfficiencyScorer.actualPathLength(strokes), 10.0);
     });
@@ -105,11 +101,7 @@ void main() {
     test('handles back-and-forth scribbling', () {
       // Go right 10, then back left 10 — total path length is 20
       final strokes = [
-        Stroke([
-          const Offset(0, 0),
-          const Offset(10, 0),
-          const Offset(0, 0),
-        ]),
+        Stroke([const Offset(0, 0), const Offset(10, 0), const Offset(0, 0)]),
       ];
       expect(EfficiencyScorer.actualPathLength(strokes), 20.0);
     });

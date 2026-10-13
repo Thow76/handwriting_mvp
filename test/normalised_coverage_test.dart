@@ -7,7 +7,14 @@ import 'package:handwriting_mvp/models/stroke.dart';
 import 'package:handwriting_mvp/models/stroke_rasterizer.dart';
 
 /// Helper to build a [rows]×[cols] mask filled in a rectangular region.
-List<List<bool>> _filledRect(int rows, int cols, int top, int left, int bottom, int right) {
+List<List<bool>> _filledRect(
+  int rows,
+  int cols,
+  int top,
+  int left,
+  int bottom,
+  int right,
+) {
   final grid = List.generate(rows, (_) => List.filled(cols, false));
   for (var r = top; r <= bottom; r++) {
     for (var c = left; c <= right; c++) {
@@ -19,42 +26,45 @@ List<List<bool>> _filledRect(int rows, int cols, int top, int left, int bottom, 
 
 void main() {
   group('Normalised coverage', () {
-    test('thin stroke tracing centre of fat reference scores high normalised coverage', () {
-      // Reference: 7-pixel-wide vertical bar (rows 2–17, cols 7–13) in a 20×20 grid.
-      final ref = _filledRect(20, 20, 2, 7, 17, 13);
-      final bounds = const Rect.fromLTWH(0, 0, 20, 20);
+    test(
+      'thin stroke tracing centre of fat reference scores high normalised coverage',
+      () {
+        // Reference: 7-pixel-wide vertical bar (rows 2–17, cols 7–13) in a 20×20 grid.
+        final ref = _filledRect(20, 20, 2, 7, 17, 13);
+        final bounds = const Rect.fromLTWH(0, 0, 20, 20);
 
-      // User traces down the centre column (col 10) with a thin stroke.
-      final points = <Offset>[];
-      for (var row = 2; row <= 17; row++) {
-        points.add(Offset(10.5, row + 0.5));
-      }
-      final stroke = Stroke(points);
+        // User traces down the centre column (col 10) with a thin stroke.
+        final points = <Offset>[];
+        for (var row = 2; row <= 17; row++) {
+          points.add(Offset(10.5, row + 0.5));
+        }
+        final stroke = Stroke(points);
 
-      // Get raw coverage for comparison.
-      final strokeMask = StrokeRasterizer.rasterize(
-        bounds: bounds,
-        strokes: [stroke],
-        strokeWidth: 3.0,
-      );
-      final rawCoverage = CoverageScorer.calculate(
-        referenceMask: ref,
-        strokeMask: strokeMask,
-      );
+        // Get raw coverage for comparison.
+        final strokeMask = StrokeRasterizer.rasterize(
+          bounds: bounds,
+          strokes: [stroke],
+          strokeWidth: 3.0,
+        );
+        final rawCoverage = CoverageScorer.calculate(
+          referenceMask: ref,
+          strokeMask: strokeMask,
+        );
 
-      // Raw coverage should be well below 100% because the stroke is thin.
-      expect(rawCoverage, lessThan(0.7));
+        // Raw coverage should be well below 100% because the stroke is thin.
+        expect(rawCoverage, lessThan(0.7));
 
-      // Normalised coverage should be significantly higher.
-      final result = ScoreIntegrator.score(
-        referenceMask: ref,
-        bounds: bounds,
-        strokes: [stroke],
-        strokeWidth: 3.0,
-      );
-      expect(result.coverage, greaterThan(rawCoverage));
-      expect(result.coverage, greaterThan(0.8));
-    });
+        // Normalised coverage should be significantly higher.
+        final result = ScoreIntegrator.score(
+          referenceMask: ref,
+          bounds: bounds,
+          strokes: [stroke],
+          strokeWidth: 3.0,
+        );
+        expect(result.coverage, greaterThan(rawCoverage));
+        expect(result.coverage, greaterThan(0.8));
+      },
+    );
 
     test('no strokes still yields 0% normalised coverage', () {
       final ref = _filledRect(20, 20, 2, 7, 17, 13);

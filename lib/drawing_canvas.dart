@@ -106,7 +106,9 @@ class _DrawingCanvasState extends State<DrawingCanvas> {
         actions: [
           if (kDebugMode)
             IconButton(
-              icon: Icon(_showDebugView ? Icons.bug_report : Icons.bug_report_outlined),
+              icon: Icon(
+                _showDebugView ? Icons.bug_report : Icons.bug_report_outlined,
+              ),
               tooltip: 'Toggle debug view',
               onPressed: () => setState(() => _showDebugView = !_showDebugView),
             ),
@@ -285,10 +287,8 @@ class _CanvasPainter extends CustomPainter {
     );
 
     final span = TextSpan(text: letter, style: textStyle);
-    final painter = TextPainter(
-      text: span,
-      textDirection: TextDirection.ltr,
-    )..layout();
+    final painter = TextPainter(text: span, textDirection: TextDirection.ltr)
+      ..layout();
 
     // Align the letter so its baseline sits on the guidelines baseline
     // and it is horizontally centered.

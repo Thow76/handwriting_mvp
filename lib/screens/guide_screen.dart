@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../models/anchor_builder.dart';
+import '../models/letter_formation_registry.dart';
 import '../models/practice_session.dart';
 import '../models/score_builder.dart';
 import '../models/scoring_level.dart';
+import '../models/skeletonizer.dart';
 import '../models/stroke.dart';
 import '../models/template_cache.dart';
 import '../models/template_rasterizer.dart';
@@ -34,6 +37,23 @@ class _GuideScreenState extends State<GuideScreen> {
   bool _finishing = false;
 
   String? _preparedFor;
+  List<StrokeAnchors> _anchors = const [];
+
+  /// Rasterizes the letter (cached) and works out its guide-marker anchors.
+  Future<void> _loadAnchors(String letter) async {
+    final template = await _prepareTemplate(letter);
+    final data = letterFormationRegistry[letter];
+    final tight = template.tightBounds;
+    if (data == null || tight == null) return;
+    final anchors = buildAnchors(
+      data: data,
+      skeleton: Skeletonizer.skeletonize(template.mask),
+      maskOrigin: template.bounds.topLeft,
+      tightBounds: tight,
+    );
+    if (!mounted || _preparedFor != letter) return;
+    setState(() => _anchors = anchors);
+  }
 
   Future<TemplateRasterResult> _prepareTemplate(String letter) =>
       TemplateCache.shared.prepare(
@@ -51,7 +71,8 @@ class _GuideScreenState extends State<GuideScreen> {
     final letter = _session(context).current;
     if (_preparedFor != letter) {
       _preparedFor = letter;
-      _prepareTemplate(letter);
+      _anchors = const [];
+      _loadAnchors(letter);
     }
   }
 
@@ -185,6 +206,8 @@ class _GuideScreenState extends State<GuideScreen> {
                       letter: session.current,
                       strokes: _strokes,
                       showModel: _showModel,
+                      anchors: _anchors,
+                      level: session.level,
                       onStrokeStart: _start,
                       onStrokeUpdate: _update,
                       onStrokeEnd: _end,

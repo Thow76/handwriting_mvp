@@ -8,7 +8,10 @@ void main() {
     test('returns ink bounds within the mask', () {
       // 10x10 mask with ink in rows 2-7 (canvas coords: 102-107)
       final mask = List.generate(10, (row) {
-        return List.generate(10, (col) => row >= 2 && row <= 7 && col >= 3 && col <= 6);
+        return List.generate(
+          10,
+          (col) => row >= 2 && row <= 7 && col >= 3 && col <= 6,
+        );
       });
       final result = TemplateRasterResult(
         mask: mask,
