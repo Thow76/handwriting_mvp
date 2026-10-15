@@ -12,14 +12,15 @@ ScoreResult _result(double v) =>
 Future<PracticeSession> _open(
   WidgetTester tester,
   List<String> letters,
-  List<double> scores,
-) async {
+  List<double> scores, {
+  ScoringLevel level = ScoringLevel.shapeOnly,
+}) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final session = PracticeSession(
     letters: letters,
-    level: ScoringLevel.shapeOnly,
+    level: level,
     index: letters.length - 1,
   );
   for (var i = 0; i < scores.length; i++) {
@@ -60,9 +61,28 @@ void main() {
     expect(find.byKey(const Key('ring_c')), findsOneWidget);
   });
 
-  testWidgets('one letter: no list', (tester) async {
+  testWidgets('one letter, level 2: big letter with ring and word', (
+    tester,
+  ) async {
+    await _open(tester, ['a'], [0.9], level: ScoringLevel.shapeAndStart);
+    expect(find.byKey(const Key('resultList')), findsNothing);
+    expect(find.byKey(const Key('bigLetter')), findsOneWidget);
+    expect(find.byKey(const Key('ring_a')), findsOneWidget);
+    expect(find.text('Good'), findsOneWidget);
+    expect(find.byKey(const Key('tick')), findsNothing);
+    expect(find.text('Practice again'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+  });
+
+  testWidgets('one letter, level 1: big letter with a tick, no ring or word', (
+    tester,
+  ) async {
     await _open(tester, ['a'], [0.9]);
     expect(find.byKey(const Key('resultList')), findsNothing);
+    expect(find.byKey(const Key('bigLetter')), findsOneWidget);
+    expect(find.byKey(const Key('tick')), findsOneWidget);
+    expect(find.byKey(const Key('ring_a')), findsNothing);
+    expect(find.text('Good'), findsNothing);
     expect(find.text('Practice again'), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
   });
