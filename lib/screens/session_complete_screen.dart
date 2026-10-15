@@ -83,7 +83,11 @@ class SessionCompleteScreen extends StatelessWidget {
                         ),
                       ),
                     )
-                  : const SizedBox.shrink(),
+                  : _SingleResult(
+                      letter: session.letters.first,
+                      result: session.results.first,
+                      level: session.level,
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
@@ -117,6 +121,82 @@ class SessionCompleteScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// A one-letter session: the letter large in the middle, with a tick at
+/// level 1 (no score there) or the ring and word below it at levels 2-4.
+class _SingleResult extends StatelessWidget {
+  const _SingleResult({
+    required this.letter,
+    required this.result,
+    required this.level,
+  });
+
+  final String letter;
+  final ScoreResult? result;
+  final ScoringLevel level;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = result;
+    final verdict = r == null ? null : judgeAttempt(r, level, letter);
+    final band = verdict?.band;
+    final color = switch (band) {
+      FeedbackBand.good => AppColors.good,
+      FeedbackBand.okay => AppColors.okay,
+      FeedbackBand.morePractice => AppColors.morePractice,
+      null => AppColors.border,
+    };
+    final wordColor = band == FeedbackBand.okay ? AppColors.okayText : color;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            letter,
+            key: const Key('bigLetter'),
+            style: const TextStyle(
+              fontFamily: 'Andika',
+              fontSize: 140,
+              height: 1.1,
+              color: AppColors.ink,
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (level == ScoringLevel.shapeOnly)
+            Container(
+              key: const Key('tick'),
+              width: 56,
+              height: 56,
+              decoration: const BoxDecoration(
+                color: AppColors.good,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check, color: Colors.white, size: 34),
+            )
+          else if (verdict != null) ...[
+            SizedBox(
+              key: Key('ring_$letter'),
+              width: 64,
+              height: 64,
+              child: CustomPaint(
+                painter: _MiniRingPainter(verdict.ringFill, color),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              band!.word,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: wordColor,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -210,7 +290,7 @@ class _MiniRingPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const thickness = 4.0;
+    final thickness = size.width / 7.5;
     final rect = (Offset.zero & size).deflate(thickness / 2);
     final paint = Paint()
       ..style = PaintingStyle.stroke
