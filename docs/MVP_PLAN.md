@@ -128,7 +128,7 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       when tapped. main.dart starts here; Session complete's "Home" button still returns
       to Home (3.2), not to this screen. Widget test: Practice card navigates, Games does
       not.
-- [~] 3.7 Session complete: show the per-letter list even when the set is one letter
+- [x] 3.7 Session complete: show the per-letter list even when the set is one letter
       (letter, small ring, word), the same as for larger sets. At level 1 there is no
       score, so the ring/word are omitted: show the letter large (Andika) with a plain
       tick instead. Levels 2–4 with one letter show letter + ring + word as in 3.5.
