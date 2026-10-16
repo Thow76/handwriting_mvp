@@ -141,6 +141,13 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       word below it. Level 1: the large letter with a plain teal tick (no ring or word).
       Keep "Practice again" and "Home". Sessions of two or more letters keep the list
       from step 3.5, unchanged.
+- [ ] 3.8 Feedback screen, last letter: the button that goes onward says "Finish" instead of
+      "Next letter" when `session.isLast` (any session length, any level 2-4; level 1 has no
+      Feedback screen). All other letters keep "Next letter". Same key (`nextLetterButton`),
+      same behaviour (records the result, goes to Session complete). Update
+      test/feedback_screen_test.dart: last letter shows "Finish" and no "Next letter";
+      non-last letter still shows "Next letter".
+      Answer (Andrew, 15 Oct): the word is "Finish".
 
 ## Phase 4 — guide markers for levels 2–4
 - [x] 4.1 Prepare the template letter on letter load, not only after drawing (tight
