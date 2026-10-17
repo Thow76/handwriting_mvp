@@ -140,9 +140,15 @@ class _GuideScreenState extends State<GuideScreen> {
   @override
   Widget build(BuildContext context) {
     final session = _session(context);
-    final caption = session.level == ScoringLevel.shapeOnly
+    final levelOne = session.level == ScoringLevel.shapeOnly;
+    final caption = levelOne
         ? 'No score at level 1 — just copy the shape'
-        : 'Copy the letter, then tap Finish';
+        : 'Copy the letter, then tap View result';
+    final buttonLabel = !levelOne
+        ? 'View result'
+        : session.isLast
+        ? 'Finish'
+        : 'Next letter';
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -274,7 +280,7 @@ class _GuideScreenState extends State<GuideScreen> {
                           onPressed: _strokes.isEmpty || _finishing
                               ? null
                               : () => _finish(session),
-                          child: const Text('Finish'),
+                          child: Text(buttonLabel),
                         ),
                       ),
                     ],

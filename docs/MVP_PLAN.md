@@ -148,6 +148,13 @@ Decisions taken for the MVP (Andrew can override by editing this file):
       test/feedback_screen_test.dart: last letter shows "Finish" and no "Next letter";
       non-last letter still shows "Next letter".
       Answer (Andrew, 15 Oct): the word is "Finish".
+- [~] 3.9 Guide screen button labels. Level 1: the right-hand button says "Next letter" when
+      `session.isLast` is false and "Finish" on the last letter. Levels 2–4: it says "View
+      result" on every letter. Update the caption under the card: Level 1 unchanged;
+      Levels 2–4 say "Copy the letter, then tap View result". Same key, same behaviour
+      (scoring and navigation do not change). Update the Guide screen tests: Level 1 with
+      two letters shows "Next letter" then "Finish"; Level 2 shows "View result" on both
+      letters.
 
 ## Phase 4 — guide markers for levels 2–4
 - [x] 4.1 Prepare the template letter on letter load, not only after drawing (tight
