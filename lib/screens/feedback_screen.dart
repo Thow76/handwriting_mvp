@@ -71,7 +71,7 @@ class FeedbackScreen extends StatelessWidget {
     final next = FilledButton(
       key: const Key('nextLetterButton'),
       onPressed: () => _nextLetter(context, session, result),
-      child: const Text('Next letter'),
+      child: Text(session.isLast ? 'Finish' : 'Next letter'),
     );
     return Scaffold(
       body: SafeArea(
