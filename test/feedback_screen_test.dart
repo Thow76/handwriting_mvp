@@ -146,7 +146,23 @@ void main() {
     expect(find.byKey(const Key('letterCanvas')), findsOneWidget);
   });
 
-  testWidgets('Next letter on the last letter ends the session', (
+  testWidgets('Last letter shows Finish, not Next letter', (tester) async {
+    await _open(
+      tester,
+      _result(bitmap: 0.9, start: 1, path: 1, strokes: 1),
+      letters: const ['a'],
+    );
+    expect(find.text('Finish'), findsOneWidget);
+    expect(find.text('Next letter'), findsNothing);
+  });
+
+  testWidgets('Non-last letter still shows Next letter', (tester) async {
+    await _open(tester, _result(bitmap: 0.9, start: 1, path: 1, strokes: 1));
+    expect(find.text('Next letter'), findsOneWidget);
+    expect(find.text('Finish'), findsNothing);
+  });
+
+  testWidgets('Finish on the last letter ends the session', (
     tester,
   ) async {
     await _open(
