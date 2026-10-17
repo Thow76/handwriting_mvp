@@ -11,11 +11,15 @@ Future<PracticeSession> _open(
   WidgetTester tester, {
   required List<String> letters,
   required ScoringLevel level,
+  int startAt = 0,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   final session = PracticeSession(letters: letters, level: level);
+  for (var i = 0; i < startAt; i++) {
+    session.next();
+  }
   await tester.pumpWidget(
     MaterialApp(
       theme: buildAppTheme(),
@@ -145,6 +149,47 @@ void main() {
     await _draw(tester);
     await _finish(tester);
     expect(find.byKey(const Key('scoreRing')), findsOneWidget);
+  });
+
+  Finder finishLabel(String text) => find.descendant(
+    of: find.byKey(const Key('finishButton')),
+    matching: find.text(text),
+  );
+
+  testWidgets('level 1 button says Next letter, then Finish on the last', (
+    tester,
+  ) async {
+    await _open(tester, letters: ['a', 'b'], level: ScoringLevel.shapeOnly);
+    expect(finishLabel('Next letter'), findsOneWidget);
+    expect(finishLabel('Finish'), findsNothing);
+    await _draw(tester);
+    await _finish(tester);
+    expect(finishLabel('Finish'), findsOneWidget);
+    expect(finishLabel('Next letter'), findsNothing);
+  });
+
+  testWidgets('level 1 button says Finish for a one-letter set', (
+    tester,
+  ) async {
+    await _open(tester, letters: ['a'], level: ScoringLevel.shapeOnly);
+    expect(finishLabel('Finish'), findsOneWidget);
+    expect(finishLabel('Next letter'), findsNothing);
+  });
+
+  testWidgets('level 2 button says View result on every letter', (
+    tester,
+  ) async {
+    await _open(tester, letters: ['a', 'b'], level: ScoringLevel.shapeAndStart);
+    expect(finishLabel('View result'), findsOneWidget);
+    expect(find.text('Copy the letter, then tap View result'), findsOneWidget);
+    await _open(
+      tester,
+      letters: ['a', 'b'],
+      level: ScoringLevel.shapeAndStart,
+      startAt: 1,
+    );
+    expect(finishLabel('View result'), findsOneWidget);
+    expect(finishLabel('Finish'), findsNothing);
   });
 
   testWidgets('the model letter is prepared as soon as the screen loads', (
